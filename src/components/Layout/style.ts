@@ -40,14 +40,12 @@ export const Footer = styled(AntdFooter)`
 
 export const StatusBar = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
   height: 100px;
   background-color: white;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
   margin-top: 30px;
+  justify-content: space-between;
   @media only screen and (max-width: 768px) {
     height: auto;
     box-shadow: none;
@@ -64,4 +62,57 @@ export const StatusWrap = styled.div`
     margin: 0;
     margin-right: 15px;
   }
+`;
+
+export const NoticeContainer = styled.div`
+  position: relative;
+  display: flex;
+`;
+
+export const NoticeWrap = styled.div`
+  padding: 10px;
+  display: flex;
+  color: #fff;
+  position: relative;
+  margin: auto 15px;
+`;
+
+export const Notice = styled.div`
+  width: 100px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #5d28dd;
+  cursor: pointer;
+`;
+
+export const Num = styled.div`
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background-color: red;
+  z-index: 2;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  right: 0;
+  top: 0%;
+`;
+
+export const Time = styled.div`
+  width: 100px;
+  height: 50px;
+  background-color: brown;
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  color: #fff;
+  margin: auto 10px;
+  border-radius: 7px;
 `;

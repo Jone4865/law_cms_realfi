@@ -63,18 +63,14 @@ export function OtpQrModal({
       centered
       footer={false}
       onCancel={handleCancel}
-      visible={visible}
+      open={visible}
       closable={false}
       focusTriggerAfterClose={false}
     >
       <S.QRWrap>
         <Image src={imageUrl} />
       </S.QRWrap>
-      <TransformBox
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
-      >
+      <TransformBox justifyContent="center" alignItems="center" flexDirection="column">
         <S.KeyWrap>key: {otpSecret}</S.KeyWrap>
         <Button onClick={handleCopy}>복사</Button>
       </TransformBox>

@@ -20,36 +20,56 @@ export const menuItems: ItemType[] = [
     icon: <SecurityScanOutlined />,
   },
   {
-    label: '회원',
+    label: '회원관리',
     key: 'users',
     icon: <UserOutlined />,
-  },
-
-  {
-    label: '고객센터 관리',
-    key: 'customer',
-    icon: <CustomerServiceOutlined />,
     children: [
       {
-        label: '1:1 문의',
-        key: 'customer-inquiry',
+        label: '회원목록',
+        key: 'users-columns',
       },
       {
-        label: 'FAQ',
-        key: 'customer-faq',
+        label: '한도변경 신청',
+        key: 'users-change',
       },
       {
-        label: '공지사항',
-        key: 'customer-notice',
+        label: '회원분류',
+        key: 'users-notice',
       },
     ],
+  },
+  {
+    label: '프로젝트 관리',
+    //이미지 수정하기
+    key: 'project',
+    icon: <UserOutlined />,
+    children: [
+      {
+        label: '프로젝트 조회',
+        key: 'project-check',
+      },
+      {
+        label: '프로젝트 등록',
+        key: 'preject-add',
+      },
+    ],
+  },
+  {
+    label: '고객센터',
+    key: 'customer',
+    icon: <CustomerServiceOutlined />,
   },
   {
     label: '약관 관리',
     key: 'policy',
     icon: <FormOutlined />,
   },
-
+  {
+    label: '전체 설정',
+    key: 'settings',
+    icon: <LineChartOutlined />,
+    //아이콘 수정하기
+  },
   {
     label: '로그아웃',
     key: 'logout',

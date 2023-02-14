@@ -1,0 +1,1 @@
+export { SettingPopupDetailModal } from './SettingPopupDetailModal';

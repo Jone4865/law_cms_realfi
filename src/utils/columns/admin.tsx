@@ -36,6 +36,7 @@ export const authDescColumns: ColumnsType<AuthDescType> = [
     title: '권한내용',
     key: 'desc',
     dataIndex: 'desc',
+    align: 'center',
     render: (val: string, record) => {
       return (
         <S.AuthWrap>
@@ -43,6 +44,5 @@ export const authDescColumns: ColumnsType<AuthDescType> = [
         </S.AuthWrap>
       );
     },
-    align: 'center',
   },
 ];

@@ -1,109 +1,34 @@
 import { useLazyQuery } from '@apollo/client';
-import { Button, Divider, Form, Input, Tag, Table, notification } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
-
-import moment from 'moment';
+import { Divider, Form, Input, Table, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { InquiryDetailModal } from '../../components/InquiryDetailModal';
-import { UserDetailModal } from '../../components/UserDetailModal';
-import { InquiryType } from '../../utils/columns';
+import {
+  FindManyUserInquiryByAdminQuery,
+  UserInquiryInFindManyUserInquiryByAdminOutput,
+} from '../../graphql/generated/graphql';
+import { FIND_MANY_USER_INQUIRY_BY_ADMIN } from '../../graphql/query';
+import { inquiryColumns } from '../../utils/columns/customer.inquiry';
 
 export function Inquiry() {
-  const [visible, setVisible] = useState(false);
+  const [visible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [modalData, setModalData] = useState<InquiryType>();
-  const [inquiryData, setInquiryData] = useState<InquiryType[]>([]);
+  const [modalData, setModalData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput>();
+  const [inquiryData, setInquiryData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput[]>(
+    [],
+  );
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchText, setSearchText] = useState('');
-
-  const columns: ColumnsType<InquiryType> = [
-    {
-      title: 'no',
-      key: 'id',
-      dataIndex: 'id',
-      align: 'center',
-    },
-    {
-      title: '문의 종류',
-      key: 'inquiryKind',
-      dataIndex: 'inquiryKind',
-      align: 'center',
-      render: (val) => {
-        return val.name;
-      },
-    },
-    {
-      title: '문의내용',
-      key: 'content',
-      dataIndex: 'content',
-      align: 'center',
-    },
-    {
-      title: '닉네임',
-      key: 'user',
-      dataIndex: 'user',
-      render: (val, record) => {
-        return (
-          <Button
-            type="link"
-            onClick={(e) => {
-              setVisible(true);
-              setModalData(record);
-              e.stopPropagation();
-            }}
-          >
-            {val.nickname}
-          </Button>
-        );
-      },
-      align: 'center',
-    },
-    {
-      title: '접수일시',
-      key: 'reportingDate',
-      dataIndex: 'reportingDate',
-      render: (val) => {
-        return moment(val).format('YYYY-MM-DD hh:mm');
-      },
-      align: 'center',
-    },
-    {
-      title: '처리일시',
-      key: 'processingDate',
-      dataIndex: 'processingDate',
-      render: (val, record) => {
-        return record.reply ? moment(val).format('YYYY-MM-DD hh:mm') : '-';
-      },
-      align: 'center',
-    },
-    {
-      title: '처리',
-      key: 'isReply',
-      dataIndex: 'reply',
-      render: (val?: string) => {
-        return val ? (
-          <Tag color="blue">완료</Tag>
-        ) : (
-          <Tag color="error">미처리</Tag>
-        );
-      },
-      align: 'center',
-    },
-  ];
+  const [userInquiryCategoryId, setUserInquiryCategoryId] = useState(1);
 
   const handlePagination = (e: number) => {
     setCurrent(e);
     setSkip((e - 1) * take);
   };
 
-  const handleCancel = () => {
-    setVisible(false);
-  };
-
-  const handleRow = (data: InquiryType) => {
+  const handleRow = (data: UserInquiryInFindManyUserInquiryByAdminOutput) => {
     setDetailModalVisible(true);
     setModalData(data);
   };
@@ -113,13 +38,15 @@ export function Inquiry() {
   };
 
   const handleSearch = (values: { searchText?: string }) => {
-    // getInquiry({
-    //   variables: {
-    //     take,
-    //     skip: 0,
-    //     searchText: values.searchText,
-    //   },
-    // });
+    findManyUserInquiryByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+        userInquiryCategoryId,
+      },
+      fetchPolicy: 'no-cache',
+    });
     setCurrent(1);
     setSkip(0);
     setSearchText(values.searchText ?? '');
@@ -136,41 +63,45 @@ export function Inquiry() {
     //       notification.error({ message: e.message });
     //     });
     // }
+    findManyUserInquiryByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+        userInquiryCategoryId,
+      },
+      fetchPolicy: 'no-cache',
+    });
+    setDetailModalVisible(false);
   };
 
-  // get inquiry list
-  // const [getInquiry, { loading, refetch }] = useLazyQuery<
-  //   SeeAllInquiryHistoryByAdminResponse,
-  //   SeeAllInquiryHistoryByAdminParams
-  // >(SEE_ALL_INQUIRY_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setInquiryData(data.seeAllInquiryHistoryByAdmin.inquiries);
-  //     setTotalCount(data.seeAllInquiryHistoryByAdmin.totalCount);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
+  const [findManyUserInquiryByAdmin, {}] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
+    FIND_MANY_USER_INQUIRY_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setInquiryData(data.findManyUserInquiryByAdmin.userInquiries);
+        setTotalCount(data.findManyUserInquiryByAdmin.totalCount);
+      },
+    },
+  );
 
-  // pagination
-  // useEffect(() => {
-  //   getInquiry({
-  //     variables: {
-  //       skip,
-  //       take,
-  //       searchText,
-  //     },
-  //   });
-  // }, [skip, take]);
+  useEffect(() => {
+    findManyUserInquiryByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+        userInquiryCategoryId,
+      },
+      fetchPolicy: 'no-cache',
+    });
+  }, [skip, take, userInquiryCategoryId, visible]);
 
   return (
     <>
-      <UserDetailModal
-        handleCancel={handleCancel}
-        visible={visible}
-        email={modalData?.user?.email ?? ''}
-      />
       <InquiryDetailModal
         data={modalData}
         visible={detailModalVisible}
@@ -184,7 +115,7 @@ export function Inquiry() {
         </Form.Item>
       </Form>
       <Table
-        columns={columns}
+        columns={inquiryColumns({ visible })}
         dataSource={inquiryData}
         pagination={{
           position: ['bottomCenter'],

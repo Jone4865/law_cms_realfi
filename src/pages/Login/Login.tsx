@@ -1,20 +1,28 @@
 import { useState } from 'react';
 import { Form, Input, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
+import { useRecoilState } from 'recoil';
+import { useCookies } from 'react-cookie';
 
 import { OtpInputModal } from '../../components/OtpInputModal';
-
+import { useLazyQuery } from '@apollo/client';
 import * as S from './style';
+import { userTokenState } from '../../recoil/atoms/userToken';
+import { SIGN_IN_FROM_ADMIN, VALIDATE_ADMIN } from '../../graphql/query';
+import Loader from '../../components/Loader';
 
 type SubmitType = {
   email: string;
   password: string;
+  code: string;
 };
 
 export function Login() {
+  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken']);
   const [visible, setVisible] = useState(false);
-
+  const [otpImg, setOtpImg] = useState('');
   const [form] = useForm<SubmitType>();
+  const [, setToken] = useRecoilState(userTokenState);
 
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -33,20 +41,57 @@ export function Login() {
     if (!values.password?.trim().length) {
       return notification.error({ message: '비밀번호를 입력해주세요' });
     }
-    setVisible(true);
+    validateAdmin({
+      variables: {
+        email: form.getFieldValue('email'),
+        password: form.getFieldValue('password'),
+      },
+    });
   };
 
   const handleFinish = (otp: string[]) => {
+    var code = otp.concat().join().replaceAll(',', '');
     const userInfo: SubmitType = {
       email: form.getFieldValue('email'),
       password: form.getFieldValue('password'),
+      code,
     };
-    const code = otp.concat().join().replaceAll(',', '');
-
-    // TODO: 로그인 로직 구현
-    localStorage.setItem('accessToken', 'sdfjklasdjfkldsjf;aklsdjfkal');
-    return (window.location.href = '/');
+    signInFromAdmin({ variables: userInfo });
   };
+
+  const [validateAdmin] = useLazyQuery(VALIDATE_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error?.message });
+    },
+    onCompleted: (data) => {
+      setVisible(true);
+      if (data.validateAdmin) {
+        setOtpImg(data.validateAdmin);
+      }
+    },
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [signInFromAdmin, { loading }] = useLazyQuery(SIGN_IN_FROM_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error?.message });
+    },
+    onCompleted: (data) => {
+      setCookie('accessToken', data.signInFromAdmin.accessToken);
+      setCookie('refreshToken', data.signInFromAdmin.refreshToken);
+      setToken({
+        accessToken: data.signInFromAdmin.accessToken,
+      });
+      return (window.location.href = '/');
+    },
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <S.Container>
@@ -55,12 +100,13 @@ export function Login() {
         visible={visible}
         handleFinish={handleFinish}
         onCancel={handleCancel}
+        otpImg={otpImg}
       />
       <S.Wrapper>
         <S.FormWrap>
           <Form layout="vertical" onFinish={handleSubmit} form={form}>
             <S.ImageWrap>
-              <S.Image src={''} alt="logo" />
+              <S.Image src={'/img/logo.png'} alt="logo" />
             </S.ImageWrap>
             <Form.Item label="이메일" name="email">
               <Input />

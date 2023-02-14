@@ -5,19 +5,22 @@ import { UserType } from '.';
 
 export type InquiryType = {
   id: number;
-  inquiryKind: {
-    name: string;
-  };
+  title: string;
   content: string;
-  reportingDate: string;
-  processingDate?: string;
-  reply?: string;
-  user?: UserType;
-  createdAt?: string;
-  inquiryImages?: {
+  reply: string;
+  repliedAt: Date;
+  createdAt: Date;
+  userInquiryCategory: {
     id: number;
     name: string;
-  }[];
+  };
+  admin: {
+    name: string;
+  };
+  user: {
+    name: string;
+    phone: string;
+  };
 };
 
 export const userInquiryColumns: ColumnsType<InquiryType> = [

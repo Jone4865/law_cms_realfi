@@ -1,25 +1,35 @@
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
+import { UserInquiryInFindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
+import { deleteTag } from '../deleteTag';
+import { noticeKindToText } from '../noticeKindToText';
 
 export type NoticeType = {
   id: number;
   title: string;
   content: string;
-
   isFix: boolean;
+  kind: string;
   admin: {
     name: string;
   };
   createdAt: string;
 };
 
-export const noticeColumns: ColumnsType<NoticeType> = [
+export const noticeColumns: ColumnsType<UserInquiryInFindManyUserInquiryByAdminOutput> = [
   {
     title: 'no',
     key: 'id',
     dataIndex: 'id',
     align: 'center',
+  },
+  {
+    title: '분류',
+    key: 'noticeKind',
+    dataIndex: 'noticeKind',
+    align: 'center',
+    render: (value) => noticeKindToText(value),
   },
   {
     title: '제목',
@@ -33,19 +43,18 @@ export const noticeColumns: ColumnsType<NoticeType> = [
     dataIndex: 'content',
     align: 'center',
     render: (val: string) => {
-      return val.length > 40 ? val.substr(0, 40) + '...' : val;
+      return val.length > 40 ? deleteTag(val.slice(0, 40)) + '...' : deleteTag(val);
     },
   },
-
-  {
-    title: '고정',
-    key: 'isFix',
-    dataIndex: 'isFix',
-    align: 'center',
-    render: (val) => {
-      return val ? <Tag color="blue">O</Tag> : <Tag color="error">X</Tag>;
-    },
-  },
+  // {
+  //   title: '고정',
+  //   key: 'isFix',
+  //   dataIndex: 'isFix',
+  //   align: 'center',
+  //   render: (val) => {
+  //     return val ? <Tag color="blue">O</Tag> : <Tag color="error">X</Tag>;
+  //   },
+  // },
   {
     title: '작성자',
     key: 'admin',

@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Divider, Form, Input, notification, Table } from 'antd';
+import { Button, Divider, notification, Table } from 'antd';
 
 import { useLazyQuery } from '@apollo/client';
 import { NoticeDetailModal } from '../../components/NoticeDetailModal';
 import TransformBox from '../../components/TransformBox';
-import { noticeColumns, NoticeType } from '../../utils/columns';
+import { noticeColumns } from '../../utils/columns';
+import { FIND_MANY_NOTICE_BY_ADMIN } from '../../graphql/query';
+import {
+  FindManyNoticeByAdminOutput,
+  FindManyNoticeByAdminQuery,
+  NoticeInFindManyNoticeByAdminOutput,
+} from '../../graphql/generated/graphql';
 
 export function Notice() {
-  const [noticeData, setNoticeData] = useState<NoticeType[]>([]);
-  const [modalData, setModalData] = useState<NoticeType>();
+  const [noticeData, setNoticeData] = useState<FindManyNoticeByAdminOutput['notices']>([]);
+  const [modalData, setModalData] = useState<NoticeInFindManyNoticeByAdminOutput>();
   const [visible, setVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [take, setTake] = useState(10);
-  const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchText, setSearchText] = useState('');
-
+  const [cursorId, setCursorId] = useState(0);
   const handlePagination = (e: number) => {
     setCurrent(e);
-    setSkip((e - 1) * take);
   };
 
   const handleClick = () => {
@@ -27,7 +30,7 @@ export function Notice() {
     setIsEdit(false);
   };
 
-  const handleRow = (record: NoticeType) => {
+  const handleRow = (record: NoticeInFindManyNoticeByAdminOutput) => {
     setVisible(true);
     setIsEdit(true);
     setModalData(record);
@@ -38,64 +41,44 @@ export function Notice() {
   };
 
   const handleRefetch = () => {
-    // if (refetch) {
-    //   refetch({ take, skip })
-    //     .then((data) => {
-    //       const { notices, totalCount } = data.data.seeNoticeHistoryByAdmin;
-    //       setNoticeData(notices);
-    //       setTotalCount(totalCount);
-    //       if (notices.length < 0 && skip !== 0) {
-    //         setSkip(skip - take);
-    //       }
-    //     })
-    //     .catch((e) => {
-    //       notification.error({ message: e.message });
-    //     });
-    // }
+    findManyNoticeByAdmin({
+      variables: {
+        take,
+        searchText: '',
+      },
+      fetchPolicy: 'no-cache',
+    });
+    setVisible(false);
   };
 
-  const handleSearch = (value: { searchText?: string }) => {
-    // getNotices({
-    //   variables: {
-    //     searchText: value.searchText,
-    //     skip: 0,
-    //     take,
-    //   },
-    // });
-    setSkip(0);
-    setCurrent(1);
-    setSearchText(value.searchText ?? '');
-  };
+  const [findManyNoticeByAdmin, {}] = useLazyQuery<FindManyNoticeByAdminQuery>(
+    FIND_MANY_NOTICE_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setNoticeData(data.findManyNoticeByAdmin.notices);
+        setTotalCount(data.findManyNoticeByAdmin.totalCount);
+      },
+    },
+  );
 
-  // get notice list
-  // const [getNotices, { loading, refetch }] = useLazyQuery<
-  //   SeeNoticeHistoryByAdminResponse,
-  //   SeeNoticeHistoryByAdminParams
-  // >(SEE_NOTICE_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setNoticeData(data.seeNoticeHistoryByAdmin.notices);
-  //     setTotalCount(data.seeNoticeHistoryByAdmin.totalCount);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
-  // pagination
-  // useEffect(() => {
-  //   getNotices({
-  //     variables: {
-  //       take,
-  //       skip,
-  //       searchText,
-  //     },
-  //   });
-  // }, [take, skip]);
+  useEffect(() => {
+    findManyNoticeByAdmin({
+      variables: {
+        take,
+        searchText: '',
+        cursorId,
+      },
+      fetchPolicy: 'no-cache',
+    });
+  }, [take, visible]);
 
   return (
     <>
       <NoticeDetailModal
+        partTitle="공지사항 분류"
         data={modalData}
         visible={visible}
         handleCancel={handleCancel}
@@ -103,17 +86,6 @@ export function Notice() {
         refetch={handleRefetch}
       />
       <Divider>공지사항</Divider>
-      <Form layout="inline" onFinish={handleSearch}>
-        <Form.Item name="searchText">
-          <Input.Search
-            enterButton
-            placeholder="검색어(제목, 내용)"
-            onSearch={(e) => {
-              handleSearch({ searchText: e });
-            }}
-          />
-        </Form.Item>
-      </Form>
 
       <TransformBox justifyContent="flex-end">
         <Button type="primary" onClick={handleClick}>

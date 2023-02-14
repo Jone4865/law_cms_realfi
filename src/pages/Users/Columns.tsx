@@ -2,13 +2,18 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
-import { UserDetailModal } from '../../components/UserDetailModal';
-import { UserType, userListColumns } from '../../utils/columns';
+import {
+  FindManyUserByAdminQuery,
+  UserInFindManyUserByAdminOutput,
+} from '../../graphql/generated/graphql';
+import { FIND_MANY_USERS_BY_ADMIN } from '../../graphql/query';
 
-export function Users() {
-  const [userData, setUserData] = useState<UserType[]>([]);
+import { userListColumns } from '../../utils/columns';
+
+export function Columns() {
+  const [userData, setUserData] = useState<UserInFindManyUserByAdminOutput[]>([]);
   const [visible, setVisible] = useState(false);
-  const [modalData, setModalData] = useState<UserType>();
+  const [modalData, setModalData] = useState<UserInFindManyUserByAdminOutput>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -19,7 +24,7 @@ export function Users() {
     setVisible(false);
   };
 
-  const handleClickRow = (rec: UserType) => {
+  const handleClickRow = (rec: UserInFindManyUserByAdminOutput) => {
     setModalData(rec);
     setVisible(true);
   };
@@ -68,19 +73,40 @@ export function Users() {
   //   });
   // }, [skip, take]);
 
+  // // 요청 분기점
+  const [findManyUserByAdmin, { loading }] = useLazyQuery<FindManyUserByAdminQuery>(
+    FIND_MANY_USERS_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setUserData(data.findManyUserByAdmin.users);
+        setTotalCount(data.findManyUserByAdmin.totalCount);
+      },
+    },
+  );
+
+  // 요청 코드
+  useEffect(() => {
+    findManyUserByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+      },
+      fetchPolicy: 'no-cache',
+    });
+  }, [take, skip, searchText]);
+
   return (
     <>
-      <UserDetailModal
-        visible={visible}
-        handleCancel={handleCancel}
-        email={modalData?.email ?? ''}
-      />
-      <Divider>회원</Divider>
+      <Divider>회원목록</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
           <Input.Search
             enterButton
-            placeholder="검색어(아이디(이메일), 닉네임, 이름, 휴대폰)"
+            placeholder="이름, 닉네임, 상호명, 휴대폰번호"
             onSearch={(e) => {
               handleSearch({ searchText: e });
             }}
@@ -107,7 +133,7 @@ export function Users() {
             onClick: () => handleClickRow(rec),
           };
         }}
-        rowKey={(rec) => rec.email}
+        // rowKey={(rec) => rec.email}
         scroll={{ x: 800 }}
       />
     </>

@@ -1,18 +1,20 @@
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
+import { FaqInFindManyFaqByAdminOutput } from '../../graphql/generated/graphql';
+import { deleteTag } from '../deleteTag';
 
 export type FaqType = {
   id: number;
   question: string;
   answer: string;
-  faqKind: KindType;
+  faqCategory: KindType;
   admin: {
     name: string;
   };
   createdAt: string;
 };
 
-export const faqColumns: ColumnsType<FaqType> = [
+export const faqColumns: ColumnsType<FaqInFindManyFaqByAdminOutput> = [
   {
     title: 'no',
     key: 'id',
@@ -21,18 +23,26 @@ export const faqColumns: ColumnsType<FaqType> = [
   },
   {
     title: 'FAQ 종류',
-    key: 'faqKind',
-    dataIndex: 'faqKind',
+    key: 'faqCategory',
+    dataIndex: 'faqCategory',
     align: 'center',
     render: (val) => {
       return val.name;
     },
-  },
-  {
-    title: '질문',
-    key: 'question',
-    dataIndex: 'question',
-    align: 'center',
+    filters: [
+      {
+        text: 'Joe',
+        value: 'Joe',
+      },
+      {
+        text: 'Category 1',
+        value: 'Category 1',
+      },
+      {
+        text: 'Category 2',
+        value: 'Category 2',
+      },
+    ],
   },
   {
     title: '답변',
@@ -40,16 +50,7 @@ export const faqColumns: ColumnsType<FaqType> = [
     dataIndex: 'answer',
     align: 'center',
     render: (val: string) => {
-      return val.length > 40 ? val.substr(0, 40) + '...' : val;
-    },
-  },
-  {
-    title: '작성자',
-    key: 'admin',
-    dataIndex: 'admin',
-    align: 'center',
-    render: (val) => {
-      return val.name;
+      return val.length > 40 ? deleteTag(val.slice(0, 40)) + '...' : deleteTag(val);
     },
   },
   {
@@ -59,6 +60,15 @@ export const faqColumns: ColumnsType<FaqType> = [
     align: 'center',
     render: (val) => {
       return moment(val).format('YYYY-MM-DD HH:mm:ss');
+    },
+  },
+  {
+    title: '작성자',
+    key: 'admin',
+    dataIndex: 'admin',
+    align: 'center',
+    render: (val) => {
+      return val.name;
     },
   },
 ];

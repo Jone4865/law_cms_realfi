@@ -1,8 +1,10 @@
 import { useMutation } from '@apollo/client';
-import { Button, Input, Modal, notification, Popconfirm, Switch } from 'antd';
+import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
 
 import React, { useEffect, useState } from 'react';
-import { NoticeType } from '../../utils/columns';
+import { NoticeInFindManyNoticeByAdminOutput, NoticeKind } from '../../graphql/generated/graphql';
+import { CREATE_NOTICE_BY_ADMIN, UPDATE_NOTICE_BY_ADMIN } from '../../graphql/mutation';
+import { noticeKindToText } from '../../utils/noticeKindToText';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
 
@@ -10,8 +12,9 @@ type Props = {
   visible: boolean;
   handleCancel: () => void;
   isEdit: boolean;
-  data: NoticeType | undefined;
+  data: NoticeInFindManyNoticeByAdminOutput | undefined;
   refetch: () => void;
+  partTitle?: string;
 };
 
 export function NoticeDetailModal({
@@ -20,15 +23,16 @@ export function NoticeDetailModal({
   isEdit,
   data,
   refetch,
+  partTitle,
 }: Props) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState(' ');
   const [isFix, setisFix] = useState(false);
+  const [noticeKindId, setNoticeKindId] = useState(data?.noticeKind);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
-
   const handleClick = () => {
     if (!title.length) {
       return notification.error({ message: '공지사항 제목을 입력해주세요.' });
@@ -36,22 +40,29 @@ export function NoticeDetailModal({
     if (!content.length) {
       return notification.error({ message: '공지사항 내용을 입력해주세요.' });
     }
-    const variables = {
-      title,
-      content,
-      isFix,
-    };
+    if (!noticeKindId) {
+      return notification.error({ message: '공지사항 분류를 선택해주세요.' });
+    }
+
     if (!isEdit) {
-      // createNotice({
-      //   variables,
-      // });
-    } else {
-      // updateNotice({
-      //   variables: {
-      //     ...variables,
-      //     id: data?.id ?? -1,
-      //   },
-      // });
+      createNoticeByAdmin({
+        variables: {
+          title,
+          noticeKind: noticeKindId,
+          content,
+        },
+      });
+    }
+
+    if (isEdit && data) {
+      updateNoticeByAdmin({
+        variables: {
+          id: data.id,
+          content,
+          noticeKind: noticeKindId,
+          title,
+        },
+      });
     }
   };
 
@@ -63,35 +74,29 @@ export function NoticeDetailModal({
     // });
   };
 
-  // create notice
-  // const [createNotice] = useMutation<CreateNoticeRespons, CreateNoticeParams>(
-  //   CREATE_NOTICE,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '공지사항을 등록했습니다' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
+  const [createNoticeByAdmin, {}] = useMutation(CREATE_NOTICE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+      handleCancel();
+      refetch();
+    },
+    onCompleted: (data) => {
+      notification.success({ message: '공지사항을 등록했습니다.' });
+      refetch();
+    },
+  });
 
-  // update notice
-  // const [updateNotice] = useMutation<UpdateNoticeResponse, UpdateNoticeParams>(
-  //   UPDATE_NOTICE,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '공지사항을 수정했습니다' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
+  const [updateNoticeByAdmin, {}] = useMutation(UPDATE_NOTICE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+      handleCancel();
+      refetch();
+    },
+    onCompleted: (data) => {
+      notification.success({ message: '수정을 완료했습니다.' });
+      refetch();
+    },
+  });
 
   // delete notice
   // const [deleteNotice] = useMutation<DeleteNoticeResponse, DeleteNoticeParams>(
@@ -112,7 +117,7 @@ export function NoticeDetailModal({
     if (isEdit) {
       setTitle(data?.title ?? '');
       setContent(data?.content ?? ' ');
-      setisFix(data?.isFix ?? false);
+      // setisFix(data?.isFix ?? false);
     } else {
       setTitle('');
       setContent(' ');
@@ -120,9 +125,13 @@ export function NoticeDetailModal({
     }
   }, [visible]);
 
+  useEffect(() => {
+    setNoticeKindId(data?.noticeKind);
+  }, [data]);
+
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={handleCancel}
       width={1000}
       closable={false}
@@ -137,20 +146,12 @@ export function NoticeDetailModal({
         </TransformBox>
       }
     >
-      <TransformBox
-        alignItems="center"
-        justifyContent="space-between"
-        marginBottom="10px"
-      >
+      <TransformBox alignItems="center" justifyContent="space-between" marginBottom="10px">
         <>
           <h3>제목</h3>
           {isEdit && (
             <TransformBox>
-              <Popconfirm
-                title="삭제하시겠습니까?"
-                okText="삭제"
-                onConfirm={handleDelete}
-              >
+              <Popconfirm title="삭제하시겠습니까?" okText="삭제" onConfirm={handleDelete}>
                 <Button type="primary" danger>
                   삭제
                 </Button>
@@ -160,10 +161,24 @@ export function NoticeDetailModal({
         </>
       </TransformBox>
       <Input value={title} onChange={handleChange} />
+      <TransformBox alignItems="center" justifyContent="space-between" marginTop="30px">
+        <h3>{partTitle}</h3>
+      </TransformBox>
+      <Select
+        onChange={setNoticeKindId}
+        value={noticeKindId}
+        style={{
+          width: '100%',
+        }}
+      >
+        {Object.values(NoticeKind).map((v) => {
+          return <Select.Option value={v}>{noticeKindToText(v)}</Select.Option>;
+        })}
+      </Select>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <TransformBox justifyContent="space-between" alignItems="center">
           <h3>내용</h3>
-          <TransformBox>
+          {/* <TransformBox>
             <span>고정</span>
             <Switch
               checked={isFix}
@@ -172,7 +187,7 @@ export function NoticeDetailModal({
               }}
               onChange={setisFix}
             />
-          </TransformBox>
+          </TransformBox> */}
         </TransformBox>
         <Editor state={content} setState={setContent} />
       </TransformBox>

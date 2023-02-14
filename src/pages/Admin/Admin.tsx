@@ -15,7 +15,57 @@ import { AdminType } from '../../utils/columns/admin';
 export function Admin() {
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState<AdminType>();
-  const [adminData, setAdminData] = useState<AdminType[]>([]);
+  const [adminData, setAdminData] = useState<AdminType[]>([
+    {
+      id: '0',
+      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      email: 'dwadw@daw.co',
+      name: 'string',
+      phone: '01099999999',
+      otpSecret: 'string',
+      adminRoles: [{ name: 'dawdawd', id: 1 }],
+    },
+    {
+      id: '1',
+      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      email: 'dwadw@daw.co',
+      name: 'string',
+      phone: '01099999999',
+      otpSecret: 'string',
+      adminRoles: [{ name: 'dawdawd', id: 1 }],
+    },
+    {
+      id: '2',
+      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      email: 'dwadw@daw.co',
+      name: 'string',
+      phone: '01099999999',
+      otpSecret: 'string',
+      adminRoles: [{ name: 'dawdawd', id: 1 }],
+    },
+    {
+      id: '3',
+      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      email: 'dwadw@daw.co',
+      name: 'string',
+      phone: '01099999999',
+      otpSecret: 'string',
+      adminRoles: [{ name: 'dawdawd', id: 1 }],
+    },
+    {
+      id: '4',
+      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
+      email: 'dwadw@daw.co',
+      name: 'string',
+      phone: '01099999999',
+      adminRoles: [{ name: 'dawdawd', id: 1 }],
+    },
+  ]);
   const [adminAuths, setAdminAuths] = useState<KindType[]>([]);
   const [secret, setSecret] = useState('');
   const [otpModalVisible, setOtpModalVisible] = useState(false);
@@ -26,7 +76,12 @@ export function Admin() {
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
-  const [authDescData, setAuthDescData] = useState<AuthDescType[]>([]);
+  const [authDescData, setAuthDescData] = useState<AuthDescType[]>([
+    {
+      desc: 'ㅇㅁㅈㅇㅈㅁ',
+      name: 'daw',
+    },
+  ]);
 
   const handlePagination = (e: number) => {
     setSkip((e - 1) * take);
@@ -34,6 +89,13 @@ export function Admin() {
   };
 
   const columns: ColumnsType<AdminType> = [
+    {
+      title: 'no',
+      key: 'no',
+      dataIndex: 'no',
+      align: 'center',
+      render: (_val, _record, idx) => idx + 1,
+    },
     {
       title: '이메일',
       key: 'email',
@@ -75,7 +137,7 @@ export function Admin() {
                   margin: 0,
                 }}
               >
-                설정 완료
+                등록
               </Tag>
             ) : (
               <Tag
@@ -84,7 +146,7 @@ export function Admin() {
                   margin: 0,
                 }}
               >
-                설정 미완료
+                미등록
               </Tag>
             )}
 

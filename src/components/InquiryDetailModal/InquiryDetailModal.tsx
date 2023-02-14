@@ -5,22 +5,18 @@ import * as S from './style';
 import moment from 'moment';
 
 import { useMutation } from '@apollo/client';
-import { InquiryType } from '../../utils/columns';
 import TransformBox from '../TransformBox';
+import { UserInquiryInFindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
+import { REPLY_USER_INQUIRY_BY_ADMIN } from '../../graphql/mutation';
 
 type Props = {
   handleCancel: () => void;
   visible: boolean;
-  data: InquiryType | undefined;
+  data: UserInquiryInFindManyUserInquiryByAdminOutput | undefined;
   refetch: () => void;
 };
 
-export function InquiryDetailModal({
-  visible,
-  handleCancel,
-  data,
-  refetch,
-}: Props) {
+export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Props) {
   const [reply, setReply] = useState('');
 
   const handleReply = () => {
@@ -30,32 +26,18 @@ export function InquiryDetailModal({
     if (!reply.length) {
       return notification.error({ message: '답변을 입력해주세요.' });
     }
-    // updateInquiryReply({
-    //   variables: {
-    //     id: Number(data?.id ?? 0),
-    //     reply,
-    //   },
-    // });
+    replyUserInquiryByAdmin({
+      variables: {
+        id: Number(data?.id ?? 0),
+        reply,
+      },
+    });
+    refetch();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReply(e.target.value);
   };
-
-  // reply to user's inquiry
-  // const [updateInquiryReply] = useMutation<
-  //   ReplyInquiryByAdminResponse,
-  //   ReplyInquiryByAdminParams
-  // >(REPLY_INQUIRY_BY_ADMIN, {
-  //   onCompleted: () => {
-  //     notification.success({ message: '답변을 등록했습니다.' });
-  //     handleCancel();
-  //     refetch();
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  // });
 
   useEffect(() => {
     if (data?.reply) {
@@ -65,6 +47,15 @@ export function InquiryDetailModal({
     }
   }, [visible]);
 
+  const [replyUserInquiryByAdmin, {}] = useMutation(REPLY_USER_INQUIRY_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      notification.success({ message: '답변을 등록하였습니다.' });
+    },
+  });
+
   return (
     <Modal
       visible={visible}
@@ -72,59 +63,50 @@ export function InquiryDetailModal({
       footer={false}
       centered
       width={1000}
+      title="1:1 문의"
       bodyStyle={{
         maxHeight: '90vh',
         overflow: 'auto',
       }}
     >
       <S.Wrap>
-        <S.Label>문의자</S.Label>
-        {data?.user?.nickname}
+        <>문의 날짜 </>
+        <S.Label>{moment(data?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</S.Label>
       </S.Wrap>
       <S.Wrap>
-        <S.Label>문의 날짜</S.Label>
-        {moment(data?.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+        <>문의자 </>
+        <S.Label>ddd{data?.user?.name}</S.Label>
       </S.Wrap>
-      {data && data.inquiryImages && data.inquiryImages.length > 0 && (
-        <>
-          <h3>첨부 사진</h3>
-          <TransformBox
-            marginBottom={'30px'}
-            width={'100%'}
-            justifyContent="space-between"
-          >
-            {data.inquiryImages.map((v) => {
-              return (
-                <Image
-                  src={`${process.env.REACT_APP_INQUIRY_IMAGE_URL}/${v.name}`}
-                  alt="image"
-                  key={v.id}
-                  height={200}
-                  style={{
-                    marginRight: '30px',
-                  }}
-                />
-              );
-            })}
-          </TransformBox>
-        </>
-      )}
-      <h3>문의내용</h3>
+
+      <>문의제목</>
+      <Input.TextArea
+        value={data?.title}
+        readOnly
+        style={{
+          marginBottom: 20,
+          height: 50,
+          resize: 'none',
+        }}
+      />
+
+      <>문의내용</>
       <Input.TextArea
         value={data?.content}
         readOnly
         style={{
-          marginBottom: 30,
+          marginBottom: 20,
           height: 100,
+          resize: 'none',
         }}
       />
 
-      <h3>문의답변</h3>
+      <>문의답변</>
       <Input.TextArea
         value={reply}
         readOnly={(data?.reply?.length ?? -1) > 0}
         style={{
           height: 100,
+          resize: 'none',
         }}
         onChange={handleChange}
       />

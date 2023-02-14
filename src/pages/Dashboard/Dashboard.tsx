@@ -1,11 +1,15 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { Button, Divider, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Chart } from '../../components/Chart';
-import { InquiryType, dashboardInquiryColumns } from '../../utils/columns';
-
+import {
+  FindManyUserInquiryByAdminQuery,
+  UserInquiryInFindManyUserInquiryByAdminOutput,
+} from '../../graphql/generated/graphql';
+import { FIND_MANY_USER_INQUIRY_BY_ADMIN } from '../../graphql/query';
+import { dashboardInquiryColumns } from '../../utils/columns';
 import * as S from './style';
 
 type DashboardStats = {
@@ -25,27 +29,11 @@ type DashboardStats = {
 };
 
 export function Dashboard() {
-  const [inquiryData, setInquiryData] = useState<InquiryType[]>([]);
+  const [inquiryData, setInquiryData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput[]>(
+    [],
+  );
   const [dashboardData, setDashboardData] = useState<DashboardStats>();
   const navigator = useNavigate();
-
-  // get user inquiry list
-  // const [seeInquiry, { loading }] = useLazyQuery<
-  //   SeeAllInquiryHistoryByAdminResponse,
-  //   SeeAllInquiryHistoryByAdminParams
-  // >(SEE_ALL_INQUIRY_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setInquiryData(data.seeAllInquiryHistoryByAdmin.inquiries);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   variables: {
-  //     skip: 0,
-  //     take: 5,
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
 
   // get dashboard stats
   // const { loading: statLoading } = useQuery<SeeDashboardStatsByAdminResponse>(
@@ -63,8 +51,8 @@ export function Dashboard() {
 
   const chartTitle = [
     { title: '회원수', keyword: 'userCount' },
-    { title: '어게인 등록 번호 개수', keyword: 'registrationInfoCount' },
-    { title: '제휴 문의수', keyword: 'partnershipInquiryCount' },
+    // { title: '어게인 등록 번호 개수', keyword: 'registrationInfoCount' },
+    // { title: '제휴 문의수', keyword: 'partnershipInquiryCount' },
   ];
 
   // useEffect(() => {
@@ -72,6 +60,30 @@ export function Dashboard() {
   //     seeInquiry();
 
   // }, []);
+
+  const [findManyUserInquiryByAdmin, { loading }] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
+    FIND_MANY_USER_INQUIRY_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setInquiryData(data.findManyUserInquiryByAdmin.userInquiries);
+      },
+    },
+  );
+
+  useEffect(() => {
+    findManyUserInquiryByAdmin({
+      variables: {
+        take: 10,
+        skip: 0,
+        searchText: '',
+        userInquiryCategoryId: 1,
+      },
+    });
+  }, []);
+
   return (
     <>
       <Divider>대시보드</Divider>
@@ -99,12 +111,11 @@ export function Dashboard() {
         </Button>
       </S.Head>
       <Table
-        pagination={false}
         rowKey={(rec) => rec.id}
         columns={dashboardInquiryColumns}
         scroll={{ x: 800 }}
         dataSource={inquiryData}
-        // loading={loading}
+        pagination={false}
       />
     </>
   );

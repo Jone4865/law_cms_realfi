@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
-
-import React, { useEffect, useState } from 'react';
+import { CREATE_FAQ_BY_ADMIN, UPDATE_FAQ_BY_ADMIN } from '../../graphql/mutation';
 import { FaqType } from '../../utils/columns';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
@@ -12,7 +12,7 @@ type Props = {
   isEdit: boolean;
   data: FaqType | undefined;
   refetch: () => void;
-  faqKind: KindType[];
+  faqCategory: FaqType[];
 };
 
 export function FaqDetailModal({
@@ -21,11 +21,11 @@ export function FaqDetailModal({
   isEdit,
   data,
   refetch,
-  faqKind,
+  faqCategory,
 }: Props) {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
-  const [faqKindId, setFaqKindId] = useState(1);
+  const [faqCategoryId, setFaqCategoryId] = useState(1);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value);
@@ -41,19 +41,19 @@ export function FaqDetailModal({
     const variables = {
       question,
       answer,
-      faqKindId,
+      faqCategoryId: 1,
     };
     if (!isEdit) {
-      // createFaq({
-      //   variables,
-      // });
+      createFaqByAdmin({
+        variables,
+      });
     } else {
-      // updateFaq({
-      //   variables: {
-      //     ...variables,
-      //     id: data?.id ?? -1,
-      //   },
-      // });
+      updateFaqByAdmin({
+        variables: {
+          ...variables,
+          id: data?.id ?? -1,
+        },
+      });
     }
   };
 
@@ -65,20 +65,29 @@ export function FaqDetailModal({
     // });
   };
 
-  // create faq
-  // const [createFaq] = useMutation<CreateFaqResponse, CreateFaqParams>(
-  //   CREATE_FAQ,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: 'FAQ를 생성했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
+  const [updateFaqByAdmin] = useMutation(UPDATE_FAQ_BY_ADMIN, {
+    onCompleted: (data) => {
+      notification.success({ message: '수정을 완료했습니다.' });
+      handleCancel();
+      refetch();
+      console.log(data);
+    },
+    onError: (e) => {
+      notification.error({ message: e.message });
+    },
+  });
+
+  const [createFaqByAdmin] = useMutation(CREATE_FAQ_BY_ADMIN, {
+    onCompleted: (data) => {
+      notification.success({ message: 'FAQ를 생성했습니다.' });
+      handleCancel();
+      refetch();
+      console.log(data);
+    },
+    onError: (e) => {
+      notification.error({ message: e.message });
+    },
+  });
 
   // update faq
   // const [updateFaq] = useMutation<UpdateFaqResponse, UpdateFaqParams>(
@@ -114,17 +123,17 @@ export function FaqDetailModal({
     if (isEdit) {
       setQuestion(data?.question ?? '');
       setAnswer(data?.answer ?? '');
-      setFaqKindId(data?.faqKind.id ?? faqKind[0]?.id);
+      setFaqCategoryId(data?.faqCategory.id ?? faqCategory[0]?.id);
     } else {
       setQuestion('');
       setAnswer('');
-      setFaqKindId(faqKind[0]?.id);
+      setFaqCategoryId(faqCategory[0]?.id);
     }
   }, [visible]);
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={handleCancel}
       width={1000}
       closable={false}
@@ -144,12 +153,8 @@ export function FaqDetailModal({
           <h3>FAQ 종류</h3>
           {isEdit && (
             <TransformBox>
-              <Popconfirm
-                title="삭제하시겠습니까?"
-                okText="삭제"
-                onConfirm={handleDelete}
-              >
-                <Button type="primary" danger>
+              <Popconfirm title="삭제하시겠습니까?" okText="삭제" onConfirm={handleDelete}>
+                <Button type="primary" danger style={{ marginBottom: '10px' }}>
                   삭제
                 </Button>
               </Popconfirm>
@@ -158,21 +163,17 @@ export function FaqDetailModal({
         </>
       </TransformBox>
       <Select
-        onChange={setFaqKindId}
-        value={faqKindId}
+        onChange={setFaqCategoryId}
+        value={faqCategoryId}
         style={{
-          width: 150,
+          width: '100%',
         }}
       >
-        {faqKind.map((v) => {
+        {faqCategory.map((v: any) => {
           return <Select.Option value={v.id}>{v.name}</Select.Option>;
         })}
       </Select>
-      <TransformBox
-        alignItems="center"
-        justifyContent="space-between"
-        marginTop="30px"
-      >
+      <TransformBox alignItems="center" justifyContent="space-between" marginTop="30px">
         <h3>질문</h3>
       </TransformBox>
       <Input value={question} onChange={handleChange} />

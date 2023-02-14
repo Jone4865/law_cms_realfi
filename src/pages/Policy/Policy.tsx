@@ -7,7 +7,16 @@ import TransformBox from '../../components/TransformBox';
 import { PolicyType, policyColumns } from '../../utils/columns';
 
 export function Policy() {
-  const [policyData, setPolicyData] = useState<PolicyType[]>([]);
+  const [policyData, setPolicyData] = useState<PolicyType[]>([
+    {
+      id: 0,
+      essential: true,
+      admin: { name: 'dawdwa' },
+      content: 'dawdawdwad',
+      createdAt: 'dawdawdaw',
+      policyKind: { name: 'dadwa', id: 0 },
+    },
+  ]);
   const [policyKind, setPolicyKind] = useState<KindType[]>([]);
   const [visible, setVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -112,7 +121,7 @@ export function Policy() {
         policyKind={policyKind}
       />
       <Divider>약관 관리</Divider>
-      <Form layout="inline" onFinish={handleSearch}>
+      {/* <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
           <Input.Search
             enterButton
@@ -122,7 +131,7 @@ export function Policy() {
             }}
           />
         </Form.Item>
-      </Form>
+      </Form> */}
 
       <TransformBox justifyContent="flex-end">
         <Button type="primary" onClick={handleClick}>

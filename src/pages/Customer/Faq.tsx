@@ -1,13 +1,15 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { Button, Divider, Form, Input, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import { FaqDetailModal } from '../../components/FaqDetailModal';
 import TransformBox from '../../components/TransformBox';
+import { FindManyFaqByAdminOutput, FindManyFaqByAdminQuery } from '../../graphql/generated/graphql';
+import { FIND_MANY_FAQ_BY_ADMIN } from '../../graphql/query';
 import { FaqType, faqColumns } from '../../utils/columns';
 
 export function Faq() {
-  const [faqData, setFaqData] = useState<FaqType[]>([]);
+  const [faqData, setFaqData] = useState<FindManyFaqByAdminOutput['faqs']>([]);
   const [visible, setVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [modalData, setModalData] = useState<FaqType>();
@@ -16,7 +18,8 @@ export function Faq() {
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [faqKind, setFaqKind] = useState<KindType[]>([]);
+  const [faqKind, setFaqKind] = useState<FaqType[]>([]);
+  const [faqCategoryId, setFaqCategoryId] = useState(1);
 
   const handlePagination = (e: number) => {
     setCurrent(e);
@@ -57,34 +60,6 @@ export function Faq() {
     // }
   };
 
-  const handleSearch = (value: { searchText?: string }) => {
-    // getFaqs({
-    //   variables: {
-    //     take,
-    //     skip: 0,
-    //     ...value,
-    //   },
-    // });
-    setCurrent(1);
-    setSkip(0);
-    setSearchText(value.searchText ?? '');
-  };
-
-  // get faq list
-  // const [getFaqs, { loading, refetch }] = useLazyQuery<
-  //   SeeFaqHistoryByAdminResponse,
-  //   SeeFaqHistoryByAdminParams
-  // >(SEE_FAQ_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setFaqData(data.seeFaqHistoryByAdmin.faqs);
-  //     setTotalCount(data.seeFaqHistoryByAdmin.totalCount);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
   // get faq kind list
   // useQuery<SeeFaqKindResponse>(SEE_FAQ_KIND, {
   //   onCompleted: (data) => {
@@ -96,16 +71,32 @@ export function Faq() {
   //   fetchPolicy: 'no-cache',
   // });
 
-  // pagination
-  // useEffect(() => {
-  //   getFaqs({
-  //     variables: {
-  //       skip,
-  //       take,
-  //       searchText,
-  //     },
-  //   });
-  // }, [skip, take]);
+  // 요청 분기점
+  const [findManyFaqByAdmin, { loading }] = useLazyQuery<FindManyFaqByAdminQuery>(
+    FIND_MANY_FAQ_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setFaqData(data.findManyFaqByAdmin.faqs);
+        setTotalCount(data.findManyFaqByAdmin.totalCount);
+      },
+    },
+  );
+
+  // 요청 코드
+  useEffect(() => {
+    findManyFaqByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+        faqCategoryId,
+      },
+      fetchPolicy: 'no-cache',
+    });
+  }, [skip, take, faqCategoryId, visible]);
 
   return (
     <>
@@ -115,10 +106,10 @@ export function Faq() {
         handleCancel={handleCancel}
         isEdit={isEdit}
         refetch={handleRefetch}
-        faqKind={faqKind}
+        faqCategory={faqKind}
       />
       <Divider>FAQ</Divider>
-      <Form layout="inline" onFinish={handleSearch}>
+      {/* <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
           <Input.Search
             enterButton
@@ -130,7 +121,7 @@ export function Faq() {
             }}
           />
         </Form.Item>
-      </Form>
+      </Form> */}
       <TransformBox justifyContent="flex-end">
         <Button type="primary" onClick={handleClick}>
           FAQ 등록

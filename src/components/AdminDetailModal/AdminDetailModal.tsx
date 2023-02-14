@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  Input,
-  Modal,
-  notification,
-  Popconfirm,
-  Table,
-} from 'antd';
+import { Button, Checkbox, Input, Modal, notification, Popconfirm, Table } from 'antd';
 import * as S from './style';
 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -31,13 +23,7 @@ type Props = {
   adminRoles: KindType[];
 };
 
-export function AdminDetailModal({
-  handleCancel,
-  visible,
-  admin,
-  refetch,
-  adminRoles,
-}: Props) {
+export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminRoles }: Props) {
   const [isPasswordChange, setPasswordChange] = useState(false);
   const [adminInfo, setAdminInfo] = useState<SubmitType>({
     adminRoles: [
@@ -104,10 +90,7 @@ export function AdminDetailModal({
     setPasswordChange(!isPasswordChange);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    keyword: string,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, keyword: string) => {
     setAdminInfo({
       ...adminInfo,
       [keyword]: e.target.value,
@@ -146,8 +129,7 @@ export function AdminDetailModal({
     }
     if (validataPassword(adminInfo.password)) {
       return notification.error({
-        message:
-          '비밀번호는 특수문자 / 문자 / 숫자 포함 형태의 8~15자리로 입력해주세요',
+        message: '비밀번호는 특수문자 / 문자 / 숫자 포함 형태의 8~15자리로 입력해주세요',
       });
     }
     if (!adminInfo.name?.length) {
@@ -309,17 +291,11 @@ export function AdminDetailModal({
       </S.FormWrap>
       <S.FormWrap>
         <S.Label>이름</S.Label>
-        <Input
-          value={adminInfo.name}
-          onChange={(e) => handleChange(e, 'name')}
-        />
+        <Input value={adminInfo.name} onChange={(e) => handleChange(e, 'name')} />
       </S.FormWrap>
       <S.FormWrap>
         <S.Label>연락처</S.Label>
-        <Input
-          value={adminInfo.phone}
-          onChange={(e) => handleChange(e, 'phone')}
-        />
+        <Input value={adminInfo.phone} onChange={(e) => handleChange(e, 'phone')} />
       </S.FormWrap>
       <S.TableWrap>
         <S.Label>권한</S.Label>
