@@ -18,12 +18,40 @@ export type Scalars = {
   Upload: any;
 };
 
+/** 지갑 거래내역 조회 output - 계좌 */
+export type AccountInFindManyWalletTransferByUserOutput = {
+  /** 예금주 */
+  accountHolder: Scalars['String'];
+  /** 계좌번호 */
+  accountNumber: Scalars['String'];
+  /** 은행 */
+  bank: BankModel;
+  /** ID */
+  id: Scalars['Int'];
+  /** 주계좌 여부 */
+  isMainAccount: Scalars['Boolean'];
+};
+
 /** 내 지갑 조회 - output - 계좌 */
 export type AccountInFindWalletByUserOutput = {
   /** 계좌번호 */
   accountNumber: Scalars['String'];
   /** 은행 */
   bank: BankInFindWalletByUserOutput;
+};
+
+/** 지갑 거래 조회 output - 계좌 */
+export type AccountInFindWalletTransferByUserOutput = {
+  /** 예금주 */
+  accountHolder: Scalars['String'];
+  /** 계좌번호 */
+  accountNumber: Scalars['String'];
+  /** 은행 */
+  bank: BankModel;
+  /** ID */
+  id: Scalars['Int'];
+  /** 주계좌 여부 */
+  isMainAccount: Scalars['Boolean'];
 };
 
 /** 투자자격변경요청 목록 조회 (관리자) output - 관리자 */
@@ -82,6 +110,24 @@ export type BankInFindWalletByUserOutput = {
   name: Scalars['String'];
 };
 
+/** 은행 */
+export type BankModel = {
+  /** 은행 코드 */
+  code: Scalars['String'];
+  /** ID */
+  id: Scalars['Int'];
+  /** 은행명 */
+  name: Scalars['String'];
+};
+
+/** 매수 목록 */
+export type BuyHistoryByOrderBook = {
+  /** 호가 (원) */
+  askPrice: Scalars['String'];
+  /** 수량 */
+  count: Scalars['Int'];
+};
+
 /** 투자자격변경요청 목록 조회 (관리자) output - 투자자격변경요청 */
 export type ChangeInvestmentQualificationInFindManyChangeInvestmentQualificationByAdminOutput = {
   /** 관리자 */
@@ -105,6 +151,20 @@ export type ChangeInvestmentQualificationInFindManyChangeInvestmentQualification
   treatedAt?: Maybe<Scalars['Date']>;
   /** 요청한 회원 */
   user: UserInFindManyChangeInvestmentQualificationByAdminOutput;
+};
+
+/** 투자 자격 변경 요청 */
+export type ChangeInvestmentQualificationModel = {
+  /** 요청 승인 상태 */
+  approveStatus: ApproveStatus;
+  /** 요청일 */
+  createdAt: Scalars['Date'];
+  /** 투자 자격 변경 요청 ID */
+  id: Scalars['Int'];
+  /** (반려일 경우,) 사유 */
+  reason?: Maybe<Scalars['String']>;
+  /** 처리일 */
+  treatedAt?: Maybe<Scalars['Date']>;
 };
 
 /** 차트 데이터 (RS) */
@@ -151,8 +211,6 @@ export type CompanyDataModel = {
 export type DailyTransactionInfoInFindManyDailyTransactionInfoOutput = {
   /** 종가 (원) */
   closePrice: Scalars['String'];
-  /** 일자 */
-  createdAt: Scalars['Date'];
   /** 고가 (원) */
   dayHighPrice: Scalars['String'];
   /** 저가 (원) */
@@ -161,8 +219,6 @@ export type DailyTransactionInfoInFindManyDailyTransactionInfoOutput = {
   fluctuation: Scalars['String'];
   /** 전일 대비 등락률 (%) */
   fluctuationRatio: Scalars['String'];
-  /** ID */
-  id: Scalars['Int'];
   /** 시가 (원) */
   openPrice: Scalars['String'];
   /** 전일 기준가 */
@@ -175,8 +231,6 @@ export type DailyTransactionInfoInFindManyDailyTransactionInfoOutput = {
 export type DailyTransactionInfoModel = {
   /** 종가 (원) */
   closePrice: Scalars['String'];
-  /** 일자 */
-  createdAt: Scalars['Date'];
   /** 고가 (원) */
   dayHighPrice: Scalars['String'];
   /** 저가 (원) */
@@ -185,8 +239,6 @@ export type DailyTransactionInfoModel = {
   fluctuation: Scalars['String'];
   /** 전일 대비 등락률 (%) */
   fluctuationRatio: Scalars['String'];
-  /** ID */
-  id: Scalars['Int'];
   /** 하한가 (원) */
   lowerLimitPrice: Scalars['String'];
   /** 시가 (원) */
@@ -199,6 +251,14 @@ export type DailyTransactionInfoModel = {
   totalVolume: Scalars['Int'];
   /** 상한가 (원) */
   upperLimitPrice: Scalars['String'];
+};
+
+/** 투자자격관련문서 */
+export type DocInCreateProjectByAdminArgs = {
+  /** 투자관련문서 */
+  file: Scalars['Upload'];
+  /** 제목 */
+  name: Scalars['String'];
 };
 
 /** FAQ 유형 */
@@ -249,6 +309,26 @@ export enum FileKind {
   OfficialInfo = 'OFFICIAL_INFO'
 }
 
+/** 실시간 거래정보 목록 조회 - output */
+export type FindDailyTransactionInfoOutput = {
+  /** 고가 (원) */
+  dayHighPrice: Scalars['String'];
+  /** 저가 (원) */
+  dayLowPrice: Scalars['String'];
+  /** 하한가 (원) */
+  lowerLimitPrice: Scalars['String'];
+  /** 시가 (원) */
+  openPrice: Scalars['String'];
+  /** 전일 기준가 */
+  standardPrice: Scalars['String'];
+  /** 총 거래 대금(원) */
+  totalTransactionAmount: Scalars['String'];
+  /** 총 거래량 (TABS) */
+  totalVolume: Scalars['Int'];
+  /** 상한가 (원) */
+  upperLimitPrice: Scalars['String'];
+};
+
 export type FindDeleteConditionByUserOutput = {
   /** 배당금 조건 */
   dividendCondition: Scalars['Boolean'];
@@ -262,17 +342,12 @@ export type FindDeleteConditionByUserOutput = {
   walletCondition: Scalars['Boolean'];
 };
 
+/** 투자 자격 조회 (회원) output */
 export type FindInvestmentQualificationByUserOutput = {
-  /** 자격 설명 */
-  description: Scalars['String'];
-  /** ID */
-  id: Scalars['Int'];
+  /** 투자 자격 변경 신청 정보 */
+  changeInvestmentQualification?: Maybe<ChangeInvestmentQualificationModel>;
   /** 투자 유형 목록 */
-  investmentTypes: Array<InvestmentTypeModel>;
-  /** 자격명 (ex. 일반 투자자) */
-  name: Scalars['String'];
-  /** 투자 가능 금액 (원) */
-  possibleInvestmentAmount: Scalars['String'];
+  investmentQualification: InvestmentQualificationInFindInvestmentQualificationByUserOutput;
 };
 
 /** 투자 유형 조회 (회원) output */
@@ -339,6 +414,14 @@ export type FindManyMarketListedProjectOutput = {
   totalCount: Scalars['Int'];
 };
 
+/** 프로젝트별 마켓 거래내역 조회 output */
+export type FindManyMarketTransferByProjectOutput = {
+  /** 프로젝트별 마켓 거래내역 */
+  marketTransfers: Array<MarketTransferInFindManyMarketTransferByProjectOutput>;
+  /** 총 개수 */
+  totalCount: Scalars['Int'];
+};
+
 /** 마켓 거래내역 조회 - output */
 export type FindManyMarketTransferByUserOutput = {
   /** 마켓 거래내역 */
@@ -378,10 +461,20 @@ export type FindManyProjectByPublicOfferingStatusOutput = {
   totalCount: Scalars['Int'];
 };
 
+/** 프로젝트 배당 목록 조회 (관리자) output */
+export type FindManyProjectDividendByAdminOutput = {
+  /** 배당 주기 */
+  dividendPeriod?: Maybe<Scalars['String']>;
+  /** 프로젝트 배당 */
+  projectDividends: Array<ProjectDividendInFindManyProjectDividendByAdminOutput>;
+  /** 총 개수 */
+  totalCount: Scalars['Int'];
+};
+
 /** 프로젝트 배당 목록 조회 - output */
 export type FindManyProjectDividendOutput = {
   /** 배당 주기 */
-  dividendPeriod: Scalars['Int'];
+  dividendPeriod?: Maybe<Scalars['String']>;
   /** 프로젝트 배당 */
   projectDividends: Array<ProjectDividendInFindManyProjectDividendOutput>;
   /** 총 개수 */
@@ -410,9 +503,17 @@ export type FindManyPublicOfferingByUserOutput = {
   totalCount: Scalars['Int'];
 };
 
-/** 투표 완료 프로젝트 목록 조회 (회원) - output */
+/** 투표 완료 프로젝트 목록 조회 (회원) output */
 export type FindManySellVoteFavourProjectOutput = {
   projects: Array<ProjectInFindManySellVoteFavourProjectOutput>;
+  /** 총 개수 */
+  totalCount: Scalars['Int'];
+};
+
+/** 거래내역 조회 (관리자) output */
+export type FindManySignedOrderByAdminOutput = {
+  /** 체결 */
+  signedOrders: Array<SignedOrderInFindManySignedOrderByAdminOutput>;
   /** 총 개수 */
   totalCount: Scalars['Int'];
 };
@@ -470,7 +571,7 @@ export type FindManyUserInquiryByUserOutput = {
   userInquiries: Array<UserInquiryInFindManyUserInquiryByUserOutput>;
 };
 
-/** 지갑 거래내역 조회 - output */
+/** 지갑 거래내역 조회 output */
 export type FindManyWalletTransferByUserOutput = {
   /** 총 개수 */
   totalCount: Scalars['Int'];
@@ -628,6 +729,28 @@ export type FindProjectOutput = {
   zoning: Scalars['String'];
 };
 
+/** 공모 상세 조회 (관리자) output */
+export type FindPublicOfferingByAdminOutput = {
+  /** 관리자명 */
+  adminName?: Maybe<Scalars['String']>;
+  /** 공모 금액 (원) */
+  amount: Scalars['String'];
+  /** 환불 금액 (원) */
+  cancelAmount?: Maybe<Scalars['String']>;
+  /** 환불 일자 */
+  canceledAt?: Maybe<Scalars['Date']>;
+  /** 취소 수량 (TABS) */
+  cancelQuantity?: Maybe<Scalars['Int']>;
+  /** 일자 */
+  createdAt: Scalars['Date'];
+  /** 수량 (TABS) */
+  quantity: Scalars['Int'];
+  /** 환불 상태 */
+  status: Scalars['String'];
+  /** 회원 */
+  user: UserInFindPublicOfferingByAdminOutput;
+};
+
 /** 공모 정보 조회 - output */
 export type FindPublicOfferingInfoOutput = {
   /** 주소 */
@@ -762,6 +885,32 @@ export type FindWalletByUserOutput = {
   user: UserInFindWalletByUserOutput;
 };
 
+/** 지갑 거래 조회 (회원) output */
+export type FindWalletTransferByUserOutput = {
+  /** 계좌 */
+  account?: Maybe<AccountInFindWalletTransferByUserOutput>;
+  /** 이체 후 잔액 (원) */
+  balance: Scalars['String'];
+  /** 최종 금액 (= 금액 (+ | -) 수수료) */
+  calcAmount: Scalars['String'];
+  /** 생성일 */
+  createdAt: Scalars['Date'];
+  /** 수수료 (원) */
+  fee: Scalars['String'];
+  /** ID */
+  id: Scalars['Int'];
+  /** 거래명 */
+  name: Scalars['String'];
+  /** 이체 종류 */
+  transferKind: TransferKind;
+};
+
+/** 프로젝트 이미지 */
+export type ImageInCreateProjectByAdminArgs = {
+  /** 프로젝트 이미지 */
+  file: Scalars['Upload'];
+};
+
 /** 투자자격변경요청 목록 조회 (관리자) output - 투자유형관련서류 카테고리 */
 export type InvestmentDocumentCategoryInFindManyChangeInvestmentQualificationByAdminOutput = {
   /** 서류명 (ex. 근로소득 원천징수 영수증) */
@@ -786,6 +935,20 @@ export type InvestmentDocumentInFindManyChangeInvestmentQualificationByAdminOutp
   fileName: Scalars['String'];
   /** 투자유형관련서류카테고리 */
   investmentDocumentCategory: InvestmentDocumentCategoryInFindManyChangeInvestmentQualificationByAdminOutput;
+};
+
+/** 투자 자격 조회 (회원) output - 투자 자격 */
+export type InvestmentQualificationInFindInvestmentQualificationByUserOutput = {
+  /** 자격 설명 */
+  description: Scalars['String'];
+  /** ID */
+  id: Scalars['Int'];
+  /** 투자 유형 목록 */
+  investmentTypes: Array<InvestmentTypeModel>;
+  /** 자격명 (ex. 일반 투자자) */
+  name: Scalars['String'];
+  /** 투자 가능 금액 (원) */
+  possibleInvestmentAmount: Scalars['String'];
 };
 
 /** 투자자격변경요청 목록 조회 (관리자) output - 투자자격 */
@@ -867,6 +1030,20 @@ export enum MarketStatus {
   Unlisted = 'UNLISTED'
 }
 
+/** 프로젝트별 마켓 거래내역 조회 output - 거래내역 */
+export type MarketTransferInFindManyMarketTransferByProjectOutput = {
+  /** 금액 (원) */
+  amount: Scalars['String'];
+  /** 생성일 */
+  createdAt: Scalars['Date'];
+  /** ID */
+  id: Scalars['Int'];
+  /** 수량 */
+  quantity: Scalars['Int'];
+  /** 이체 종류 */
+  transferKind: MarketTransferKindFilter;
+};
+
 /** 마켓 거래내역 조회 - output - 거래내역 */
 export type MarketTransferInFindManyMarketTransferByUserOutput = {
   /** 금액 (원) */
@@ -898,12 +1075,16 @@ export type Mutation = {
   cancelOrderByUser: Scalars['Boolean'];
   /** 공모 취소하기 (회원) */
   cancelPublicOfferingByUser: Scalars['Boolean'];
+  /** [일일 거래 정보] 프로젝트별 일일 거래정보 생성 */
+  createDailyTransactionInfo: Scalars['Boolean'];
   /** FAQ 생성 (관리자) */
   createFaqByAdmin: Scalars['Boolean'];
   /** 공지사항 생성 (관리자) */
   createNoticeByAdmin: Scalars['Boolean'];
   /** 프로젝트 생성 (관리자) */
   createProjectByAdmin: ProjectModel;
+  /** 프로젝트 배당 등록 (관리자) */
+  createProjectDividendByAdmin: Scalars['Boolean'];
   /** 매각투표 회차정보 생성 (관리자) */
   createProjectSellVoteByAdmin: Scalars['Boolean'];
   /** 공모하기 (회원) */
@@ -934,6 +1115,8 @@ export type Mutation = {
   signUpFromAdmin: AdminModel;
   /** 가입 (회원) */
   signUpFromUser: UserModel;
+  /** [입고일] 입고일 날짜 도달시 공모한 회원들에게 TABS 전달 */
+  transferTabsToUserByReceivingDate: Scalars['Boolean'];
   /** 투자 자격 변경 처리 (관리자) */
   treatChangeInvestmentQualificationByAdmin: Scalars['Boolean'];
   /** 주소 변경 (회원) */
@@ -944,18 +1127,34 @@ export type Mutation = {
   updateFaqByAdmin: Scalars['Boolean'];
   /** 투자 정보 등록 (회원) */
   updateInvestmentInfoByUser: Scalars['Boolean'];
+  /** [해당 회차 투표 결과] 부결 일 경우 마켓 거래 상태 - "마켓 거래중"으로 변경 */
+  updateMarketStatusIfVoteKind: Array<ProjectModel>;
   /** 공지사항 수정 (관리자) */
   updateNoticeByAdmin: Scalars['Boolean'];
   /** 비밀번호 변경 (회원) */
   updatePasswordByUser: Scalars['Boolean'];
   /** 휴대폰 변경 (회원) */
   updatePhoneByUser: Scalars['Boolean'];
+  /** 프로젝트 배당 수정 (관리자) */
+  updateProjectDividendByAdmin: Scalars['Boolean'];
   /** 2차 비밀번호 변경 (회원) */
   updateSubPasswordByUser: Scalars['Boolean'];
   /** 투표 결과 선택 (관리자) */
   updateVoteKindByAdmin: ProjectSellVoteModel;
   /** 공지사항 파일 업로드 (관리자) */
   uploadNoticeFileByAdmin: Scalars['String'];
+  /** [마켓 거래 상태] "상장대기" => "마켓 거래중"으로 변경 */
+  verifyMarketStatusIsUnlisted: Array<ProjectModel>;
+  /** [공모 상태] "공모 중" => "공모실패"로 변경 */
+  verifyPublicOfferingStatusIsOffering: Array<ProjectModel>;
+  /** [공모 상태] "공모 중" => "공모 성공" 상태 변경 */
+  verifyPublicOfferingStatusIsOfferingToBeSuccess: Array<ProjectModel>;
+  /** [공모 상태] "공모예정" => "공모 중"으로 변경 */
+  verifyPublicOfferingStatusIsWait: Array<ProjectModel>;
+  /** [매각 투표 상태] "매각투표 예정" => "매각투표 중"으로 변경 */
+  verifyVoteStatusIsSellVoteWait: Array<ProjectModel>;
+  /** [매각 투표 상태] "매각투표 중" => "매각투표 완료"로 변경 */
+  verifyVoteStatusIsSellVoting: Array<ProjectModel>;
 };
 
 
@@ -996,11 +1195,11 @@ export type MutationCreateProjectByAdminArgs = {
   allocationDate: Scalars['Date'];
   buildingCoverageRatio: Scalars['String'];
   completionDate: Scalars['Date'];
-  docs: Array<Scalars['Upload']>;
+  docs: Array<DocInCreateProjectByAdminArgs>;
   floorAreaRatio: Scalars['String'];
   grossFloorAreaMeter: Scalars['String'];
   grossFloorAreaPyeong: Scalars['String'];
-  images: Array<Scalars['Upload']>;
+  images: Array<ImageInCreateProjectByAdminArgs>;
   issuer: Scalars['String'];
   latitude: Scalars['String'];
   leaseEndedAt?: InputMaybe<Scalars['Date']>;
@@ -1010,7 +1209,7 @@ export type MutationCreateProjectByAdminArgs = {
   longitude: Scalars['String'];
   mainPurpose: Scalars['String'];
   name: Scalars['String'];
-  officialInfos: Array<Scalars['Upload']>;
+  officialInfos: Array<OfficialInfoInCreateProjectByAdminArgs>;
   officialLandPrice: Scalars['String'];
   publicOfferingEndedAt: Scalars['Date'];
   publicOfferingPrice: Scalars['String'];
@@ -1022,6 +1221,14 @@ export type MutationCreateProjectByAdminArgs = {
   url?: InputMaybe<Scalars['String']>;
   zip: Scalars['String'];
   zoning: Scalars['String'];
+};
+
+
+export type MutationCreateProjectDividendByAdminArgs = {
+  closingDate: Scalars['Date'];
+  name: Scalars['String'];
+  operatingProfit?: InputMaybe<Scalars['String']>;
+  projectId: Scalars['Int'];
 };
 
 
@@ -1153,6 +1360,14 @@ export type MutationUpdatePhoneByUserArgs = {
 };
 
 
+export type MutationUpdateProjectDividendByAdminArgs = {
+  closingDate: Scalars['Date'];
+  id: Scalars['Int'];
+  name?: InputMaybe<Scalars['String']>;
+  operatingProfit?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationUpdateSubPasswordByUserArgs = {
   newSubPassword: Scalars['String'];
   originSubPassword: Scalars['String'];
@@ -1227,6 +1442,26 @@ export type NoticeModel = {
   title: Scalars['String'];
 };
 
+/** 공시 */
+export type OfficialInfoInCreateProjectByAdminArgs = {
+  /** 공시 */
+  file: Scalars['Upload'];
+  /** 제목 */
+  name: Scalars['String'];
+};
+
+/** 십호가 */
+export type OrderBookModel = {
+  /** 매수 목록 */
+  buyHistory: Array<BuyHistoryByOrderBook>;
+  /** 매수 총 수량 */
+  buyTotalCount: Scalars['Int'];
+  /** 매도 목록 */
+  sellHistory: Array<SellHistoryByOrderBook>;
+  /** 매도 총 수량 */
+  sellTotalCount: Scalars['Int'];
+};
+
 /** 미체결 주문 내역 조회 (회원) output - 주문 내역 */
 export type OrderInFindManyUnsignedOrderByUserOutput = {
   /** 호가 (원) */
@@ -1285,6 +1520,24 @@ export type PolicyModel = {
   isRequired: Scalars['Boolean'];
   /** 제목 */
   title: Scalars['String'];
+};
+
+/** 프로젝트 배당 목록 조회 (관리자) output - 프로젝트 배당 */
+export type ProjectDividendInFindManyProjectDividendByAdminOutput = {
+  /** 기준일 (= 마감일) */
+  closingDate: Scalars['Date'];
+  /** 배당지급일 */
+  dividendAt?: Maybe<Scalars['Date']>;
+  /** 배당자 수 (명) */
+  dividendCount?: Maybe<Scalars['Int']>;
+  /** TABS 당 배당금 (원) */
+  dividendPerTabs?: Maybe<Scalars['String']>;
+  /** ID */
+  id: Scalars['Int'];
+  /** 배당명 */
+  name: Scalars['String'];
+  /** 운영이익금 (원) = 총 배당금 */
+  operatingProfit?: Maybe<Scalars['String']>;
 };
 
 /** 프로젝트 배당 목록 조회 - output - 프로젝트 배당 */
@@ -1458,14 +1711,14 @@ export type ProjectInFindManyProjectOutput = {
   zoning: Scalars['String'];
 };
 
-/** 투표 완료 프로젝트 목록 조회 (회원) - output - 프로젝트 */
+/** 투표 완료 프로젝트 목록 조회 (회원) output - 프로젝트 */
 export type ProjectInFindManySellVoteFavourProjectOutput = {
+  /** 마지막 거래가 (원) */
+  currentPrice: Scalars['String'];
   /** ID */
   id: Scalars['Int'];
   /** 프로젝트명 */
   name: Scalars['String'];
-  /** 공모가 (원/TABS) */
-  publicOfferingPrice: Scalars['String'];
   /** 투표 종료일 */
   sellVoteEndedAt: Scalars['Date'];
   /** 썸네일 */
@@ -1590,6 +1843,8 @@ export type ProjectSellVoteModel = {
 export type PublicOfferingInFindManyPublicOfferingByAdminOutput = {
   /** 공모 금액 */
   amount: Scalars['String'];
+  /** 환불 일자 */
+  canceledAt?: Maybe<Scalars['Date']>;
   /** 일자 */
   createdAt: Scalars['Date'];
   /** ID */
@@ -1602,6 +1857,8 @@ export type PublicOfferingInFindManyPublicOfferingByAdminOutput = {
   phone: Scalars['String'];
   /** 수량 (TABS) */
   quantity: Scalars['Int'];
+  /** 공모 상태 */
+  status: Scalars['String'];
 };
 
 /** 공모 내역 조회 (회원) - output - 공모 */
@@ -1610,6 +1867,8 @@ export type PublicOfferingInFindManyPublicOfferingByUserOutput = {
   amount: Scalars['String'];
   /** 환불 금액 */
   cancelAmount?: Maybe<Scalars['String']>;
+  /** 환불 일자 */
+  canceledAt?: Maybe<Scalars['Date']>;
   /** 취소 수량 (TABS) */
   cancelQuantity?: Maybe<Scalars['Int']>;
   /** 일자 */
@@ -1626,6 +1885,8 @@ export type PublicOfferingInFindManyPublicOfferingByUserOutput = {
 
 /** 공모 */
 export type PublicOfferingModel = {
+  /** 환불 일자 */
+  canceledAt?: Maybe<Scalars['Date']>;
   /** 취소 수량 (TABS) */
   cancelQuantity?: Maybe<Scalars['Int']>;
   /** 일자 */
@@ -1665,6 +1926,8 @@ export enum PublicOfferingStatusFilter {
 export type Query = {
   /** 전체 설정 조회 */
   findCompanyData: CompanyDataModel;
+  /** 실시간 거래정보 조회 */
+  findDailyTransactionInfo: FindDailyTransactionInfoOutput;
   /** 탈퇴 조건 조회 (회원) */
   findDeleteConditionByUser: FindDeleteConditionByUserOutput;
   /** 이메일 찾기 (회원) */
@@ -1673,6 +1936,8 @@ export type Query = {
   findInvestmentQualificationByUser: FindInvestmentQualificationByUserOutput;
   /** 투자 유형 조회 (회원) */
   findInvestmentTypeByUser: FindInvestmentTypeByUserOutput;
+  /** 가장 최근에 체결된 주문 조회 */
+  findLatelySignedOrder: SignedOrderModel;
   /** 투자 자격 변경 요청 목록 조회 (관리자) */
   findManyChangeInvestmentQualificationByAdmin: FindManyChangeInvestmentQualificationByAdminOutput;
   /** 차트 데이터 목록 조회 */
@@ -1689,6 +1954,8 @@ export type Query = {
   findManyInvestmentQualificationByUser: FindManyInvestmentQualificationByUserOutput;
   /** 마켓 거래중 프로젝트 목록 조회 (회원) */
   findManyMarketListedProject: FindManyMarketListedProjectOutput;
+  /** 프로젝트 별 마켓 거래내역 조회 (회원) */
+  findManyMarketTransferByProject: FindManyMarketTransferByProjectOutput;
   /** 마켓 거래내역 조회 (회원) */
   findManyMarketTransferByUser: FindManyMarketTransferByUserOutput;
   /** 공지사항 목록 조회 */
@@ -1705,6 +1972,8 @@ export type Query = {
   findManyProjectByPublicOfferingStatus: FindManyProjectByPublicOfferingStatusOutput;
   /** 프로젝트 배당 목록 조회 */
   findManyProjectDividend: FindManyProjectDividendOutput;
+  /** 프로젝트 배당 목록 조회 (관리자) */
+  findManyProjectDividendByAdmin: FindManyProjectDividendByAdminOutput;
   /** 프로젝트 파일 목록 조회 */
   findManyProjectFile: Array<ProjectFileModel>;
   /** 공모 내역 조회 (관리자) */
@@ -1718,6 +1987,8 @@ export type Query = {
    * @deprecated 개발중
    */
   findManySignedOrder: Array<SignedOrderModel>;
+  /** 거래 내역 조회 (관리자) */
+  findManySignedOrderByAdmin: FindManySignedOrderByAdminOutput;
   /** 내 건물 목록 조회 (회원) */
   findManyTabsWalletByUser: FindManyTabsWalletByUserOutput;
   /** 내 건물 거래 내역 조회 (회원) */
@@ -1738,6 +2009,8 @@ export type Query = {
   findMarketTransferByUser: FindMarketTransferByUserOutput;
   /** 공지사항 상세 조회 */
   findNotice: NoticeModel;
+  /** 십호가 조회 */
+  findOrderBook: OrderBookModel;
   /** 약관 상세 조회 */
   findPolicy: PolicyModel;
   /** 매수 가능 금액 조회 (회원) */
@@ -1750,6 +2023,10 @@ export type Query = {
   findProfileFromUser: FindProfileFromUserOutput;
   /** 프로젝트 조회 */
   findProject: FindProjectOutput;
+  /** 프로젝트 파일 조회 */
+  findProjectFile: ProjectFileModel;
+  /** 공모 상세 조회 (관리자) */
+  findPublicOfferingByAdmin: FindPublicOfferingByAdminOutput;
   /** 공모 정보 조회 */
   findPublicOfferingInfo: FindPublicOfferingInfoOutput;
   /** 공모 환불 정보 조회 (관리자) */
@@ -1764,10 +2041,14 @@ export type Query = {
   findUserInquiryByUser: FindUserInquiryByUserOutput;
   /** 내 지갑 조회 */
   findWalletByUser: FindWalletByUserOutput;
+  /** 지갑 거래 조회 (회원) */
+  findWalletTransferByUser: FindWalletTransferByUserOutput;
   /** 이메일 중복 검사 */
   isExistEmail: Scalars['Boolean'];
   /** 회원 존재 여부 확인 (회원) */
   isSignedUpByUser: Scalars['Boolean'];
+  /** 공모 환불 (관리자) */
+  refundPublicOfferingByAdmin: Scalars['Boolean'];
   /** 로그인 (관리자) */
   signInFromAdmin: TokenOutput;
   /** 로그인 (회원) */
@@ -1776,6 +2057,11 @@ export type Query = {
   validateAdmin?: Maybe<Scalars['String']>;
   /** 2차 비밀번호 검사 (회원) */
   validateSubPasswordByUser: Scalars['Boolean'];
+};
+
+
+export type QueryFindDailyTransactionInfoArgs = {
+  projectId: Scalars['Int'];
 };
 
 
@@ -1794,6 +2080,11 @@ export type QueryFindInvestmentTypeByUserArgs = {
 };
 
 
+export type QueryFindLatelySignedOrderArgs = {
+  projectId: Scalars['Int'];
+};
+
+
 export type QueryFindManyChangeInvestmentQualificationByAdminArgs = {
   gte: Scalars['Date'];
   lt: Scalars['Date'];
@@ -1809,8 +2100,8 @@ export type QueryFindManyChartDataArgs = {
 
 
 export type QueryFindManyDailyTransactionInfoArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
   projectId: Scalars['Int'];
-  skip: Scalars['Int'];
   take: Scalars['Int'];
 };
 
@@ -1832,16 +2123,23 @@ export type QueryFindManyFaqByAdminArgs = {
 
 
 export type QueryFindManyMarketListedProjectArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
   marketSorter: MarketSorter;
-  skip: Scalars['Int'];
+  take: Scalars['Int'];
+};
+
+
+export type QueryFindManyMarketTransferByProjectArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
+  projectId: Scalars['Int'];
   take: Scalars['Int'];
 };
 
 
 export type QueryFindManyMarketTransferByUserArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
   gte: Scalars['Date'];
   lt: Scalars['Date'];
-  skip: Scalars['Int'];
   take: Scalars['Int'];
   transferKind?: InputMaybe<MarketTransferKindFilter>;
 };
@@ -1854,8 +2152,7 @@ export type QueryFindManyNoticeArgs = {
 
 
 export type QueryFindManyNoticeByAdminArgs = {
-  cursorId?: InputMaybe<Scalars['Int']>;
-  searchText: Scalars['String'];
+  skip: Scalars['Int'];
   take: Scalars['Int'];
 };
 
@@ -1884,6 +2181,13 @@ export type QueryFindManyProjectByPublicOfferingStatusArgs = {
 
 
 export type QueryFindManyProjectDividendArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
+  projectId: Scalars['Int'];
+  take: Scalars['Int'];
+};
+
+
+export type QueryFindManyProjectDividendByAdminArgs = {
   projectId: Scalars['Int'];
   skip: Scalars['Int'];
   take: Scalars['Int'];
@@ -1923,8 +2227,15 @@ export type QueryFindManySignedOrderArgs = {
 };
 
 
-export type QueryFindManyTabsWalletByUserArgs = {
+export type QueryFindManySignedOrderByAdminArgs = {
+  projectId: Scalars['Int'];
   skip: Scalars['Int'];
+  take: Scalars['Int'];
+};
+
+
+export type QueryFindManyTabsWalletByUserArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
   take: Scalars['Int'];
 };
 
@@ -1937,8 +2248,8 @@ export type QueryFindManyTabsWalletTransferByUserArgs = {
 
 
 export type QueryFindManyUnsignedOrderByUserArgs = {
+  cursorId?: InputMaybe<Scalars['Int']>;
   projectId?: InputMaybe<Scalars['Int']>;
-  skip: Scalars['Int'];
   take: Scalars['Int'];
 };
 
@@ -1982,6 +2293,11 @@ export type QueryFindNoticeArgs = {
 };
 
 
+export type QueryFindOrderBookArgs = {
+  projectId: Scalars['Int'];
+};
+
+
 export type QueryFindPolicyArgs = {
   id: Scalars['Int'];
 };
@@ -1993,6 +2309,16 @@ export type QueryFindPossibleSellTabsByUserArgs = {
 
 
 export type QueryFindProjectArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryFindProjectFileArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryFindPublicOfferingByAdminArgs = {
   id: Scalars['Int'];
 };
 
@@ -2027,6 +2353,11 @@ export type QueryFindUserInquiryByUserArgs = {
 };
 
 
+export type QueryFindWalletTransferByUserArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QueryIsExistEmailArgs = {
   email: Scalars['String'];
 };
@@ -2034,6 +2365,11 @@ export type QueryIsExistEmailArgs = {
 
 export type QueryIsSignedUpByUserArgs = {
   impUid: Scalars['String'];
+};
+
+
+export type QueryRefundPublicOfferingByAdminArgs = {
+  projectId: Scalars['Int'];
 };
 
 
@@ -2076,6 +2412,34 @@ export enum Role {
   User = 'USER'
 }
 
+/** 매도 목록 */
+export type SellHistoryByOrderBook = {
+  /** 호가 (원) */
+  askPrice: Scalars['String'];
+  /** 수량 */
+  count: Scalars['Int'];
+};
+
+/** 거래내역 조회 (관리자) output - 체결 */
+export type SignedOrderInFindManySignedOrderByAdminOutput = {
+  /** 호가 (원) */
+  askPrice: Scalars['String'];
+  /** 매수자 */
+  buyer: Scalars['String'];
+  /** 체결일 */
+  createdAt: Scalars['Date'];
+  /** 전일 대비 등락가 (원) */
+  fluctuation: Scalars['String'];
+  /** 전일 대비 등락률 (%) */
+  fluctuationRatio: Scalars['String'];
+  /** ID */
+  id: Scalars['Int'];
+  /** 수량 (TABS) */
+  quantity: Scalars['Int'];
+  /** 매도자 */
+  seller: Scalars['String'];
+};
+
 /** 체결된 주문 (RS) */
 export type SignedOrderModel = {
   /** 생성일 */
@@ -2096,13 +2460,25 @@ export type SignedOrderModel = {
 
 export type Subscription = {
   subscribeChartData: ChartDataModel;
+  subscribeDailyTransactionInfo: DailyTransactionInfoModel;
   subscribeManyProject: Array<ProjectModel>;
   subscribeNewUserFromUser: UserModel;
+  subscribeOrderBook: OrderBookModel;
   subscribeSignedOrder: SignedOrderModel;
 };
 
 
 export type SubscriptionSubscribeChartDataArgs = {
+  projectIds: Array<Scalars['Int']>;
+};
+
+
+export type SubscriptionSubscribeDailyTransactionInfoArgs = {
+  projectIds: Array<Scalars['Int']>;
+};
+
+
+export type SubscriptionSubscribeOrderBookArgs = {
   projectIds: Array<Scalars['Int']>;
 };
 
@@ -2169,8 +2545,6 @@ export enum TransferKind {
 export enum TransferKindFilter {
   /** 입금 */
   Deposit = 'DEPOSIT',
-  /** 배당 */
-  Dividend = 'DIVIDEND',
   /** 출금 */
   Withdrawal = 'WITHDRAWAL'
 }
@@ -2203,6 +2577,14 @@ export type UserInFindManyUserByAdminOutput = {
 
 /** 1:1 문의 목록 조회 (관리자) - output - 작성한 회원 */
 export type UserInFindManyUserInquiryByAdminOutput = {
+  /** 이름 */
+  name: Scalars['String'];
+  /** 휴대폰 */
+  phone: Scalars['String'];
+};
+
+/** 공모 상세 조회 (관리자) output */
+export type UserInFindPublicOfferingByAdminOutput = {
   /** 이름 */
   name: Scalars['String'];
   /** 휴대폰 */
@@ -2315,16 +2697,22 @@ export type WalletInFindProfileFromUserOutput = {
   balance: Scalars['String'];
 };
 
-/** 지갑 거래내역 조회 - output - 거래내역 */
+/** 지갑 거래내역 조회 output - 거래내역 */
 export type WalletTransferInFindManyWalletTransferByUserOutput = {
+  /** 계좌 */
+  account?: Maybe<AccountInFindManyWalletTransferByUserOutput>;
   /** 이체 후 잔액 (원) */
   balance: Scalars['String'];
   /** 최종 금액 (= 금액 (+ | -) 수수료) */
   calcAmount: Scalars['String'];
   /** 생성일 */
   createdAt: Scalars['Date'];
+  /** 수수료 (원) */
+  fee: Scalars['String'];
   /** ID */
   id: Scalars['Int'];
+  /** 거래명 */
+  name: Scalars['String'];
   /** 이체 종류 */
   transferKind: TransferKind;
 };
@@ -2376,9 +2764,9 @@ export type CreateProjectByAdminMutationVariables = Exact<{
   allocationDate: Scalars['Date'];
   receivingDate: Scalars['Date'];
   listedDate: Scalars['Date'];
-  images: Array<Scalars['Upload']> | Scalars['Upload'];
-  docs: Array<Scalars['Upload']> | Scalars['Upload'];
-  officialInfos: Array<Scalars['Upload']> | Scalars['Upload'];
+  images: Array<ImageInCreateProjectByAdminArgs> | ImageInCreateProjectByAdminArgs;
+  docs: Array<DocInCreateProjectByAdminArgs> | DocInCreateProjectByAdminArgs;
+  officialInfos: Array<OfficialInfoInCreateProjectByAdminArgs> | OfficialInfoInCreateProjectByAdminArgs;
 }>;
 
 
@@ -2485,12 +2873,21 @@ export type FindManyFaqByAdminQuery = { findManyFaqByAdmin: { totalCount: number
 
 export type FindManyNoticeByAdminQueryVariables = Exact<{
   take: Scalars['Int'];
-  searchText: Scalars['String'];
-  cursorId: Scalars['Int'];
+  skip: Scalars['Int'];
 }>;
 
 
 export type FindManyNoticeByAdminQuery = { findManyNoticeByAdmin: { totalCount: number, notices: Array<{ id: number, noticeKind: NoticeKind, title: string, content: string, createdAt: any, admin: { name: string } }> } };
+
+export type FindManyProjectQueryVariables = Exact<{
+  take: Scalars['Int'];
+  skip: Scalars['Int'];
+  publicOfferingStatus?: InputMaybe<PublicOfferingStatus>;
+  marketStatus?: InputMaybe<MarketStatus>;
+}>;
+
+
+export type FindManyProjectQuery = { findManyProject: { totalCount: number, projects: Array<{ id: number, name: string, publicOfferingStatus: PublicOfferingStatus, marketStatus: MarketStatus, voteStatus: VoteStatus, totalPublicOfferingAmount: string, publicOfferingPrice: string, publicOfferingQuantity: number, publicOfferingStartedAt: any, publicOfferingEndedAt: any, currentPrice?: string | null, fluctuation?: string | null, fluctuationRatio?: string | null, dDay?: number | null, url?: string | null, projectFiles: Array<{ id: number, fileKind: FileKind, name?: string | null, fileName: string }>, dailyTransactionInfos: Array<{ standardPrice: string, totalTransactionAmount: string, totalVolume: number, fluctuation: string, fluctuationRatio: string }> }> } };
 
 export type FindManyUserByAdminQueryVariables = Exact<{
   take: Scalars['Int'];
@@ -2535,7 +2932,7 @@ export type ValidateAdminQuery = { validateAdmin?: string | null };
 
 export const CreateFaqByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createFaqByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"question"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"answer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"faqCategoryId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createFaqByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"question"},"value":{"kind":"Variable","name":{"kind":"Name","value":"question"}}},{"kind":"Argument","name":{"kind":"Name","value":"answer"},"value":{"kind":"Variable","name":{"kind":"Name","value":"answer"}}},{"kind":"Argument","name":{"kind":"Name","value":"faqCategoryId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"faqCategoryId"}}}]}]}}]} as unknown as DocumentNode<CreateFaqByAdminMutation, CreateFaqByAdminMutationVariables>;
 export const CreateNoticeByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createNoticeByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"noticeKind"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NoticeKind"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"content"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createNoticeByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}},{"kind":"Argument","name":{"kind":"Name","value":"noticeKind"},"value":{"kind":"Variable","name":{"kind":"Name","value":"noticeKind"}}},{"kind":"Argument","name":{"kind":"Name","value":"content"},"value":{"kind":"Variable","name":{"kind":"Name","value":"content"}}}]}]}}]} as unknown as DocumentNode<CreateNoticeByAdminMutation, CreateNoticeByAdminMutationVariables>;
-export const CreateProjectByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createProjectByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"zip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addressDetail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"zoning"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mainPurpose"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaMeter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaPyeong"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"buildingCoverageRatio"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"floorAreaRatio"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"officialLandPrice"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"completionDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lessee"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leaseStartedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leaseEndedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"url"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tabsName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"totalPublicOfferingAmount"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingPrice"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingQuantity"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"issuer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingStartedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingEndedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"allocationDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"receivingDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"listedDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"images"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"docs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"officialInfos"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProjectByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"zip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"zip"}}},{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"addressDetail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addressDetail"}}},{"kind":"Argument","name":{"kind":"Name","value":"latitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"longitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"zoning"},"value":{"kind":"Variable","name":{"kind":"Name","value":"zoning"}}},{"kind":"Argument","name":{"kind":"Name","value":"mainPurpose"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mainPurpose"}}},{"kind":"Argument","name":{"kind":"Name","value":"grossFloorAreaMeter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaMeter"}}},{"kind":"Argument","name":{"kind":"Name","value":"grossFloorAreaPyeong"},"value":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaPyeong"}}},{"kind":"Argument","name":{"kind":"Name","value":"buildingCoverageRatio"},"value":{"kind":"Variable","name":{"kind":"Name","value":"buildingCoverageRatio"}}},{"kind":"Argument","name":{"kind":"Name","value":"floorAreaRatio"},"value":{"kind":"Variable","name":{"kind":"Name","value":"floorAreaRatio"}}},{"kind":"Argument","name":{"kind":"Name","value":"officialLandPrice"},"value":{"kind":"Variable","name":{"kind":"Name","value":"officialLandPrice"}}},{"kind":"Argument","name":{"kind":"Name","value":"completionDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"completionDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"lessee"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lessee"}}},{"kind":"Argument","name":{"kind":"Name","value":"leaseStartedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leaseStartedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"leaseEndedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leaseEndedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"url"}}},{"kind":"Argument","name":{"kind":"Name","value":"tabsName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tabsName"}}},{"kind":"Argument","name":{"kind":"Name","value":"totalPublicOfferingAmount"},"value":{"kind":"Variable","name":{"kind":"Name","value":"totalPublicOfferingAmount"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingPrice"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingPrice"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingQuantity"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingQuantity"}}},{"kind":"Argument","name":{"kind":"Name","value":"issuer"},"value":{"kind":"Variable","name":{"kind":"Name","value":"issuer"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingStartedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingStartedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingEndedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingEndedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"allocationDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"allocationDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"receivingDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"receivingDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"listedDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"listedDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"images"},"value":{"kind":"Variable","name":{"kind":"Name","value":"images"}}},{"kind":"Argument","name":{"kind":"Name","value":"docs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"docs"}}},{"kind":"Argument","name":{"kind":"Name","value":"officialInfos"},"value":{"kind":"Variable","name":{"kind":"Name","value":"officialInfos"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingStatus"}},{"kind":"Field","name":{"kind":"Name","value":"marketStatus"}},{"kind":"Field","name":{"kind":"Name","value":"voteStatus"}},{"kind":"Field","name":{"kind":"Name","value":"isSold"}},{"kind":"Field","name":{"kind":"Name","value":"zip"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"addressDetail"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"zoning"}},{"kind":"Field","name":{"kind":"Name","value":"mainPurpose"}},{"kind":"Field","name":{"kind":"Name","value":"grossFloorAreaMeter"}},{"kind":"Field","name":{"kind":"Name","value":"grossFloorAreaPyeong"}},{"kind":"Field","name":{"kind":"Name","value":"buildingCoverageRatio"}},{"kind":"Field","name":{"kind":"Name","value":"floorAreaRatio"}},{"kind":"Field","name":{"kind":"Name","value":"officialLandPrice"}},{"kind":"Field","name":{"kind":"Name","value":"completionDate"}},{"kind":"Field","name":{"kind":"Name","value":"lessee"}},{"kind":"Field","name":{"kind":"Name","value":"leaseStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"leaseEndedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"tabsName"}},{"kind":"Field","name":{"kind":"Name","value":"totalPublicOfferingAmount"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingPrice"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"issuer"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingEndedAt"}},{"kind":"Field","name":{"kind":"Name","value":"allocationDate"}},{"kind":"Field","name":{"kind":"Name","value":"receivingDate"}},{"kind":"Field","name":{"kind":"Name","value":"listedDate"}},{"kind":"Field","name":{"kind":"Name","value":"currentPublicOfferingAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currentPublicOfferingQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateProjectByAdminMutation, CreateProjectByAdminMutationVariables>;
+export const CreateProjectByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createProjectByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"zip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addressDetail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"zoning"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mainPurpose"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaMeter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaPyeong"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"buildingCoverageRatio"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"floorAreaRatio"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"officialLandPrice"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"completionDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lessee"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leaseStartedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"leaseEndedAt"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"url"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tabsName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"totalPublicOfferingAmount"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingPrice"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingQuantity"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"issuer"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingStartedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingEndedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"allocationDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"receivingDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"listedDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"images"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ImageInCreateProjectByAdminArgs"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"docs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DocInCreateProjectByAdminArgs"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"officialInfos"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"OfficialInfoInCreateProjectByAdminArgs"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProjectByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"zip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"zip"}}},{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"addressDetail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addressDetail"}}},{"kind":"Argument","name":{"kind":"Name","value":"latitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"longitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"zoning"},"value":{"kind":"Variable","name":{"kind":"Name","value":"zoning"}}},{"kind":"Argument","name":{"kind":"Name","value":"mainPurpose"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mainPurpose"}}},{"kind":"Argument","name":{"kind":"Name","value":"grossFloorAreaMeter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaMeter"}}},{"kind":"Argument","name":{"kind":"Name","value":"grossFloorAreaPyeong"},"value":{"kind":"Variable","name":{"kind":"Name","value":"grossFloorAreaPyeong"}}},{"kind":"Argument","name":{"kind":"Name","value":"buildingCoverageRatio"},"value":{"kind":"Variable","name":{"kind":"Name","value":"buildingCoverageRatio"}}},{"kind":"Argument","name":{"kind":"Name","value":"floorAreaRatio"},"value":{"kind":"Variable","name":{"kind":"Name","value":"floorAreaRatio"}}},{"kind":"Argument","name":{"kind":"Name","value":"officialLandPrice"},"value":{"kind":"Variable","name":{"kind":"Name","value":"officialLandPrice"}}},{"kind":"Argument","name":{"kind":"Name","value":"completionDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"completionDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"lessee"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lessee"}}},{"kind":"Argument","name":{"kind":"Name","value":"leaseStartedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leaseStartedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"leaseEndedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"leaseEndedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"url"},"value":{"kind":"Variable","name":{"kind":"Name","value":"url"}}},{"kind":"Argument","name":{"kind":"Name","value":"tabsName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tabsName"}}},{"kind":"Argument","name":{"kind":"Name","value":"totalPublicOfferingAmount"},"value":{"kind":"Variable","name":{"kind":"Name","value":"totalPublicOfferingAmount"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingPrice"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingPrice"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingQuantity"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingQuantity"}}},{"kind":"Argument","name":{"kind":"Name","value":"issuer"},"value":{"kind":"Variable","name":{"kind":"Name","value":"issuer"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingStartedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingStartedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingEndedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingEndedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"allocationDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"allocationDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"receivingDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"receivingDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"listedDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"listedDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"images"},"value":{"kind":"Variable","name":{"kind":"Name","value":"images"}}},{"kind":"Argument","name":{"kind":"Name","value":"docs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"docs"}}},{"kind":"Argument","name":{"kind":"Name","value":"officialInfos"},"value":{"kind":"Variable","name":{"kind":"Name","value":"officialInfos"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingStatus"}},{"kind":"Field","name":{"kind":"Name","value":"marketStatus"}},{"kind":"Field","name":{"kind":"Name","value":"voteStatus"}},{"kind":"Field","name":{"kind":"Name","value":"isSold"}},{"kind":"Field","name":{"kind":"Name","value":"zip"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"addressDetail"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"zoning"}},{"kind":"Field","name":{"kind":"Name","value":"mainPurpose"}},{"kind":"Field","name":{"kind":"Name","value":"grossFloorAreaMeter"}},{"kind":"Field","name":{"kind":"Name","value":"grossFloorAreaPyeong"}},{"kind":"Field","name":{"kind":"Name","value":"buildingCoverageRatio"}},{"kind":"Field","name":{"kind":"Name","value":"floorAreaRatio"}},{"kind":"Field","name":{"kind":"Name","value":"officialLandPrice"}},{"kind":"Field","name":{"kind":"Name","value":"completionDate"}},{"kind":"Field","name":{"kind":"Name","value":"lessee"}},{"kind":"Field","name":{"kind":"Name","value":"leaseStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"leaseEndedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"tabsName"}},{"kind":"Field","name":{"kind":"Name","value":"totalPublicOfferingAmount"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingPrice"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"issuer"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingEndedAt"}},{"kind":"Field","name":{"kind":"Name","value":"allocationDate"}},{"kind":"Field","name":{"kind":"Name","value":"receivingDate"}},{"kind":"Field","name":{"kind":"Name","value":"listedDate"}},{"kind":"Field","name":{"kind":"Name","value":"currentPublicOfferingAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currentPublicOfferingQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateProjectByAdminMutation, CreateProjectByAdminMutationVariables>;
 export const CreateProjectSellVoteByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createProjectSellVoteByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"requestSellAmount"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sellVoteStartedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sellVoteEndedAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"soldDate"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"docs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createProjectSellVoteByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"requestSellAmount"},"value":{"kind":"Variable","name":{"kind":"Name","value":"requestSellAmount"}}},{"kind":"Argument","name":{"kind":"Name","value":"sellVoteStartedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sellVoteStartedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"sellVoteEndedAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sellVoteEndedAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"soldDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"soldDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"projectId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"projectId"}}},{"kind":"Argument","name":{"kind":"Name","value":"docs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"docs"}}}]}]}}]} as unknown as DocumentNode<CreateProjectSellVoteByAdminMutation, CreateProjectSellVoteByAdminMutationVariables>;
 export const RefreshFromAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"refreshFromAdmin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshFromAdmin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}}]}}]}}]} as unknown as DocumentNode<RefreshFromAdminMutation, RefreshFromAdminMutationVariables>;
 export const ReplyUserInquiryByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"replyUserInquiryByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"reply"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"replyUserInquiryByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"reply"},"value":{"kind":"Variable","name":{"kind":"Name","value":"reply"}}}]}]}}]} as unknown as DocumentNode<ReplyUserInquiryByAdminMutation, ReplyUserInquiryByAdminMutationVariables>;
@@ -2547,7 +2944,8 @@ export const UpdateVoteKindByAdminDocument = {"kind":"Document","definitions":[{
 export const UploadNoticeFileByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"uploadNoticeFileByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadNoticeFileByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}]}]}}]} as unknown as DocumentNode<UploadNoticeFileByAdminMutation, UploadNoticeFileByAdminMutationVariables>;
 export const FindManyChangeInvestmentQualificationByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyChangeInvestmentQualificationByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gte"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Date"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyChangeInvestmentQualificationByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchText"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}}},{"kind":"Argument","name":{"kind":"Name","value":"gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gte"}}},{"kind":"Argument","name":{"kind":"Name","value":"lt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lt"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"changeInvestmentQualifications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"approveStatus"}},{"kind":"Field","name":{"kind":"Name","value":"reason"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"treatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"originInvestmentQualification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"possibleInvestmentAmount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"investmentQualification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"possibleInvestmentAmount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"investmentType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}}]}},{"kind":"Field","name":{"kind":"Name","value":"admin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"investmentDocuments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fileName"}},{"kind":"Field","name":{"kind":"Name","value":"investmentDocumentCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindManyChangeInvestmentQualificationByAdminQuery, FindManyChangeInvestmentQualificationByAdminQueryVariables>;
 export const FindManyFaqByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyFaqByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"faqCategoryId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyFaqByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchText"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}}},{"kind":"Argument","name":{"kind":"Name","value":"faqCategoryId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"faqCategoryId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"faqs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"question"}},{"kind":"Field","name":{"kind":"Name","value":"answer"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"faqCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"admin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindManyFaqByAdminQuery, FindManyFaqByAdminQueryVariables>;
-export const FindManyNoticeByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyNoticeByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursorId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyNoticeByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchText"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}}},{"kind":"Argument","name":{"kind":"Name","value":"cursorId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursorId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"notices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"noticeKind"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"admin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindManyNoticeByAdminQuery, FindManyNoticeByAdminQueryVariables>;
+export const FindManyNoticeByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyNoticeByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyNoticeByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"notices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"noticeKind"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"admin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindManyNoticeByAdminQuery, FindManyNoticeByAdminQueryVariables>;
+export const FindManyProjectDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyProject"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingStatus"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PublicOfferingStatus"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketStatus"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MarketStatus"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyProject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"publicOfferingStatus"},"value":{"kind":"Variable","name":{"kind":"Name","value":"publicOfferingStatus"}}},{"kind":"Argument","name":{"kind":"Name","value":"marketStatus"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketStatus"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projects"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingStatus"}},{"kind":"Field","name":{"kind":"Name","value":"marketStatus"}},{"kind":"Field","name":{"kind":"Name","value":"voteStatus"}},{"kind":"Field","name":{"kind":"Name","value":"totalPublicOfferingAmount"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingPrice"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"publicOfferingEndedAt"}},{"kind":"Field","name":{"kind":"Name","value":"projectFiles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fileKind"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"fileName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dailyTransactionInfos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"standardPrice"}},{"kind":"Field","name":{"kind":"Name","value":"totalTransactionAmount"}},{"kind":"Field","name":{"kind":"Name","value":"totalVolume"}},{"kind":"Field","name":{"kind":"Name","value":"fluctuation"}},{"kind":"Field","name":{"kind":"Name","value":"fluctuationRatio"}}]}},{"kind":"Field","name":{"kind":"Name","value":"currentPrice"}},{"kind":"Field","name":{"kind":"Name","value":"fluctuation"}},{"kind":"Field","name":{"kind":"Name","value":"fluctuationRatio"}},{"kind":"Field","name":{"kind":"Name","value":"dDay"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<FindManyProjectQuery, FindManyProjectQueryVariables>;
 export const FindManyUserByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyUserByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyUserByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"possibleInvestmentAmount"}},{"kind":"Field","name":{"kind":"Name","value":"isExistAccount"}},{"kind":"Field","name":{"kind":"Name","value":"birth"}}]}}]}}]}}]} as unknown as DocumentNode<FindManyUserByAdminQuery, FindManyUserByAdminQueryVariables>;
 export const FindManyUserInquiryByAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findManyUserInquiryByAdmin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userInquiryCategoryId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyUserInquiryByAdmin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchText"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchText"}}},{"kind":"Argument","name":{"kind":"Name","value":"userInquiryCategoryId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userInquiryCategoryId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"userInquiries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"reply"}},{"kind":"Field","name":{"kind":"Name","value":"repliedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"userInquiryCategory"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"admin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindManyUserInquiryByAdminQuery, FindManyUserInquiryByAdminQueryVariables>;
 export const FindProfileFromAdminDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"findProfileFromAdmin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findProfileFromAdmin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<FindProfileFromAdminQuery, FindProfileFromAdminQueryVariables>;

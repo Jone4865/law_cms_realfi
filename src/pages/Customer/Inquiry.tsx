@@ -98,7 +98,7 @@ export function Inquiry() {
       },
       fetchPolicy: 'no-cache',
     });
-  }, [skip, take, userInquiryCategoryId, visible]);
+  }, [skip, take, userInquiryCategoryId, visible, searchText]);
 
   return (
     <>
@@ -111,7 +111,13 @@ export function Inquiry() {
       <Divider>1:1 문의</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
-          <Input.Search enterButton placeholder="검색어(문의내용, 닉네임)" />
+          <Input.Search
+            onSearch={(e) => {
+              handleSearch({ searchText: e });
+            }}
+            enterButton
+            placeholder="검색어(문의내용, 닉네임)"
+          />
         </Form.Item>
       </Form>
       <Table

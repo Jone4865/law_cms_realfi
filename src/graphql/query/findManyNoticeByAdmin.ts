@@ -1,8 +1,8 @@
 import { gql } from '../generated';
 
 export const FIND_MANY_NOTICE_BY_ADMIN = gql(/* GraphQL */ `
-  query findManyNoticeByAdmin($take: Int!, $searchText: String!, $cursorId: Int!) {
-    findManyNoticeByAdmin(take: $take, searchText: $searchText, cursorId: $cursorId) {
+  query findManyNoticeByAdmin($take: Int!, $skip: Int!) {
+    findManyNoticeByAdmin(take: $take, skip: $skip) {
       totalCount
       notices {
         id

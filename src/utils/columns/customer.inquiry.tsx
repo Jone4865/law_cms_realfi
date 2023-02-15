@@ -63,7 +63,7 @@ export const inquiryColumns = ({
     dataIndex: 'user',
     align: 'center',
     render: (val) => {
-      return val.phone;
+      return val.phone.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
     },
   },
   {

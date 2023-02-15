@@ -30,9 +30,9 @@ export const CREATE_PROJECT_BY_ADMIN = gql(/* GraphQL */ `
     $allocationDate: Date!
     $receivingDate: Date!
     $listedDate: Date!
-    $images: [Upload!]!
-    $docs: [Upload!]!
-    $officialInfos: [Upload!]!
+    $images: [ImageInCreateProjectByAdminArgs!]!
+    $docs: [DocInCreateProjectByAdminArgs!]!
+    $officialInfos: [OfficialInfoInCreateProjectByAdminArgs!]!
   ) {
     createProjectByAdmin(
       name: $name

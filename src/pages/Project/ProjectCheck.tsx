@@ -1,16 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Button, Divider, Form, Input, Tag, Table, notification } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
+import { Divider, Form, Input, notification, Table } from 'antd';
 import * as S from './style';
 import { Calendar } from '../../components/Calendar';
 import moment from 'moment';
-
-import { projectCheckColumns, ProjectCheckType } from '../../utils/columns/project.check';
-import { useNavigate } from 'react-router-dom';
+import { useLazyQuery } from '@apollo/client';
+import { FIND_MANY_PROJECT } from '../../graphql/query/findManyProject';
+import {
+  FindManyProjectQuery,
+  MarketStatus,
+  PublicOfferingStatus,
+} from '../../graphql/generated/graphql';
+import { projectCheckColumns } from '../../utils/columns';
 
 export function ProjectCheck() {
+  const [take, setTake] = useState(10);
+  const [skip, setSkip] = useState(0);
+  const [current, setCurrent] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchText, setSearchText] = useState('');
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
+  const [findProjectData, setFindProjectData] = useState<any[]>([]);
   const one = ['전체'];
   const two = ['공모예정', '공모중', '공모완료'];
   const three = ['상장대기'];
@@ -18,23 +28,6 @@ export function ProjectCheck() {
   const five = ['매각투표예정', '매각투표중', '매각투표완료'];
   const six = ['매각완료'];
   const [able, setAble] = useState<string[]>([]);
-
-  const data: ProjectCheckType[] = [
-    {
-      id: 0,
-      name: 'dawdawdaw',
-      price: 'dawdawdaw',
-      oneTabsPrice: 'dawdawdaw',
-      tabsCount: 'dawdawdaw',
-      percent: 'dawdawdaw',
-      closingPrice: 'dawdawdaw',
-      upDown: 'dawdawdaw',
-      saleVote: 'dawdawdaw',
-      date: new Date(),
-      manager: 'dawdawdaw',
-      state: 'dawdawdaw',
-    },
-  ];
 
   const clickHandel = (item: string) => {
     if (item !== '전체') {
@@ -56,8 +49,42 @@ export function ProjectCheck() {
     }
   };
 
+  // const handleSearch = (values: { searchText?: string }) => {
+  //   findManyUserInquiryByAdmin({
+  //     variables: {
+  //       take,
+  //       skip,
+  //       searchText,
+  //       userInquiryCategoryId,
+  //     },
+  //     fetchPolicy: 'no-cache',
+  //   });
+  //   setCurrent(1);
+  //   setSkip(0);
+  //   setSearchText(values.searchText ?? '');
+  // };
+
   useEffect(() => {}, [able]);
-  const navigator = useNavigate();
+  useEffect(() => {
+    findManyProject({
+      variables: {
+        take: 10,
+        skip: 0,
+        publicOfferingStatus: PublicOfferingStatus.Wait,
+        marketStatus: MarketStatus.Unlisted,
+      },
+    });
+  }, []);
+
+  // // 요청 분기점
+  const [findManyProject, { loading }] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setFindProjectData(data.findManyProject.projects);
+    },
+  });
 
   return (
     <>
@@ -65,16 +92,22 @@ export function ProjectCheck() {
       <S.FormWrap>
         <Form layout="inline">
           <Form.Item name="searchText">
-            <Input.Search enterButton placeholder="검색어(문의내용, 닉네임)" />
+            <Input.Search
+              // onSearch={(e) => {
+              //   handleSearch({ searchText: e });
+              // }}
+              enterButton
+              placeholder="검색어(문의내용, 닉네임)"
+            />
           </Form.Item>
         </Form>
-        <Button
+        {/* <Button
           onClick={() => navigator('/project/add')}
           type="primary"
           style={{ marginRight: '0' }}
         >
           등록하기
-        </Button>
+        </Button> */}
       </S.FormWrap>
       <S.Span>Total: 총 00개</S.Span>
       <S.BtnContainer>
@@ -179,8 +212,7 @@ export function ProjectCheck() {
         rowKey={(rec) => rec.id}
         columns={projectCheckColumns}
         scroll={{ x: 800 }}
-        // dataSource={inquiryData}
-        dataSource={data.reverse()}
+        dataSource={findProjectData}
         // loading={loading}
         pagination={{ position: ['bottomCenter'] }}
       />

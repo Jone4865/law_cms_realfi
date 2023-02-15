@@ -20,9 +20,11 @@ export function Notice() {
   const [take, setTake] = useState(10);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [cursorId, setCursorId] = useState(0);
+  const [skip, setSkip] = useState(0);
+
   const handlePagination = (e: number) => {
     setCurrent(e);
+    setSkip((e - 1) * take);
   };
 
   const handleClick = () => {
@@ -44,12 +46,22 @@ export function Notice() {
     findManyNoticeByAdmin({
       variables: {
         take,
-        searchText: '',
+        skip: 0,
       },
       fetchPolicy: 'no-cache',
     });
     setVisible(false);
   };
+
+  useEffect(() => {
+    findManyNoticeByAdmin({
+      variables: {
+        take,
+        skip,
+      },
+      fetchPolicy: 'no-cache',
+    });
+  }, [take, skip, visible]);
 
   const [findManyNoticeByAdmin, {}] = useLazyQuery<FindManyNoticeByAdminQuery>(
     FIND_MANY_NOTICE_BY_ADMIN,
@@ -63,17 +75,6 @@ export function Notice() {
       },
     },
   );
-
-  useEffect(() => {
-    findManyNoticeByAdmin({
-      variables: {
-        take,
-        searchText: '',
-        cursorId,
-      },
-      fetchPolicy: 'no-cache',
-    });
-  }, [take, visible]);
 
   return (
     <>

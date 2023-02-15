@@ -1,12 +1,7 @@
 import { gql } from '../generated';
 
 export const FIND_MANY_FAQ_BY_ADMIN = gql(/* GraphQL */ `
-  query findManyFaqByAdmin(
-    $take: Int!
-    $skip: Int!
-    $searchText: String!
-    $faqCategoryId: Int!
-  ) {
+  query findManyFaqByAdmin($take: Int!, $skip: Int!, $searchText: String!, $faqCategoryId: Int!) {
     findManyFaqByAdmin(
       take: $take
       skip: $skip

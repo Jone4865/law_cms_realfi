@@ -27,5 +27,9 @@ export { projectCheckColumns } from './project.check';
 export type { settingType } from './setting';
 export { settingColumns } from './setting';
 
-export type { InvestfileType } from './projectadd.investfile';
-export { investfileColumns } from './projectadd.investfile';
+export { investfileColumns } from './project.add.investfile';
+
+export type { LesseeType } from './project.add.lessee';
+export { lesseeColumns } from './project.add.lessee';
+
+export { officialInfosColumns } from './project.add.officialInfos';

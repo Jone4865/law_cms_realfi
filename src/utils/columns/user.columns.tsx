@@ -36,6 +36,9 @@ export const userListColumns: ColumnsType<UserType> = [
     key: 'phone',
     dataIndex: 'phone',
     align: 'center',
+    render: (val) => {
+      return val.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+    },
   },
   {
     title: '회원명',
@@ -45,8 +48,8 @@ export const userListColumns: ColumnsType<UserType> = [
   },
   {
     title: '생년월일',
-    key: 'birthday',
-    dataIndex: 'birthday',
+    key: 'birth',
+    dataIndex: 'birth',
     align: 'center',
   },
   {
@@ -63,6 +66,10 @@ export const userListColumns: ColumnsType<UserType> = [
     key: 'possibleInvestmentAmount',
     dataIndex: 'possibleInvestmentAmount',
     align: 'center',
+    render: (value) => {
+      const newVal = +value;
+      return newVal.toLocaleString();
+    },
   },
   {
     title: '계좌생성여부',

@@ -1,4 +1,4 @@
-import { Button, Table } from 'antd';
+import { Button, Input, Table } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
 import { SettingPopupDetailModal } from '../../components/SettingPopupDetailModal';
@@ -64,20 +64,20 @@ export function Setting() {
           <S.Charge>
             <S.ChargeWrap>
               <div>거래 수수료</div>
-              <S.ChargeInput />
+              <Input style={{ width: '170px', margin: '0 10px' }} />
               <span>%</span>
               <S.ChargeBtn>수정</S.ChargeBtn>
             </S.ChargeWrap>
             <S.Hr />
             <S.ChargeWrap>
               <div>배당 소득세</div>
-              <S.ChargeInput />
+              <Input style={{ width: '170px', margin: '0 10px' }} />
               <span>%</span>
               <S.ChargeBtn>수정</S.ChargeBtn>
             </S.ChargeWrap>
             <S.ChargeWrap>
               <div>지방 소득세</div>
-              <S.ChargeInput />
+              <Input style={{ width: '170px', margin: '0 10px' }} />
               <span>%</span>
               <S.ChargeBtn>수정</S.ChargeBtn>
             </S.ChargeWrap>
@@ -133,9 +133,9 @@ export function Setting() {
                   <div>공모 종료일 종료시간 :</div>
                 </S.SettingsDivTitle>
                 <S.SettingsInputs>
-                  <input />
-                  <input />
-                  <input />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
                 </S.SettingsInputs>
               </S.SettingsRight>
             </S.SettingsWrap>
@@ -147,8 +147,8 @@ export function Setting() {
                   <div>종료시간 :</div>
                 </S.SettingsDivTitle>
                 <S.SettingsInputs>
-                  <input />
-                  <input />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
                 </S.SettingsInputs>
               </S.SettingsRight>
             </S.SettingsWrap>
@@ -161,9 +161,9 @@ export function Setting() {
                   <div>투표 종료일 종료시간 :</div>
                 </S.SettingsDivTitle>
                 <S.SettingsInputs>
-                  <input />
-                  <input />
-                  <input />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
+                  <Input style={{ width: '150px', margin: '3px 10px' }} />
                 </S.SettingsInputs>
               </S.SettingsRight>
             </S.SettingsWrap>

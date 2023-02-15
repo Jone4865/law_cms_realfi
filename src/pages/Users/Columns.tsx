@@ -19,7 +19,7 @@ export function Columns() {
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
-
+  console.log(userData);
   const handleCancel = () => {
     setVisible(false);
   };
@@ -30,13 +30,14 @@ export function Columns() {
   };
 
   const handleSearch = (value: { searchText?: string }) => {
-    // seeAllUsers({
-    //   variables: {
-    //     take,
-    //     skip: 0,
-    //     ...value,
-    //   },
-    // });
+    findManyUserByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+      },
+      fetchPolicy: 'no-cache',
+    });
     setSkip(0);
     setCurrent(1);
     setSearchText(value.searchText ?? '');
@@ -46,32 +47,6 @@ export function Columns() {
     setSkip((e - 1) * take);
     setCurrent(e);
   };
-
-  // get user list
-  // const [seeAllUsers, { loading }] = useLazyQuery<
-  //   SeeUserHistoryByAdminResponse,
-  //   SeeUserHistoryByAdminParams
-  // >(SEE_USER_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setUserData(data.seeUserHistoryByAdmin.users);
-  //     setTotalCount(data.seeUserHistoryByAdmin.totalCount);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
-  // pagination
-  // useEffect(() => {
-  //   seeAllUsers({
-  //     variables: {
-  //       take,
-  //       skip,
-  //       searchText,
-  //     },
-  //   });
-  // }, [skip, take]);
 
   // // 요청 분기점
   const [findManyUserByAdmin, { loading }] = useLazyQuery<FindManyUserByAdminQuery>(

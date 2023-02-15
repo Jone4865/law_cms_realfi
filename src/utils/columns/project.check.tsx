@@ -33,45 +33,70 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
   },
   {
     title: '공모금액(원)',
-    key: 'price',
-    dataIndex: 'price',
+    key: 'totalPublicOfferingAmount',
+    dataIndex: 'totalPublicOfferingAmount',
     align: 'center',
+    render: (val) => {
+      const newVal = +val;
+      return newVal.toLocaleString();
+    },
   },
   {
     title: '1TABS 당 공모가(원)',
-    key: 'oneTabsPrice',
-    dataIndex: 'oneTabsPrice',
+    key: 'publicOfferingPrice',
+    dataIndex: 'publicOfferingPrice',
     align: 'center',
+    render: (val) => {
+      const newVal = +val;
+      return newVal.toLocaleString();
+    },
   },
   {
     title: 'TABS 수',
-    key: 'tabsCount',
-    dataIndex: 'tabsCount',
+    key: 'publicOfferingQuantity',
+    dataIndex: 'publicOfferingQuantity',
     align: 'center',
+    render: (val) => {
+      const newVal = +val;
+      return newVal.toLocaleString();
+    },
   },
   {
     title: '공모율',
     key: 'percent',
     dataIndex: 'percent',
     align: 'center',
+    render: (val) => {
+      return val ? val + '%' : '-';
+    },
   },
   {
     title: '체결가',
     key: 'closingPrice',
     dataIndex: 'closingPrice',
     align: 'center',
+    render: (val) => {
+      const newVal = +val;
+      return val ? newVal.toLocaleString() : '-';
+    },
   },
   {
     title: '등락율',
-    key: 'upDown',
-    dataIndex: 'upDown',
+    key: 'fluctuationRatio',
+    dataIndex: 'fluctuationRatio',
     align: 'center',
+    render: (val) => {
+      return val ? val + '%' : '-';
+    },
   },
   {
     title: '매각투표율',
     key: 'saleVote',
     dataIndex: 'saleVote',
     align: 'center',
+    render: (val) => {
+      return val ? val + '%' : '-';
+    },
   },
   {
     title: '등록일자',
@@ -90,8 +115,8 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
   },
   {
     title: '상태',
-    key: 'state',
-    dataIndex: 'state',
+    key: 'publicOfferingStatus',
+    dataIndex: 'publicOfferingStatus',
     align: 'center',
   },
   {

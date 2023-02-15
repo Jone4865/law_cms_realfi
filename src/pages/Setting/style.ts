@@ -91,6 +91,7 @@ export const SettingsDivTitle = styled.div`
   justify-content: space-between;
   div {
     margin-bottom: 10px;
+    margin-top: 5px;
   }
 `;
 
