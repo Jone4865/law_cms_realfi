@@ -20,7 +20,7 @@ export function Admin() {
       id: '0',
       createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
       updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@daw.co',
+      email: 'dwadw@dadaw.co',
       name: 'string',
       phone: '01099999999',
       otpSecret: 'string',
@@ -30,7 +30,7 @@ export function Admin() {
       id: '1',
       createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
       updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@daw.co',
+      email: 'dwadw@dadww.co',
       name: 'string',
       phone: '01099999999',
       otpSecret: 'string',
@@ -116,7 +116,7 @@ export function Admin() {
         return (
           <TransformBox alignItems="center" flexDirection="column">
             {val.map((v: AdminType) => {
-              return <div>{v.name}</div>;
+              return <div key={v.id}>{v.name}</div>;
             })}
           </TransformBox>
         );

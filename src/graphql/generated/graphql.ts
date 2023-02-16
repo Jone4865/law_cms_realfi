@@ -253,6 +253,22 @@ export type DailyTransactionInfoModel = {
   upperLimitPrice: Scalars['String'];
 };
 
+/** 배당자 목록 조회 (관리자) output - 배당자 */
+export type DividendInFindManyDividendByAdminOutput = {
+  /** 최종 배당금 (원) */
+  calcDividend?: Maybe<Scalars['String']>;
+  /** ID */
+  id: Scalars['Int'];
+  /** 이름 */
+  name: Scalars['String'];
+  /** 전화번호 뒷자리 */
+  phone: Scalars['String'];
+  /** 보유 TABS 수 (TABS) */
+  tabsCount: Scalars['Int'];
+  /** 세금 (원) */
+  tax?: Maybe<Scalars['String']>;
+};
+
 /** 투자자격관련문서 */
 export type DocInCreateProjectByAdminArgs = {
   /** 투자관련문서 */
@@ -380,6 +396,14 @@ export type FindManyChartDataOutput = {
 export type FindManyDailyTransactionInfoOutput = {
   /** 일일 거래정보 목록 */
   dailyTransactionInfos: Array<DailyTransactionInfoInFindManyDailyTransactionInfoOutput>;
+  /** 총 개수 */
+  totalCount: Scalars['Int'];
+};
+
+/** 배당자 목록 조회 (관리자) output */
+export type FindManyDividendByAdminOutput = {
+  /** 배당자 목록 */
+  dividends: Array<DividendInFindManyDividendByAdminOutput>;
   /** 총 개수 */
   totalCount: Scalars['Int'];
 };
@@ -1077,6 +1101,8 @@ export type Mutation = {
   cancelPublicOfferingByUser: Scalars['Boolean'];
   /** [일일 거래 정보] 프로젝트별 일일 거래정보 생성 */
   createDailyTransactionInfo: Scalars['Boolean'];
+  /** 기준일로부터 배당자 목록 생성 cron */
+  createDividendCron: Scalars['Boolean'];
   /** FAQ 생성 (관리자) */
   createFaqByAdmin: Scalars['Boolean'];
   /** 공지사항 생성 (관리자) */
@@ -1099,6 +1125,8 @@ export type Mutation = {
   findPasswordByUser: Scalars['Boolean'];
   /** 2차 비밀번호 찾기 (회원) */
   findSubPasswordByUser: Scalars['Boolean'];
+  /** 배당금 지급 (관리자) */
+  payDividendByAdmin: Scalars['Boolean'];
   /** Token 재발급 (관리자) */
   refreshFromAdmin: TokenOutput;
   /** Token 재발급 (회원) */
@@ -1123,6 +1151,8 @@ export type Mutation = {
   updateAddressByUser: Scalars['Boolean'];
   /** 마케팅 수신 동의 여부 수정 (회원) */
   updateAllowedMarketingByUser: Scalars['Boolean'];
+  /** 프로젝트 배당 주기 수정 (관리자) */
+  updateDividendPeriodByAdmin: Scalars['Boolean'];
   /** FAQ 수정 (관리자) */
   updateFaqByAdmin: Scalars['Boolean'];
   /** 투자 정보 등록 (회원) */
@@ -1172,6 +1202,11 @@ export type MutationCancelOrderByUserArgs = {
 
 export type MutationCancelPublicOfferingByUserArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationCreateDividendCronArgs = {
+  closingDate: Scalars['Date'];
 };
 
 
@@ -1272,6 +1307,11 @@ export type MutationFindSubPasswordByUserArgs = {
 };
 
 
+export type MutationPayDividendByAdminArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationReplyUserInquiryByAdminArgs = {
   id: Scalars['Int'];
   reply: Scalars['String'];
@@ -1321,6 +1361,12 @@ export type MutationUpdateAddressByUserArgs = {
   address: Scalars['String'];
   addressDetail: Scalars['String'];
   zip: Scalars['String'];
+};
+
+
+export type MutationUpdateDividendPeriodByAdminArgs = {
+  dividendPeriod: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
@@ -1606,6 +1652,8 @@ export type ProjectInFindManyProjectByPublicOfferingStatusOutput = {
   publicOfferingStatus: PublicOfferingStatus;
   /** 입고일 */
   receivingDate: Scalars['Date'];
+  /** 환불일 */
+  refundDate: Scalars['Date'];
   /** 썸네일 */
   thumbnail?: Maybe<Scalars['String']>;
   /** 공모총액 (원) */
@@ -1944,6 +1992,8 @@ export type Query = {
   findManyChartData: Array<FindManyChartDataOutput>;
   /** 일일 거래정보 목록 조회 */
   findManyDailyTransactionInfo: FindManyDailyTransactionInfoOutput;
+  /** 배당자 목록 조회 (관리자) */
+  findManyDividendByAdmin: FindManyDividendByAdminOutput;
   /** FAQ 목록 조회 (회원) */
   findManyFaq: FindManyFaqOutput;
   /** FAQ 목록 조회 (관리자) */
@@ -1968,7 +2018,7 @@ export type Query = {
   findManyPolicyCategory: Array<PolicyCategoryModel>;
   /** 프로젝트 목록 조회 */
   findManyProject: FindManyProjectOutput;
-  /** 공모 상태별 프로젝트 목록 조회 (회원) */
+  /** 공모 상태별 프로젝트 목록 조회 */
   findManyProjectByPublicOfferingStatus: FindManyProjectByPublicOfferingStatusOutput;
   /** 프로젝트 배당 목록 조회 */
   findManyProjectDividend: FindManyProjectDividendOutput;
@@ -2102,6 +2152,14 @@ export type QueryFindManyChartDataArgs = {
 export type QueryFindManyDailyTransactionInfoArgs = {
   cursorId?: InputMaybe<Scalars['Int']>;
   projectId: Scalars['Int'];
+  take: Scalars['Int'];
+};
+
+
+export type QueryFindManyDividendByAdminArgs = {
+  projectDividendId: Scalars['Int'];
+  searchText: Scalars['String'];
+  skip: Scalars['Int'];
   take: Scalars['Int'];
 };
 

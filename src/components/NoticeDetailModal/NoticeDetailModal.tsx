@@ -172,7 +172,11 @@ export function NoticeDetailModal({
         }}
       >
         {Object.values(NoticeKind).map((v) => {
-          return <Select.Option value={v}>{noticeKindToText(v)}</Select.Option>;
+          return (
+            <Select.Option key={v} value={v}>
+              {noticeKindToText(v)}
+            </Select.Option>
+          );
         })}
       </Select>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">

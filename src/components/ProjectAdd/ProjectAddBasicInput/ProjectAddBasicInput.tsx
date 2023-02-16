@@ -44,12 +44,10 @@ export function ProjectAddBasicInput({
         <Input
           type={type}
           style={{ width: '371px' }}
-          value={type ? value?.replace(/(^0+)/, '') : value}
+          value={value}
           disabled={disable && true}
           onChange={(e) => {
-            +e.target.value >= 0 && type
-              ? handleChange(`${saveName}`, e.target.value)
-              : handleChange(`${saveName}`, e.target.value);
+            handleChange(`${saveName}`, e.target.value.replace(/-(^0+)/g, ''));
           }}
           placeholder="입력해주세요."
         />

@@ -121,7 +121,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
             <S.Flex>
               <Input
                 type="number"
-                onChange={(e) => +e.target.value >= 0 && handleChange('zip', e.target.value)}
+                onChange={(e) => handleChange('zip', e.target.value.replace(/-/g, ''))}
                 placeholder="우편번호"
                 style={{ width: '310px' }}
                 value={variables['zip']}
@@ -149,14 +149,14 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
             <Input
               type="number"
               style={{ width: '100px', margin: '0 5px' }}
-              onChange={(e) => +e.target.value >= 0 && handleChange('longitude', e.target.value)}
+              onChange={(e) => handleChange('longitude', e.target.value.replace(/-/g, ''))}
               placeholder="x 좌표"
               value={variables['longitude']}
             />
             <Input
               type="number"
               style={{ width: '100px' }}
-              onChange={(e) => +e.target.value >= 0 && handleChange('latitude', e.target.value)}
+              onChange={(e) => handleChange('latitude', e.target.value.replace(/-/g, ''))}
               placeholder="y 좌표"
               value={variables['latitude']}
             />
