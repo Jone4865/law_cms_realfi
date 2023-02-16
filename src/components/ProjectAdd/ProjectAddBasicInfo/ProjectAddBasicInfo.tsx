@@ -205,7 +205,6 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
         />
         <ProjectAddBasicInput
           title="연면적"
-          type="number"
           subTitle={
             <>
               (m<sup>2</sup>)
@@ -213,32 +212,28 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           }
           handleChange={handleChange}
           saveName="grossFloorAreaMeter"
-          value={variables['grossFloorAreaMeter']}
+          value={+variables['grossFloorAreaMeter']}
         />
         <ProjectAddBasicInput
           title="연면적(평)"
-          type="number"
           handleChange={handleChange}
           saveName="grossFloorAreaPyeong"
-          value={variables['grossFloorAreaPyeong']}
+          value={+variables['grossFloorAreaPyeong']}
         />
         <ProjectAddBasicInput
           title="건폐율(%)"
-          type="number"
           handleChange={handleChange}
           saveName="buildingCoverageRatio"
-          value={variables['buildingCoverageRatio']}
+          value={+variables['buildingCoverageRatio']}
         />
         <ProjectAddBasicInput
           title="용적률(%)"
-          type="number"
           handleChange={handleChange}
           saveName="floorAreaRatio"
-          value={variables['floorAreaRatio']}
+          value={+variables['floorAreaRatio']}
         />
         <ProjectAddBasicInput
           title="공시지가"
-          type="number"
           subTitle={
             <>
               (원/m<sup>2</sup>)
@@ -246,7 +241,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           }
           handleChange={handleChange}
           saveName="officialLandPrice"
-          value={variables['officialLandPrice']}
+          value={+variables['officialLandPrice']}
         />
         <ProjectAddBasicInput
           title="준공일"
