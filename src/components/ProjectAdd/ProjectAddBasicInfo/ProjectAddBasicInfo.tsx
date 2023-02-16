@@ -22,6 +22,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 
 export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
+  var regExp = /^[0-9]/g;
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
@@ -98,7 +99,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
     setOfficialInfosFileList(officialInfosFileList.filter((_v, i) => i !== idx));
   };
 
-  useEffect(() => {}, [investFileList, officialInfosFileList]);
+  useEffect(() => {}, [investFileList, officialInfosFileList, variables]);
 
   return (
     <>
@@ -120,8 +121,11 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
             </S.AddTitle>
             <S.Flex>
               <Input
-                type="number"
-                onChange={(e) => handleChange('zip', e.target.value.replace(/-/g, ''))}
+                onChange={(e) => {
+                  regExp.test(e.target.value)
+                    ? handleChange('zip', e.target.value.replace('-', ''))
+                    : handleChange('zip', '');
+                }}
                 placeholder="우편번호"
                 style={{ width: '310px' }}
                 value={variables['zip']}
@@ -147,16 +151,22 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
               value={variables['addressDetail']}
             />
             <Input
-              type="number"
               style={{ width: '100px', margin: '0 5px' }}
-              onChange={(e) => handleChange('longitude', e.target.value.replace(/-/g, ''))}
+              onChange={(e) => {
+                regExp.test(e.target.value)
+                  ? handleChange('longitude', e.target.value.replace('-', ''))
+                  : handleChange('longitude', '');
+              }}
               placeholder="x 좌표"
               value={variables['longitude']}
             />
             <Input
-              type="number"
               style={{ width: '100px' }}
-              onChange={(e) => handleChange('latitude', e.target.value.replace(/-/g, ''))}
+              onChange={(e) => {
+                regExp.test(e.target.value)
+                  ? handleChange('latitude', e.target.value.replace('-', ''))
+                  : handleChange('latitude', '');
+              }}
               placeholder="y 좌표"
               value={variables['latitude']}
             />
