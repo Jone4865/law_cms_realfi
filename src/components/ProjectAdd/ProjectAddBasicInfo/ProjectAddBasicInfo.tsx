@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Upload, Modal, Table } from 'antd';
+import { Button, Upload, Modal, Table, Input } from 'antd';
 import * as S from '../style';
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
@@ -119,8 +119,9 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
               <S.Red>*</S.Red>위치 :
             </S.AddTitle>
             <S.Flex>
-              <S.AddInput
-                onChange={(e) => handleChange('zip', e.target.value)}
+              <Input
+                type="number"
+                onChange={(e) => +e.target.value >= 0 && handleChange('zip', e.target.value)}
                 placeholder="우편번호"
                 style={{ width: '310px' }}
                 value={variables['zip']}
@@ -130,7 +131,8 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           </S.Flex>
           <S.Flex>
             <S.AddTitle />
-            <S.AddInput
+            <Input
+              style={{ width: '371px', margin: '5px 0' }}
               onChange={(e) => handleChange('address', e.target.value)}
               placeholder="기본주소"
               value={variables['address']}
@@ -138,18 +140,23 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           </S.Flex>
           <S.Flex>
             <S.AddTitle />
-            <S.AddInput
+            <Input
+              style={{ width: '371px' }}
               onChange={(e) => handleChange('addressDetail', e.target.value)}
               placeholder="상세주소"
               value={variables['addressDetail']}
             />
-            <S.AddSmallInput
-              onChange={(e) => handleChange('longitude', e.target.value)}
+            <Input
+              type="number"
+              style={{ width: '100px', margin: '0 5px' }}
+              onChange={(e) => +e.target.value >= 0 && handleChange('longitude', e.target.value)}
               placeholder="x 좌표"
               value={variables['longitude']}
             />
-            <S.AddSmallInput
-              onChange={(e) => handleChange('latitude', e.target.value)}
+            <Input
+              type="number"
+              style={{ width: '100px' }}
+              onChange={(e) => +e.target.value >= 0 && handleChange('latitude', e.target.value)}
               placeholder="y 좌표"
               value={variables['latitude']}
             />
@@ -169,6 +176,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
         />
         <ProjectAddBasicInput
           title="연면적"
+          type="number"
           subTitle={
             <>
               (m<sup>2</sup>)
@@ -180,24 +188,28 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
         />
         <ProjectAddBasicInput
           title="연면적(평)"
+          type="number"
           handleChange={handleChange}
           saveName="grossFloorAreaPyeong"
           value={variables['grossFloorAreaPyeong']}
         />
         <ProjectAddBasicInput
           title="건폐율(%)"
+          type="number"
           handleChange={handleChange}
           saveName="buildingCoverageRatio"
           value={variables['buildingCoverageRatio']}
         />
         <ProjectAddBasicInput
           title="용적률(%)"
+          type="number"
           handleChange={handleChange}
           saveName="floorAreaRatio"
           value={variables['floorAreaRatio']}
         />
         <ProjectAddBasicInput
           title="공시지가"
+          type="number"
           subTitle={
             <>
               (원/m<sup>2</sup>)

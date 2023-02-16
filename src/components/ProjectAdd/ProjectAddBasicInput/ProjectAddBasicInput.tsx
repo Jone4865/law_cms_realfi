@@ -1,16 +1,17 @@
-import { DatePicker } from 'antd';
+import { DatePicker, Input } from 'antd';
 import moment from 'moment';
 import * as S from './../style';
 
 type Props = {
   title: string;
   saveName: string;
+  value: string;
   handleChange: (key: string, value: any) => void;
   subTitle?: React.ReactNode;
   essential?: boolean;
   datePicker?: boolean;
   disable?: boolean;
-  value: string;
+  type?: string;
 };
 
 export function ProjectAddBasicInput({
@@ -22,6 +23,7 @@ export function ProjectAddBasicInput({
   datePicker,
   disable,
   value,
+  type,
 }: Props) {
   return (
     <S.AddFormWrap>
@@ -39,11 +41,15 @@ export function ProjectAddBasicInput({
           style={{ width: '370px' }}
         />
       ) : (
-        <S.AddInput
-          value={value}
+        <Input
+          type={type}
+          style={{ width: '371px' }}
+          value={type ? value?.replace(/(^0+)/, '') : value}
           disabled={disable && true}
           onChange={(e) => {
-            handleChange && handleChange(`${saveName}`, e.target.value);
+            +e.target.value >= 0 && type
+              ? handleChange(`${saveName}`, e.target.value)
+              : handleChange(`${saveName}`, e.target.value);
           }}
           placeholder="입력해주세요."
         />
