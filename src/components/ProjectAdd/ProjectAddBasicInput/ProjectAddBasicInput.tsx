@@ -36,7 +36,7 @@ export function ProjectAddBasicInput({
         <DatePicker
           defaultValue={moment(value)}
           onChange={(v) => {
-            handleChange && handleChange(`${saveName}`, new Date(moment(v).format('YYYY-MM-DD')));
+            handleChange && handleChange(`${saveName}`, moment(v).format('YYYY-MM-DD'));
           }}
           style={{ width: '370px' }}
         />

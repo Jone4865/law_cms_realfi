@@ -5,6 +5,7 @@ import { ProjectAddBasicInfo } from '../../components/ProjectAdd/ProjectAddBasic
 import { ProjectAddCollusionInfo } from '../../components/ProjectAdd/ProjectAddCollusionInfo/ProjectAddCollusionInfo';
 import { useMutation } from '@apollo/client';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
+import moment from 'moment';
 
 export function ProjectAdd() {
   const btns = ['1. 기본정보', '2. 공모정보'];
@@ -16,11 +17,12 @@ export function ProjectAdd() {
     createProjectByAdmin({
       variables: {
         ...variables,
-        images: variables.images.map((file: any) => ({ file: file.originFileObj })),
+        images: variables.images?.map((file: any) => ({ file: file.originFileObj })),
       },
     });
   };
-
+  console.log({ variables });
+  console.log(variables.publicOfferingStartedAt);
   // 요청 분기점
   const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
     onError: (error) => {

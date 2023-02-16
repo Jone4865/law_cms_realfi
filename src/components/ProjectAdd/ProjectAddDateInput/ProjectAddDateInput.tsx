@@ -52,7 +52,7 @@ export function ProjectAddDateInput({
                   onChange={(v) => {
                     handleChange &&
                       saveNames &&
-                      handleChange(saveNames[idx], new Date(moment(v).format('YYYY-MM-DD')));
+                      handleChange(saveNames[idx], moment(v).format('YYYY-MM-DD'));
                   }}
                   style={{ width: '270px' }}
                 />
