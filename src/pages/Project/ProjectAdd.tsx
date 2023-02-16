@@ -21,8 +21,7 @@ export function ProjectAdd() {
       },
     });
   };
-  console.log({ variables });
-  console.log(variables.publicOfferingStartedAt);
+
   // 요청 분기점
   const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
     onError: (error) => {

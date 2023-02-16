@@ -34,7 +34,6 @@ export const investfileColumns = ({
     dataIndex: 'name',
     align: 'center',
     render: (val, _record, index) => {
-      console.log(_record);
       return val ? (
         val
       ) : (

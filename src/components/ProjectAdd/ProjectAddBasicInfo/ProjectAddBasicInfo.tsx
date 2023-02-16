@@ -7,6 +7,8 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import { ProjectAddBasicInput } from '../ProjectAddBasicInput/ProjectAddBasicInput';
 import { investfileColumns, lesseeColumns, officialInfosColumns } from '../../../utils/columns';
 import { DocInCreateProjectByAdminArgs } from '../../../graphql/generated/graphql';
+import GetZipApi from '../../GetZipApi/GetZipApi';
+import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
 
 type Props = {
   handleChange: (key: string, value: any) => void;
@@ -23,6 +25,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
 
 export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
   var regExp = /^[0-9]/g;
+  const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
@@ -99,10 +102,26 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
     setOfficialInfosFileList(officialInfosFileList.filter((_v, i) => i !== idx));
   };
 
-  useEffect(() => {}, [investFileList, officialInfosFileList, variables]);
+  const setCoordinateHandle = (longitude: number, latitude: number) => {
+    handleChange('longitude', longitude);
+    handleChange('latitude', latitude);
+  };
+
+  const complteSerchZipHandle = (fullAdress: string, zip: string) => {
+    handleChange('zip', zip);
+    handleChange('address', fullAdress);
+    GetCoordinateApi(fullAdress, setCoordinateHandle);
+    setVisible(false);
+  };
+
+  useEffect(() => {
+    if (visible) {
+    }
+  }, [investFileList, officialInfosFileList, visible]);
 
   return (
     <>
+      {visible && <GetZipApi complteSerchZipHandle={complteSerchZipHandle} />}
       <S.AddTitle style={{ marginTop: '25px' }}>
         기본 정보
         {/* <Button type="primary">저장</Button> */}
@@ -121,25 +140,23 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
             </S.AddTitle>
             <S.Flex>
               <Input
-                onChange={(e) => {
-                  regExp.test(e.target.value)
-                    ? handleChange('zip', e.target.value.replace('-', ''))
-                    : handleChange('zip', '');
-                }}
+                value={variables['zip']}
+                disabled
                 placeholder="우편번호"
                 style={{ width: '310px' }}
-                value={variables['zip']}
               />
-              <Button style={{ marginLeft: '5px' }}>검색</Button>
+              <Button onClick={() => setVisible(true)} style={{ marginLeft: '5px' }}>
+                검색
+              </Button>
             </S.Flex>
           </S.Flex>
           <S.Flex>
             <S.AddTitle />
             <Input
-              style={{ width: '371px', margin: '5px 0' }}
-              onChange={(e) => handleChange('address', e.target.value)}
-              placeholder="기본주소"
               value={variables['address']}
+              style={{ width: '371px', margin: '5px 0' }}
+              disabled
+              placeholder="기본주소"
             />
           </S.Flex>
           <S.Flex>
@@ -151,7 +168,8 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
               value={variables['addressDetail']}
             />
             <Input
-              style={{ width: '100px', margin: '0 5px' }}
+              disabled
+              style={{ width: '180px', margin: '0 5px' }}
               onChange={(e) => {
                 regExp.test(e.target.value)
                   ? handleChange('longitude', e.target.value.replace('-', ''))
@@ -161,7 +179,8 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
               value={variables['longitude']}
             />
             <Input
-              style={{ width: '100px' }}
+              disabled
+              style={{ width: '180px' }}
               onChange={(e) => {
                 regExp.test(e.target.value)
                   ? handleChange('latitude', e.target.value.replace('-', ''))
