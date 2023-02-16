@@ -13,7 +13,7 @@ import { Classifi } from '../pages/Users';
 import { useCookies } from 'react-cookie';
 import { CookiesProvider } from 'react-cookie';
 import { useEffect } from 'react';
-import { Setting } from '../pages/Setting';
+// import { Setting } from '../pages/Setting';
 
 function Root() {
   const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken']);
@@ -45,7 +45,7 @@ function Root() {
                 <Route path="check" element={<ProjectCheck />} />
                 <Route path="add" element={<ProjectAdd />} />
               </Route>
-              <Route path="setting" element={<Setting />} />
+              {/* <Route path="setting" element={<Setting />} /> */}
             </Route>
           )}
           {!cookies?.accessToken && (

@@ -1,7 +1,6 @@
-import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { UserInquiryInFindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
+import { NoticeInFindManyNoticeByAdminOutput } from '../../graphql/generated/graphql';
 import { deleteTag } from '../deleteTag';
 import { noticeKindToText } from '../noticeKindToText';
 
@@ -17,7 +16,7 @@ export type NoticeType = {
   createdAt: string;
 };
 
-export const noticeColumns: ColumnsType<UserInquiryInFindManyUserInquiryByAdminOutput> = [
+export const noticeColumns: ColumnsType<NoticeInFindManyNoticeByAdminOutput> = [
   {
     title: 'no',
     key: 'id',

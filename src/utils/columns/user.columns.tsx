@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
+import { UserInFindManyUserByAdminOutput } from '../../graphql/generated/graphql';
 
 export type UserType = {
   nickname: string;
@@ -21,7 +22,7 @@ export type UserType = {
   }[];
 };
 
-export const userListColumns: ColumnsType<UserType> = [
+export const userListColumns: ColumnsType<UserInFindManyUserByAdminOutput> = [
   {
     render: (_val, _record, idx) => {
       return idx + 1;

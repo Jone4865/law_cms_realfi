@@ -24,9 +24,6 @@ export { policyColumns } from './policy';
 // export type { ProjectType } from './project';
 export { projectCheckColumns } from './project.check';
 
-export type { settingType } from './setting';
-export { settingColumns } from './setting';
-
 export { investfileColumns } from './project.add.investfile';
 
 export type { LesseeType } from './project.add.lessee';
