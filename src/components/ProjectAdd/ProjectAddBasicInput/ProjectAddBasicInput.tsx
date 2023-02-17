@@ -5,13 +5,12 @@ import * as S from './../style';
 type Props = {
   title: string;
   saveName: string;
-  value: string;
+  value: string | number;
   handleChange: (key: string, value: any) => void;
   subTitle?: React.ReactNode;
   essential?: boolean;
   datePicker?: boolean;
   disable?: boolean;
-  type?: string;
 };
 
 export function ProjectAddBasicInput({
@@ -23,7 +22,6 @@ export function ProjectAddBasicInput({
   datePicker,
   disable,
   value,
-  type,
 }: Props) {
   return (
     <S.AddFormWrap>
@@ -42,12 +40,17 @@ export function ProjectAddBasicInput({
         />
       ) : (
         <Input
-          type={type}
           style={{ width: '371px' }}
-          value={value}
+          value={
+            typeof value === 'string'
+              ? value
+              : value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+          }
           disabled={disable && true}
           onChange={(e) => {
-            handleChange(`${saveName}`, e.target.value.replace(/-(^0+)/g, ''));
+            typeof value === 'string'
+              ? handleChange(`${saveName}`, e.target.value)
+              : handleChange(`${saveName}`, e.target.value.replace(/\D/g, ''));
           }}
           placeholder="입력해주세요."
         />

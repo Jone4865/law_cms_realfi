@@ -22,22 +22,19 @@ export function ProjectAddCollusionInfo({ handleChange, variables, submitHandle 
       />
       <ProjectAddBasicInput
         saveName="totalPublicOfferingAmount"
-        type="number"
-        value={variables['totalPublicOfferingAmount']}
+        value={+variables['totalPublicOfferingAmount']}
         handleChange={handleChange}
         title="공모총액(원)"
       />
       <ProjectAddBasicInput
         saveName="publicOfferingPrice"
-        type="number"
-        value={variables['publicOfferingPrice']}
+        value={+variables['publicOfferingPrice']}
         handleChange={handleChange}
         title="공모가(원/TABS)"
       />
       <ProjectAddBasicInput
         saveName="publicOfferingQuantity"
-        type="number"
-        value={variables['publicOfferingQuantity']}
+        value={+variables['publicOfferingQuantity']}
         handleChange={handleChange}
         title="모집수량(TABS)"
       />

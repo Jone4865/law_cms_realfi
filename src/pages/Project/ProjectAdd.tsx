@@ -13,16 +13,16 @@ export function ProjectAdd() {
   const [nowAble, setNowAble] = useState('1. 기본정보');
 
   const submitHandle = () => {
-    console.log(variables.images);
     createProjectByAdmin({
       variables: {
         ...variables,
         images: variables.images?.map((file: any) => ({ file: file.originFileObj })),
+        latitude: variables.latitude.toString(),
+        longitude: variables.longitude.toString(),
       },
     });
   };
-  console.log({ variables });
-  console.log(variables.publicOfferingStartedAt);
+
   // 요청 분기점
   const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
     onError: (error) => {
