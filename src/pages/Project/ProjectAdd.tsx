@@ -13,11 +13,12 @@ export function ProjectAdd() {
   const [nowAble, setNowAble] = useState('1. 기본정보');
 
   const submitHandle = () => {
-    console.log(variables.images);
     createProjectByAdmin({
       variables: {
         ...variables,
         images: variables.images?.map((file: any) => ({ file: file.originFileObj })),
+        latitude: variables.latitude.toString(),
+        longitude: variables.longitude.toString(),
       },
     });
   };
