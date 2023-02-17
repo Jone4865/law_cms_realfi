@@ -32,8 +32,9 @@ export function ProjectAddBasicInput({
       </S.AddTitle>
       {datePicker ? (
         <DatePicker
-          defaultValue={moment(value)}
+          defaultValue={value ? moment(value) : undefined}
           onChange={(v) => {
+            console.log(value);
             handleChange && handleChange(`${saveName}`, moment(v).format('YYYY-MM-DD'));
           }}
           style={{ width: '370px' }}

@@ -47,7 +47,7 @@ export function ProjectAddDateInput({
                 />
               ) : (
                 <DatePicker
-                  defaultValue={values && moment(values[idx])}
+                  value={values && values[idx] ? moment(values[idx]) : undefined}
                   disabled={disable && true}
                   onChange={(v) => {
                     handleChange &&

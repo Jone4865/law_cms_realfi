@@ -49,14 +49,13 @@ export function ProjectAddCollusionInfo({ handleChange, variables, submitHandle 
         titles={['시작일', '종료일']}
         title="공모기간"
         saveNames={['publicOfferingStartedAt', 'publicOfferingEndedAt']}
-        values={[variables['publicOfferingEndedAt'], variables['publicOfferingEndedAt']]}
+        values={[variables['publicOfferingStartedAt'], variables['publicOfferingEndedAt']]}
       />
       <ProjectAddDateInput
         titles={['시작시간', '종료시간', '공모종료시간']}
         timePicker={true}
         disable={true}
         title="공모시간"
-        // value={variables['publicOfferingEndedAt']}
       />
       <ProjectAddDateInput
         titles={['배정공지일', '배정일', '입고일', '상장일']}

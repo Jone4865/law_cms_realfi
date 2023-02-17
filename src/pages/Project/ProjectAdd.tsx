@@ -5,7 +5,7 @@ import { ProjectAddBasicInfo } from '../../components/ProjectAdd/ProjectAddBasic
 import { ProjectAddCollusionInfo } from '../../components/ProjectAdd/ProjectAddCollusionInfo/ProjectAddCollusionInfo';
 import { useMutation } from '@apollo/client';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
-import moment from 'moment';
+import Loader from '../../components/Loader';
 
 export function ProjectAdd() {
   const btns = ['1. 기본정보', '2. 공모정보'];
@@ -28,8 +28,10 @@ export function ProjectAdd() {
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
-      console.log(data);
+    onCompleted: (_data) => {
+      notification.success({ message: '프로젝트 생성을 완료했습니다.' });
+      setVariables({});
+      setNowAble('1. 기본정보');
     },
   });
 
@@ -55,6 +57,10 @@ export function ProjectAdd() {
       return newVariables;
     });
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <div>
