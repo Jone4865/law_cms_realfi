@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client';
 import { Button, Input, Modal, notification, Popconfirm, Select, Switch, Checkbox } from 'antd';
 
 import React, { useEffect, useState } from 'react';
+import { PolicyInFindManyPolicyOutput } from '../../graphql/generated/graphql';
 import { PolicyType } from '../../utils/columns';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
@@ -10,7 +11,7 @@ type Props = {
   visible: boolean;
   handleCancel: () => void;
   isEdit: boolean;
-  data: PolicyType | undefined;
+  data: PolicyInFindManyPolicyOutput | undefined;
   refetch: () => void;
   policyKind: KindType[];
 };
@@ -114,8 +115,8 @@ export function PolicyDetailModal({
 
   useEffect(() => {
     if (isEdit) {
-      setPolicyKindId(data?.policyKind.id ?? policyKind[0]?.id);
-      setContent(data?.content ?? '');
+      // setPolicyKindId(data?.policyKind.id ?? policyKind[0]?.id);
+      // setContent(data?.content ?? '');
     } else {
       setPolicyKindId(policyKind[0]?.id);
       setContent('');
@@ -141,9 +142,7 @@ export function PolicyDetailModal({
       }
     >
       <h3>약관 제목</h3>
-      <Input
-      // value={title} onChange={handleChange}
-      />
+      <Input value={data && data.title} onChange={handleChange} />
       <h3 style={{ marginTop: '15px' }}>분류</h3>
       <Checkbox.Group options={options} onChange={handleChange} />
       <TransformBox alignItems="center" marginTop="30px">

@@ -1,16 +1,37 @@
 import { useEffect, useState } from 'react';
 import { Divider, notification } from 'antd';
-import * as S from './style';
-import { ProjectAddBasicInfo } from '../../components/ProjectAdd/ProjectAddBasicInfo/ProjectAddBasicInfo';
-import { ProjectAddCollusionInfo } from '../../components/ProjectAdd/ProjectAddCollusionInfo/ProjectAddCollusionInfo';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
+import { FIND_PROJECT } from '../../graphql/query/findProject';
+import { useParams } from 'react-router-dom';
+import * as S from './style';
 import Loader from '../../components/Loader';
+import { ProjectStateModal } from '../../components/ProjectStateModal';
+import { BasicInfo } from '../../components/ProjectAdd/BasicInfo/BasicInfo';
+import { CollusionInfo } from '../../components/ProjectAdd/CollusionInfo/CollusionInfo';
+import { CollusionHistory } from '../../components/ProjectAdd/CollusionHistory/CollusionHistory';
+import { TransactioDetails } from '../../components/ProjectAdd/TransactioDetails/TransactioDetails';
+import { DividendManagement } from '../../components/ProjectAdd/DividendManagement/DividendManagement';
 
-export function ProjectAdd() {
+type Props = {
+  isFix?: boolean;
+  isAdd?: boolean;
+};
+
+export function ProjectAdd({ isFix, isAdd }: Props) {
+  const params = useParams();
   const btns = ['1. 기본정보', '2. 공모정보'];
+  const fixBtns = [
+    '1. 기본정보',
+    '2. 공모정보',
+    '3. 공모내역',
+    '4. 거래내역',
+    '5. 배당관리',
+    '6. 매각관리',
+  ];
+  const btnAble = [true, true, true, true, true, true];
   const [variables, setVariables] = useState<any>({});
-  const [nowAble, setNowAble] = useState('1. 기본정보');
+  const [nowAble, setNowAble] = useState(0);
 
   const submitHandle = () => {
     createProjectByAdmin({
@@ -31,11 +52,9 @@ export function ProjectAdd() {
     onCompleted: (_data) => {
       notification.success({ message: '프로젝트 생성을 완료했습니다.' });
       setVariables({});
-      setNowAble('1. 기본정보');
+      setNowAble(0);
     },
   });
-
-  useEffect(() => {}, []);
 
   const handleChange = (key: string, value: any) => {
     if (key === 'name') {
@@ -58,18 +77,44 @@ export function ProjectAdd() {
     });
   };
 
+  const onClickHandle = (idx: number) => {
+    btnAble[idx] && setNowAble(idx);
+  };
+
+  useEffect(() => {
+    if (isFix && params.projectId) {
+      findProject({
+        variables: {
+          id: +params.projectId,
+        },
+      });
+    }
+    if (isAdd) {
+      setVariables({});
+    }
+  }, [isAdd, isFix]);
+
+  const [findProject] = useLazyQuery(FIND_PROJECT, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setVariables(data.findProject);
+    },
+  });
+
   if (loading) {
     return <Loader />;
   }
-
   return (
     <div>
-      <Divider>프로젝트 등록</Divider>
+      {isFix && <ProjectStateModal state={'헤헤헹'} />}
+      <Divider>{isFix ? '프로젝트 상세' : '프로젝트 등록'}</Divider>
       <S.TopBtns>
-        {btns.map((item, idx) => (
+        {(isFix ? fixBtns : btns).map((item, idx) => (
           <S.AddBtn
-            onClick={() => setNowAble(item)}
-            style={{ backgroundColor: `${nowAble === item ? '#5d28dd' : ''}` }}
+            onClick={() => onClickHandle(idx)}
+            style={{ backgroundColor: `${nowAble === idx ? '#5d28dd' : ''}` }}
             key={item}
           >
             {item}
@@ -77,15 +122,19 @@ export function ProjectAdd() {
         ))}
       </S.TopBtns>
 
-      {nowAble === '1. 기본정보' ? (
-        <ProjectAddBasicInfo variables={variables} handleChange={handleChange} />
-      ) : (
-        <ProjectAddCollusionInfo
+      {nowAble === 0 && (
+        <BasicInfo variables={variables} handleChange={handleChange} isFix={isFix} />
+      )}
+      {nowAble === 1 && (
+        <CollusionInfo
           submitHandle={submitHandle}
           variables={variables}
           handleChange={handleChange}
         />
       )}
+      {nowAble === 2 && <CollusionHistory projectId={params.projectId && +params.projectId} />}
+      {nowAble === 3 && <TransactioDetails projectId={params.projectId && +params.projectId} />}
+      {nowAble === 4 && <DividendManagement projectId={params.projectId && +params.projectId} />}
     </div>
   );
 }

@@ -29,13 +29,10 @@ export type SubmitType = {
 };
 
 type Props = {
-  visible: boolean;
-  handleCancel: () => void;
   data?: any;
-  refetch: () => void;
 };
 
-export function SettingPopupDetailModal({ handleCancel, visible, data, refetch }: Props) {
+export function SettingPopupDetailModal({ data }: Props) {
   const [startDate, setStartDate] = useState<moment.Moment>();
   const [endDate, setEndDate] = useState<moment.Moment>();
   const getBase64 = (img: RcFile, callback: (url: string) => void) => {
@@ -82,8 +79,6 @@ export function SettingPopupDetailModal({ handleCancel, visible, data, refetch }
 
   return (
     <Modal
-      visible={visible}
-      onCancel={handleCancel}
       title="팝업 관리"
       centered
       width={800}

@@ -1,6 +1,10 @@
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import { Button, Divider, Form, Input, Tag, Table, notification } from 'antd';
+import {
+  FindManyPolicyOutput,
+  PolicyInFindManyPolicyOutput,
+} from '../../graphql/generated/graphql';
 
 export type PolicyType = {
   id: number;
@@ -16,7 +20,7 @@ export type PolicyType = {
   createdAt: string;
 };
 
-export const policyColumns: ColumnsType<PolicyType> = [
+export const policyColumns: ColumnsType<PolicyInFindManyPolicyOutput> = [
   {
     title: 'no',
     key: 'id',
@@ -25,12 +29,9 @@ export const policyColumns: ColumnsType<PolicyType> = [
   },
   {
     title: '약관 제목',
-    key: 'policyKind',
-    dataIndex: 'policyKind',
+    key: 'title',
+    dataIndex: 'title',
     align: 'center',
-    render: (val: { name: string }) => {
-      return val.name;
-    },
   },
   // {
   //   title: '약관 내용',
@@ -46,9 +47,9 @@ export const policyColumns: ColumnsType<PolicyType> = [
     key: 'admin',
     dataIndex: 'admin',
     align: 'center',
-    render: (val) => {
-      return val.name;
-    },
+    // render: (val) => {
+    //   return val.name;
+    // },
   },
   {
     title: '생성 일자',
@@ -61,8 +62,8 @@ export const policyColumns: ColumnsType<PolicyType> = [
   },
   {
     title: '필수여부',
-    key: 'essential',
-    dataIndex: 'essential',
+    key: 'isRequired',
+    dataIndex: 'isRequired',
     align: 'center',
     render: (val) => {
       return val ? <Tag color="blue">필수</Tag> : <Tag color="error">선택</Tag>;

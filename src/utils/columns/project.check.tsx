@@ -24,6 +24,9 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     key: 'id',
     dataIndex: 'id',
     align: 'center',
+    render(_value, _record, index) {
+      return index + 1;
+    },
   },
   {
     title: '프로젝트명',
@@ -38,7 +41,7 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     align: 'center',
     render: (val) => {
       const newVal = +val;
-      return newVal.toLocaleString();
+      return newVal.toLocaleString() + ' 원';
     },
   },
   {
@@ -48,7 +51,7 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     align: 'center',
     render: (val) => {
       const newVal = +val;
-      return newVal.toLocaleString();
+      return newVal.toLocaleString() + ' 원';
     },
   },
   {
@@ -58,7 +61,7 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     align: 'center',
     render: (val) => {
       const newVal = +val;
-      return newVal.toLocaleString();
+      return newVal.toLocaleString() + ' 개';
     },
   },
   {

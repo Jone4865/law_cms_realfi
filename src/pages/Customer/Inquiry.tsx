@@ -2,27 +2,34 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, Table, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { InquiryDetailModal } from '../../components/InquiryDetailModal';
+import { UserDetailModal } from '../../components/UserDetailModal';
 import {
   FindManyUserInquiryByAdminQuery,
+  FindManyUserInquiryCategoryQuery,
   UserInquiryInFindManyUserInquiryByAdminOutput,
 } from '../../graphql/generated/graphql';
-import { FIND_MANY_USER_INQUIRY_BY_ADMIN } from '../../graphql/query';
+import {
+  FIND_MANY_USER_INQUIRY_BY_ADMIN,
+  FIND_MANY_USER_INQUIRY_CATEGORY,
+} from '../../graphql/query';
 import { inquiryColumns } from '../../utils/columns/customer.inquiry';
 
 export function Inquiry() {
-  const [visible] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [modalData, setModalData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput>();
   const [inquiryData, setInquiryData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput[]>(
     [],
   );
+  const [inquiryCategorys, setInquiryCategorys] = useState<
+    FindManyUserInquiryCategoryQuery['findManyUserInquiryCategory']
+  >([]);
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [userInquiryCategoryId, setUserInquiryCategoryId] = useState(1);
-
+  const [userInquiryCategoryId, setUserInquiryCategoryId] = useState<number | null>(1);
   const handlePagination = (e: number) => {
     setCurrent(e);
     setSkip((e - 1) * take);
@@ -36,7 +43,7 @@ export function Inquiry() {
   const handleCancelDetail = () => {
     setDetailModalVisible(false);
   };
-
+  const handleCanceluserDetail = () => {};
   const handleSearch = (values: { searchText?: string }) => {
     findManyUserInquiryByAdmin({
       variables: {
@@ -75,6 +82,15 @@ export function Inquiry() {
     setDetailModalVisible(false);
   };
 
+  const [findManyUserInquiryCategory, { loading }] = useLazyQuery(FIND_MANY_USER_INQUIRY_CATEGORY, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setInquiryCategorys(data.findManyUserInquiryCategory);
+    },
+  });
+
   const [findManyUserInquiryByAdmin, {}] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
     FIND_MANY_USER_INQUIRY_BY_ADMIN,
     {
@@ -89,6 +105,7 @@ export function Inquiry() {
   );
 
   useEffect(() => {
+    findManyUserInquiryCategory({});
     findManyUserInquiryByAdmin({
       variables: {
         take,
@@ -102,6 +119,7 @@ export function Inquiry() {
 
   return (
     <>
+      <UserDetailModal email="" handleCancel={handleCanceluserDetail} visible={visible} />
       <InquiryDetailModal
         data={modalData}
         visible={detailModalVisible}
@@ -121,8 +139,13 @@ export function Inquiry() {
         </Form.Item>
       </Form>
       <Table
-        columns={inquiryColumns({ visible })}
+        columns={inquiryColumns({ setVisible, inquiryCategorys })}
         dataSource={inquiryData}
+        onChange={(v, filter) => {
+          setUserInquiryCategoryId(
+            filter && filter.userInquiryCategory ? +filter.userInquiryCategory[0] : null,
+          );
+        }}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: true,

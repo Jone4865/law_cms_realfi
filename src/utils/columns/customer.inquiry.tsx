@@ -1,14 +1,20 @@
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { UserInquiryInFindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
+import { Dispatch, SetStateAction } from 'react';
+import {
+  FindManyUserInquiryCategoryQuery,
+  UserInquiryInFindManyUserInquiryByAdminOutput,
+} from '../../graphql/generated/graphql';
 
 type Props = {
-  visible: boolean;
+  setVisible: Dispatch<SetStateAction<boolean>>;
+  inquiryCategorys: FindManyUserInquiryCategoryQuery['findManyUserInquiryCategory'];
 };
 
 export const inquiryColumns = ({
-  visible,
+  setVisible,
+  inquiryCategorys,
 }: Props): ColumnsType<UserInquiryInFindManyUserInquiryByAdminOutput> => [
   {
     title: 'no',
@@ -18,26 +24,32 @@ export const inquiryColumns = ({
   },
   {
     title: '문의 유형',
-    key: 'inquiryKind',
+    key: 'userInquiryCategory',
     dataIndex: 'userInquiryCategory',
     align: 'center',
     render: (val) => {
       return val.name;
     },
-    filters: [
-      {
-        text: 'Joe',
-        value: 'Joe',
-      },
-      {
-        text: 'Category 1',
-        value: 'Category 1',
-      },
-      {
-        text: 'Category 2',
-        value: 'Category 2',
-      },
-    ],
+    filters: inquiryCategorys.map((v) => ({ text: v.name, value: v.id })),
+    filterMultiple: false,
+  },
+  {
+    title: '이름',
+    key: 'name',
+    dataIndex: 'user',
+    align: 'center',
+    render: (val) => {
+      return val?.name ? <span onClick={(e) => setVisible(true)}>{val.name}</span> : '-';
+    },
+  },
+  {
+    title: '전화번호',
+    key: 'phone',
+    dataIndex: 'user',
+    align: 'center',
+    render: (val) => {
+      return val.phone.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+    },
   },
   {
     title: '접수일시',
@@ -57,25 +69,6 @@ export const inquiryColumns = ({
     },
     align: 'center',
   },
-  {
-    title: '전화번호',
-    key: 'phone',
-    dataIndex: 'user',
-    align: 'center',
-    render: (val) => {
-      return val.phone.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
-    },
-  },
-  {
-    title: '처리자',
-    key: 'name',
-    dataIndex: 'admin',
-    align: 'center',
-    render: (val) => {
-      return val?.name ? val.name : '-';
-    },
-  },
-
   {
     title: '처리 여부',
     key: 'isReply',

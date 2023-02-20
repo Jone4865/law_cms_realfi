@@ -48,7 +48,7 @@ function Layout() {
               </S.NoticeWrap>
             </S.NoticeContainer>
             <S.Time>
-              <FieldTimeOutlined style={{ color: 'white' }} />
+              <FieldTimeOutlined style={{ color: 'white', marginRight: 10 }} />
               <span>
                 {Min}:{Sec < 10 ? '0' + Sec : Sec}
               </span>

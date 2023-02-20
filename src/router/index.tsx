@@ -43,7 +43,8 @@ function Root() {
               <Route path="policy" element={<Policy />} />
               <Route path="/project">
                 <Route path="check" element={<ProjectCheck />} />
-                <Route path="add" element={<ProjectAdd />} />
+                <Route path="add" element={<ProjectAdd isAdd={true} />} />
+                <Route path="detail/:projectId" element={<ProjectAdd isFix={true} />} />
               </Route>
               {/* <Route path="setting" element={<Setting />} /> */}
             </Route>

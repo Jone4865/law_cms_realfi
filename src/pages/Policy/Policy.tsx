@@ -5,28 +5,26 @@ import { useLazyQuery, useQuery } from '@apollo/client';
 import { PolicyDetailModal } from '../../components/PolicyDetailModal';
 import TransformBox from '../../components/TransformBox';
 import { PolicyType, policyColumns } from '../../utils/columns';
+import { FIND_MANY_POLICY } from '../../graphql/query';
+import {
+  FindManyPolicyOutput,
+  FindManyPolicyQuery,
+  PolicyInFindManyPolicyOutput,
+} from '../../graphql/generated/graphql';
 
 export function Policy() {
-  const [policyData, setPolicyData] = useState<PolicyType[]>([
-    {
-      id: 0,
-      essential: true,
-      admin: { name: 'dawdwa' },
-      content: 'dawdawdwad',
-      createdAt: 'dawdawdaw',
-      policyKind: { name: 'dadwa', id: 0 },
-    },
-  ]);
+  const [policyData, setPolicyData] = useState<PolicyInFindManyPolicyOutput[]>([]);
   const [policyKind, setPolicyKind] = useState<KindType[]>([]);
   const [visible, setVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [modalData, setModalData] = useState<PolicyType>();
+  const [modalData, setModalData] = useState<PolicyInFindManyPolicyOutput>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
-
+  const [cursorId, setCursorId] = useState(0);
+  const [policyCategoryId, setPolicyCategoryId] = useState(0);
   const handlePagination = (e: number) => {
     setSkip((e - 1) * take);
     setCurrent(e);
@@ -37,10 +35,11 @@ export function Policy() {
     setIsEdit(false);
   };
 
-  const handleRow = (record: PolicyType) => {
+  const handleRow = (record: PolicyInFindManyPolicyOutput) => {
     setVisible(true);
     setIsEdit(true);
     setModalData(record);
+    console.log(record);
   };
 
   const handleCancel = () => {
@@ -73,42 +72,26 @@ export function Policy() {
     setSearchText(value.searchText ?? '');
   };
 
-  // get policy list
-  // const [getPolicies, { refetch, loading }] = useLazyQuery<
-  //   SeePolicyHistoryByAdminResponse,
-  //   SeePolicyHistoryByAdminParams
-  // >(SEE_POLICY_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setPolicyData(data.seePolicyHistoryByAdmin.policies);
-  //     setTotalCount(data.seePolicyHistoryByAdmin.totalCount);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
+  // // 요청 분기점
+  const [findManyPolicy, { loading }] = useLazyQuery(FIND_MANY_POLICY, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setTotalCount(data.findManyPolicy.totalCount);
+      setPolicyData(data.findManyPolicy.policies);
+    },
+  });
 
-  // get policy kind list
-  // useQuery<SeePolicyKindResponse>(SEE_POLICY_KIND, {
-  //   onCompleted: (data) => {
-  //     setPolicyKind(data.seePolicyKind);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
-  // pagination
-  // useEffect(() => {
-  //   getPolicies({
-  //     variables: {
-  //       skip,
-  //       take,
-  //       searchText,
-  //     },
-  //   });
-  // }, [take, skip]);
+  useEffect(() => {
+    findManyPolicy({
+      variables: {
+        take,
+        cursorId,
+        policyCategoryId,
+      },
+    });
+  }, []);
 
   return (
     <>

@@ -5,6 +5,7 @@ import { CREATE_FAQ_BY_ADMIN, UPDATE_FAQ_BY_ADMIN } from '../../graphql/mutation
 import { FaqType } from '../../utils/columns';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
+import { FindManyFaqCategoryQuery } from '../../graphql/generated/graphql';
 
 type Props = {
   visible: boolean;
@@ -12,7 +13,7 @@ type Props = {
   isEdit: boolean;
   data: FaqType | undefined;
   refetch: () => void;
-  faqCategory: FaqType[];
+  faqCategory: FindManyFaqCategoryQuery['findManyFaqCategory'];
 };
 
 export function FaqDetailModal({

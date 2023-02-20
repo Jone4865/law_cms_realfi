@@ -43,7 +43,7 @@ export function UserDetailModal({ email, handleCancel, visible }: Props) {
   }, [visible]);
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={handleCancel}
       footer={false}
       title={`${user?.nickname}의 상세정보`}
@@ -54,11 +54,7 @@ export function UserDetailModal({ email, handleCancel, visible }: Props) {
       centered
       width={1000}
     >
-      <Tabs
-        defaultActiveKey="1"
-        activeKey={selectedKey}
-        onChange={setSeletedKey}
-      >
+      <Tabs defaultActiveKey="1" activeKey={selectedKey} onChange={setSeletedKey}>
         <TabPane tab={<span>상세정보</span>} key="1">
           <Descriptions bordered>
             <Descriptions.Item
@@ -78,17 +74,6 @@ export function UserDetailModal({ email, handleCancel, visible }: Props) {
             </Descriptions.Item>
             <Descriptions.Item label="전화번호" span={24}>
               {user?.phone}
-            </Descriptions.Item>
-            <Descriptions.Item label="주소" span={24}>
-              {user && user.shippingAddresses.length > 0
-                ? user.shippingAddresses
-                    .filter((v) => v.isDefault)
-                    .map((v) => {
-                      return v.address.length
-                        ? v.address + ' ' + v.addressDetail
-                        : '배송지가 존재하지 않습니다.';
-                    })
-                : '배송지가 존재하지 않습니다.'}
             </Descriptions.Item>
           </Descriptions>
         </TabPane>

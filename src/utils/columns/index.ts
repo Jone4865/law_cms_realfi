@@ -30,3 +30,9 @@ export type { LesseeType } from './project.add.lessee';
 export { lesseeColumns } from './project.add.lessee';
 
 export { officialInfosColumns } from './project.add.officialInfos';
+
+export { collutionHistoryColumns } from './project.add.collutionhistory';
+
+export { transactioDetailsColumns } from './project.add.transactiodetails';
+
+export { dividendmanagementColumns } from './project.add.dividendmanagement';

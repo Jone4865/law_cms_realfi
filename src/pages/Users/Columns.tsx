@@ -2,6 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
+import { UserDetailModal } from '../../components/UserDetailModal';
 import {
   FindManyUserByAdminQuery,
   UserInFindManyUserByAdminOutput,
@@ -19,14 +20,13 @@ export function Columns() {
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
-  console.log(userData);
+
   const handleCancel = () => {
     setVisible(false);
   };
 
   const handleClickRow = (rec: UserInFindManyUserByAdminOutput) => {
     setModalData(rec);
-    setVisible(true);
   };
 
   const handleSearch = (value: { searchText?: string }) => {
@@ -76,6 +76,7 @@ export function Columns() {
 
   return (
     <>
+      <UserDetailModal email="dad" handleCancel={handleCancel} visible={visible} />
       <Divider>회원목록</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
@@ -89,7 +90,7 @@ export function Columns() {
         </Form.Item>
       </Form>
       <Table
-        columns={userListColumns}
+        columns={userListColumns({ setVisible })}
         dataSource={userData}
         pagination={{
           position: ['bottomCenter'],

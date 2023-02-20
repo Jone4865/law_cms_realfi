@@ -4,7 +4,7 @@ import * as S from '../style';
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
-import { ProjectAddBasicInput } from '../ProjectAddBasicInput/ProjectAddBasicInput';
+import { InputBasic } from '../InputBasic/InputBasic';
 import { investfileColumns, lesseeColumns, officialInfosColumns } from '../../../utils/columns';
 import { DocInCreateProjectByAdminArgs } from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
@@ -13,6 +13,7 @@ import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
 type Props = {
   handleChange: (key: string, value: any) => void;
   variables: any;
+  isFix?: boolean;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -23,7 +24,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
+export function BasicInfo({ handleChange, variables, isFix }: Props) {
   var regExp = /^[0-9]/g;
   const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -85,13 +86,6 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
     });
   };
 
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
   const handleRow = (rec: any) => {};
 
   const investDeleteClick = (idx: number) => () => {
@@ -115,9 +109,16 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
   };
 
   useEffect(() => {
-    if (visible) {
+    if (isFix) {
     }
   }, [investFileList, officialInfosFileList, visible]);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   return (
     <>
@@ -127,7 +128,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
         {/* <Button type="primary">저장</Button> */}
       </S.AddTitle>
       <S.AddFormContainer>
-        <ProjectAddBasicInput
+        <InputBasic
           handleChange={handleChange}
           title="프로젝트명"
           saveName="name"
@@ -191,19 +192,19 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
             />
           </S.Flex>
         </S.LocationWrap>
-        <ProjectAddBasicInput
+        <InputBasic
           title="용도지역"
           handleChange={handleChange}
           saveName="zoning"
           value={variables['zoning']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="주용도"
           handleChange={handleChange}
           saveName="mainPurpose"
           value={variables['mainPurpose']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="연면적"
           subTitle={
             <>
@@ -214,25 +215,25 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           saveName="grossFloorAreaMeter"
           value={+variables['grossFloorAreaMeter']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="연면적(평)"
           handleChange={handleChange}
           saveName="grossFloorAreaPyeong"
           value={+variables['grossFloorAreaPyeong']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="건폐율(%)"
           handleChange={handleChange}
           saveName="buildingCoverageRatio"
           value={+variables['buildingCoverageRatio']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="용적률(%)"
           handleChange={handleChange}
           saveName="floorAreaRatio"
           value={+variables['floorAreaRatio']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="공시지가"
           subTitle={
             <>
@@ -243,14 +244,14 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           saveName="officialLandPrice"
           value={+variables['officialLandPrice']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="준공일"
           datePicker={true}
           handleChange={handleChange}
           saveName="completionDate"
           value={variables['completionDate']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="투자정보 url"
           essential={false}
           handleChange={handleChange}
@@ -291,16 +292,19 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
+            width: '1300px',
           }}
         />
         {investFileList.length < 10 && (
-          <Button
-            onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
-            type="primary"
-            style={{ width: '200px', margin: '20px auto' }}
-          >
-            투자관련문서 추가
-          </Button>
+          <div style={{ width: '1300px', display: 'flex' }}>
+            <Button
+              onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
+              type="primary"
+              style={{ width: '200px', margin: '20px auto' }}
+            >
+              투자관련문서 추가
+            </Button>
+          </div>
         )}
         <S.AddTitle style={{ marginTop: '25px' }}>임차인 정보</S.AddTitle>
         <Table
@@ -317,15 +321,9 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
+            width: '1300px',
           }}
         />
-        {/* <Button
-          onClick={() => setLesseeNum([...lesseeNum, { id: lesseeNum.length + 1 }])}
-          type="primary"
-          style={{ width: '200px', margin: '20px auto' }}
-        >
-          임차인 추가
-        </Button> */}
         <S.AddTitle style={{ marginTop: '25px' }}>공시</S.AddTitle>
         <Table
           pagination={false}
@@ -343,18 +341,21 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
+            width: '1300px',
           }}
         />
         {officialInfosFileList.length < 10 && (
-          <Button
-            onClick={() =>
-              setOfficialInfosFileList([...officialInfosFileList, { file: null, name: '' }])
-            }
-            type="primary"
-            style={{ width: '200px', margin: '20px auto' }}
-          >
-            공시파일 추가
-          </Button>
+          <div style={{ width: '1300px', display: 'flex' }}>
+            <Button
+              onClick={() =>
+                setOfficialInfosFileList([...officialInfosFileList, { file: null, name: '' }])
+              }
+              type="primary"
+              style={{ width: '200px', margin: '20px auto' }}
+            >
+              공시파일 추가
+            </Button>
+          </div>
         )}
       </S.AddFormContainer>
     </>

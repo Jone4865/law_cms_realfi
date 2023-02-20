@@ -24,7 +24,7 @@ export const officialInfosColumns = ({
     title: '제목',
     key: 'name',
     align: 'center',
-    render: (_val) => {
+    render: (_val, record) => {
       return <Input placeholder="입력해주세요." />;
     },
   },

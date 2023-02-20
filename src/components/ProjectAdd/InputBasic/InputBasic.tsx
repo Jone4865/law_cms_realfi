@@ -1,6 +1,6 @@
 import { DatePicker, Input } from 'antd';
 import moment from 'moment';
-import * as S from './../style';
+import * as S from '../style';
 
 type Props = {
   title: string;
@@ -13,7 +13,7 @@ type Props = {
   disable?: boolean;
 };
 
-export function ProjectAddBasicInput({
+export function InputBasic({
   title,
   saveName,
   handleChange,
@@ -45,7 +45,9 @@ export function ProjectAddBasicInput({
           value={
             typeof value === 'string'
               ? value
-              : value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : !Number.isNaN(value)
+              ? value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : ''
           }
           disabled={disable && true}
           onChange={(e) => {

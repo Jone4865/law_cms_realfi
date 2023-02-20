@@ -112,7 +112,7 @@ export function AsideMenu() {
         </Menu.Item>
         <Menu.SubMenu key={'users'} title="회원관리" icon={<UserOutlined />}>
           <Menu.Item key={'users-columns'}>회원목록</Menu.Item>
-          <Menu.Item key={'users-change'}>한도변경 신청</Menu.Item>
+          <Menu.Item key={'users-change'}>자격변경 신청</Menu.Item>
           <Menu.Item key={'users-classifi'}>회원분류</Menu.Item>
         </Menu.SubMenu>
         <Menu.SubMenu key={'project'} title="프로젝트관리" icon={<ProjectOutlined />}>

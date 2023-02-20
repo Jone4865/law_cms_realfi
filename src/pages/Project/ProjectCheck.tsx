@@ -11,6 +11,7 @@ import {
   PublicOfferingStatus,
 } from '../../graphql/generated/graphql';
 import { projectCheckColumns } from '../../utils/columns';
+import { useNavigate } from 'react-router-dom';
 
 export function ProjectCheck() {
   const [take, setTake] = useState(10);
@@ -28,6 +29,7 @@ export function ProjectCheck() {
   const five = ['매각투표예정', '매각투표중', '매각투표완료'];
   const six = ['매각완료'];
   const [able, setAble] = useState<string[]>([]);
+  const navigator = useNavigate();
 
   const clickHandel = (item: string) => {
     if (item !== '전체') {
@@ -49,29 +51,12 @@ export function ProjectCheck() {
     }
   };
 
-  // const handleSearch = (values: { searchText?: string }) => {
-  //   findManyUserInquiryByAdmin({
-  //     variables: {
-  //       take,
-  //       skip,
-  //       searchText,
-  //       userInquiryCategoryId,
-  //     },
-  //     fetchPolicy: 'no-cache',
-  //   });
-  //   setCurrent(1);
-  //   setSkip(0);
-  //   setSearchText(values.searchText ?? '');
-  // };
-
   useEffect(() => {}, [able]);
   useEffect(() => {
     findManyProject({
       variables: {
         take: 10,
         skip: 0,
-        publicOfferingStatus: PublicOfferingStatus.Wait,
-        marketStatus: MarketStatus.Unlisted,
       },
     });
   }, []);
@@ -213,6 +198,11 @@ export function ProjectCheck() {
         columns={projectCheckColumns}
         scroll={{ x: 800 }}
         dataSource={findProjectData}
+        onRow={(rec) => {
+          return {
+            onClick: () => navigator(`/project/detail/${rec.id}`),
+          };
+        }}
         // loading={loading}
         pagination={{ position: ['bottomCenter'] }}
       />
