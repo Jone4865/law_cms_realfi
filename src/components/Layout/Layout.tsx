@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import useInterval from '../../utils/useInterval';
 
 import * as S from './style';

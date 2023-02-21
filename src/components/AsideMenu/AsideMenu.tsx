@@ -3,7 +3,6 @@ import { Menu } from 'antd';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as S from './style';
-import { menuItems } from '../../utils/menuItems';
 
 import {
   CustomerServiceOutlined,
@@ -119,7 +118,6 @@ export function AsideMenu() {
           <Menu.Item key={'project-check'}>프로젝트 조회</Menu.Item>
           <Menu.Item key={'project-add'}>프로젝트 등록</Menu.Item>
         </Menu.SubMenu>
-        {/* <Menu.Item key={'contract'}>체결내역관리</Menu.Item> */}
         <Menu.SubMenu key={'customer'} title="고객센터" icon={<CustomerServiceOutlined />}>
           <Menu.Item key={'customer-inquiry'}>1:1 문의</Menu.Item>
           <Menu.Item key={'customer-faq'}>FAQ 관리</Menu.Item>

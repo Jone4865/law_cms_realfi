@@ -1,5 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
-import { Descriptions, Modal, notification, Tabs } from 'antd';
+import { Descriptions, Modal, Tabs } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import { UserType } from '../../utils/columns';

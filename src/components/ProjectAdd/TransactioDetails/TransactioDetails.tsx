@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import { Button, notification, Table } from 'antd';
+import { notification, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { PublicOfferingInFindManyPublicOfferingByAdminOutput } from '../../../graphql/generated/graphql';
 import { FIND_MANY_PUBLIC_OFFERING_BY_ADMIN } from '../../../graphql/query';
@@ -40,7 +40,7 @@ export function TransactioDetails({ projectId }: Props) {
       },
       onCompleted: (data) => {
         setTotalCount(data.findManyPublicOfferingByAdmin.totalCount);
-        setCollutionHistoryData(data.findManyPublicOfferingByAdmin.publicOfferings);
+        // setCollutionHistoryData(data.findManyPublicOfferingByAdmin.publicOfferings);
       },
     },
   );

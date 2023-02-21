@@ -88,7 +88,7 @@ export const userListColumns = ({
       return value ? 'O' : 'X';
     },
   },
-  { title: '이용제한', key: 'block', dataIndex: 'block', align: 'center' },
+  // { title: '이용제한', key: 'block', dataIndex: 'block', align: 'center' },
   {
     title: '행동',
     key: 'do',

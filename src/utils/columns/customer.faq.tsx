@@ -37,6 +37,7 @@ export const faqColumns = ({ faqCategorys }: Props): ColumnsType<FaqInFindManyFa
       return val.name;
     },
     filters: faqCategorys.map((v) => ({ text: v.name, value: v.id })),
+    filterMultiple: false,
   },
   {
     title: '답변',

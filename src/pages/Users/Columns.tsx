@@ -48,7 +48,6 @@ export function Columns() {
     setCurrent(e);
   };
 
-  // // 요청 분기점
   const [findManyUserByAdmin, { loading }] = useLazyQuery<FindManyUserByAdminQuery>(
     FIND_MANY_USERS_BY_ADMIN,
     {
@@ -62,7 +61,6 @@ export function Columns() {
     },
   );
 
-  // 요청 코드
   useEffect(() => {
     findManyUserByAdmin({
       variables: {
@@ -109,7 +107,6 @@ export function Columns() {
             onClick: () => handleClickRow(rec),
           };
         }}
-        // rowKey={(rec) => rec.email}
         scroll={{ x: 800 }}
       />
     </>

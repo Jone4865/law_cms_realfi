@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import { Button, Divider, Form, Input, notification, Table } from 'antd';
+import { Button, Divider, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import { FaqDetailModal } from '../../components/FaqDetailModal';
@@ -66,7 +66,6 @@ export function Faq() {
     // }
   };
 
-  // faq 요청
   const [findManyFaqByAdmin, { loading }] = useLazyQuery<FindManyFaqByAdminQuery>(
     FIND_MANY_FAQ_BY_ADMIN,
     {
@@ -80,7 +79,6 @@ export function Faq() {
     },
   );
 
-  // faq 카테고리 요청
   const [findManyFaqCategory, {}] = useLazyQuery(FIND_MANY_FAQ_CATEGORY, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -114,19 +112,6 @@ export function Faq() {
         faqCategory={faqCategorys}
       />
       <Divider>FAQ</Divider>
-      {/* <Form layout="inline" onFinish={handleSearch}>
-        <Form.Item name="searchText">
-          <Input.Search
-            enterButton
-            placeholder="검색어(질문)"
-            onSearch={(e) => {
-              handleSearch({
-                searchText: e,
-              });
-            }}
-          />
-        </Form.Item>
-      </Form> */}
       <TransformBox justifyContent="flex-end">
         <Button type="primary" onClick={handleClick}>
           FAQ 등록

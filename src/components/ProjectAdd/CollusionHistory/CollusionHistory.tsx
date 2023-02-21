@@ -40,7 +40,7 @@ export function CollusionHistory({ projectId }: Props) {
       },
       onCompleted: (data) => {
         setTotalCount(data.findManyPublicOfferingByAdmin.totalCount);
-        setCollutionHistoryData(data.findManyPublicOfferingByAdmin.publicOfferings);
+        // setCollutionHistoryData(data.findManyPublicOfferingByAdmin.publicOfferings);
       },
     },
   );

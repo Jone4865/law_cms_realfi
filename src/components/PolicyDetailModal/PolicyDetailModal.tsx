@@ -1,9 +1,15 @@
-import { useMutation } from '@apollo/client';
-import { Button, Input, Modal, notification, Popconfirm, Select, Switch, Checkbox } from 'antd';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { Button, Input, Modal, notification, Switch, Checkbox } from 'antd';
 
 import React, { useEffect, useState } from 'react';
-import { PolicyInFindManyPolicyOutput } from '../../graphql/generated/graphql';
-import { PolicyType } from '../../utils/columns';
+import {
+  CreatePolicyByAdminMutationVariables,
+  FindPolicyQuery,
+  FindPolicyQueryVariables,
+  PolicyModel,
+} from '../../graphql/generated/graphql';
+import { CREATE_POLICY_BY_ADMIN } from '../../graphql/mutation';
+import { FIND_POLICY } from '../../graphql/query';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
 
@@ -11,48 +17,41 @@ type Props = {
   visible: boolean;
   handleCancel: () => void;
   isEdit: boolean;
-  data: PolicyInFindManyPolicyOutput | undefined;
-  refetch: () => void;
+  handleRefetch: () => void;
   policyKind: KindType[];
+  policyId: number | undefined;
 };
 
 export function PolicyDetailModal({
   visible,
   handleCancel,
   isEdit,
-  data,
-  refetch,
+  handleRefetch,
   policyKind,
+  policyId,
 }: Props) {
+  const [content, setContent] = useState('');
+  const [variables, setVariables] = useState<
+    | CreatePolicyByAdminMutationVariables
+    | { id: number; title: string; content: string; isRequired: boolean; createdAt: any }
+  >();
   const options = [
-    { label: '회원가입', value: '회원가입' },
-    { label: '비밀번호 초기화', value: '비밀번호 초기화' },
-    { label: '투자정보 입력', value: '투자정보 입력' },
-    { label: '투자자격 변경', value: '투자자격 변경' },
+    { label: '회원가입', value: 1 },
+    { label: '비밀번호 초기화', value: 2 },
+    { label: '투자정보 입력', value: 3 },
+    { label: '투자자격 변경', value: 4 },
   ];
 
-  const [content, setContent] = useState('');
-  const [policyKindId, setPolicyKindId] = useState<number>(1);
-  const [faqKindId, setFaqKindId] = useState(1);
-  const [faqKind, setFaqKind] = useState([
-    {
-      id: 0,
-      name: 'xawdwa',
-    },
-  ]);
-
   const handleClick = () => {
-    if (!content.length) {
-      return notification.error({ message: '약관 내용을 입력해주세요' });
-    }
-    const variables = {
-      content,
-      policyKindId,
-    };
     if (!isEdit) {
-      // createPolicy({
-      //   variables: variables,
-      // });
+      createPolicyByAdmin({
+        variables: {
+          content,
+          isRequired: variables?.isRequired ? variables?.isRequired : false,
+          title: variables?.title ? variables?.title : '',
+          policyCategoryIds: variables?.policyCategoryIds ? variables.policyCategoryIds : [],
+        },
+      });
     } else {
       // updatePolicy({
       //   variables: {
@@ -62,21 +61,6 @@ export function PolicyDetailModal({
       // });
     }
   };
-
-  // create policy
-  // const [createPolicy] = useMutation<CreatePolicyResponse, CreatePolicyParams>(
-  //   CREATE_POLICY,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '약관을 생성했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
 
   // update policy
   // const [updatePolicy] = useMutation<UpdatePolicyResponse, UpdatePolicyParams>(
@@ -111,21 +95,46 @@ export function PolicyDetailModal({
   //   },
   // );
 
-  const handleChange = () => {};
+  const [findPolicy] = useLazyQuery(FIND_POLICY, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setVariables(data.findPolicy);
+    },
+  });
+
+  const [createPolicyByAdmin] = useMutation(CREATE_POLICY_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      notification.success({ message: '약관을 생성했습니다.' });
+      handleRefetch();
+    },
+  });
+
+  const handleChange = (key: string, value: any) => {
+    setVariables((prev: any) => {
+      let newData: any = { ...prev };
+      newData[key] = value;
+      return newData;
+    });
+  };
 
   useEffect(() => {
-    if (isEdit) {
-      // setPolicyKindId(data?.policyKind.id ?? policyKind[0]?.id);
-      // setContent(data?.content ?? '');
-    } else {
-      setPolicyKindId(policyKind[0]?.id);
-      setContent('');
+    if (policyId) {
+      findPolicy({
+        variables: {
+          id: policyId,
+        },
+      });
     }
-  }, [visible]);
+  }, [policyId]);
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={handleCancel}
       width={1000}
       closable={false}
@@ -142,9 +151,9 @@ export function PolicyDetailModal({
       }
     >
       <h3>약관 제목</h3>
-      <Input value={data && data.title} onChange={handleChange} />
+      <Input value={variables?.title} onChange={(e) => handleChange('title', e.target.value)} />
       <h3 style={{ marginTop: '15px' }}>분류</h3>
-      <Checkbox.Group options={options} onChange={handleChange} />
+      <Checkbox.Group options={options} onChange={(e) => handleChange('policyCategoryIds', e)} />
       <TransformBox alignItems="center" marginTop="30px">
         <h3
           style={{
@@ -154,44 +163,16 @@ export function PolicyDetailModal({
           필수 여부
         </h3>
         <Switch
-          // checked={isFix}
           style={{
             margin: '0 10px',
           }}
-          // onChange={setisFix}
+          checked={variables?.isRequired ? true : false}
+          onChange={(e) => handleChange('isRequired', e)}
         />
       </TransformBox>
-      {/* {isEdit && (
-        <TransformBox justifyContent="space-between">
-          <h3>약관 종류</h3>
-          <>
-            <Popconfirm
-              title="정말 삭제하시겠습니까?"
-              okText="삭제"
-
-              // onConfirm={() => deletePolicy()}
-            >
-              <Button type="primary" danger>
-                삭제
-              </Button>
-            </Popconfirm>
-          </>
-        </TransformBox>
-      )} */}
-      {/* <Select
-        value={policyKindId}
-        style={{
-          width: 150,
-        }}
-        onChange={setPolicyKindId}
-      >
-        {policyKind.map((v) => {
-          return <Select.Option value={v.id}>{v.name}</Select.Option>;
-        })}
-      </Select> */}
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>약관 내용</h3>
-        <Editor state={content} setState={setContent} />
+        <Editor state={variables?.content ? variables?.content : ''} setState={setContent} />
       </TransformBox>
     </Modal>
   );

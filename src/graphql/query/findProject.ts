@@ -71,23 +71,3 @@ export const FIND_PROJECT = gql(/* GraphQL */ `
     }
   }
 `);
-
-// // 요청 분기점
-// const [findProject, { loading }] = useLazyQuery(
-//   FIND_PROJECT,
-//   {
-//     onError: (error) => {
-//       notification.error({ message: error.message });
-//     },
-//     onCompleted: (data) => {
-//       console.log(data);
-//     },
-//   },
-// );
-
-// // 요청 코드
-//   findProject({
-//     variables: {
-//       id:projectId
-//     },
-//   });

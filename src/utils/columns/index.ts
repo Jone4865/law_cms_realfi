@@ -36,3 +36,5 @@ export { collutionHistoryColumns } from './project.add.collutionhistory';
 export { transactioDetailsColumns } from './project.add.transactiodetails';
 
 export { dividendmanagementColumns } from './project.add.dividendmanagement';
+
+export { SettingColumns } from './setting';

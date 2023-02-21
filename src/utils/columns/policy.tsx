@@ -1,10 +1,7 @@
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { Button, Divider, Form, Input, Tag, Table, notification } from 'antd';
-import {
-  FindManyPolicyOutput,
-  PolicyInFindManyPolicyOutput,
-} from '../../graphql/generated/graphql';
+import { Tag } from 'antd';
+import { PolicyInFindManyPolicyOutput } from '../../graphql/generated/graphql';
 
 export type PolicyType = {
   id: number;
@@ -25,7 +22,9 @@ export const policyColumns: ColumnsType<PolicyInFindManyPolicyOutput> = [
     title: 'no',
     key: 'id',
     dataIndex: 'id',
-    align: 'center',
+    render: (val) => {
+      return val;
+    },
   },
   {
     title: '약관 제목',
@@ -33,23 +32,14 @@ export const policyColumns: ColumnsType<PolicyInFindManyPolicyOutput> = [
     dataIndex: 'title',
     align: 'center',
   },
-  // {
-  //   title: '약관 내용',
-  //   key: 'content',
-  //   dataIndex: 'content',
-  //   align: 'center',
-  //   render: (val: string) => {
-  //     return val.length > 40 ? val.substr(0, 40) + '...' : val;
-  //   },
-  // },
   {
     title: '작성자',
     key: 'admin',
     dataIndex: 'admin',
     align: 'center',
-    // render: (val) => {
-    //   return val.name;
-    // },
+    render: (val) => {
+      return val.name;
+    },
   },
   {
     title: '생성 일자',

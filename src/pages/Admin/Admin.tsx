@@ -1,5 +1,5 @@
-import { Button, Divider, Form, Input, notification, Table } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import { Button, Divider, Form, Input, Table } from 'antd';
+import React, { useState } from 'react';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
@@ -327,9 +327,7 @@ export function Admin() {
         visible={qrModalVisible}
         handleCancel={handleCancelQr}
         handleNext={handleNext}
-        email={email}
         otpSecret={secret}
-        setOtpSecret={setSecret}
       />
       <OtpInputModal
         loading={false}

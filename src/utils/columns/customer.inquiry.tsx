@@ -34,7 +34,7 @@ export const inquiryColumns = ({
     filterMultiple: false,
   },
   {
-    title: '이름',
+    title: '문의자',
     key: 'name',
     dataIndex: 'user',
     align: 'center',

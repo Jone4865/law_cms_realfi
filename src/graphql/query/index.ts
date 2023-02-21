@@ -13,4 +13,5 @@ export { FIND_MANY_PROJECT } from './findManyProject';
 export { FIND_MANY_PROJECT_DIVIDEND_BY_ADMIN } from './findManyProjectDividendByAdmin';
 export { FIND_PROJECT_FILE } from './findProjectFile';
 export { FIND_MANY_USER_INQUIRY_CATEGORY } from './findManyUserInquiryCategory';
-export { FIND_MANY_POLICY } from './findManyPolicy';
+export { FIND_MANY_POLICY_BY_ADMIN } from './findManyPolicyByAdmin';
+export { FIND_POLICY } from './findPolicy';

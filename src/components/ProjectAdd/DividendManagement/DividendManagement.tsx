@@ -2,7 +2,6 @@ import { useLazyQuery } from '@apollo/client';
 import { Button, Input, notification, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { FindManyProjectDividendByAdminOutput } from '../../../graphql/generated/graphql';
-import { FIND_MANY_PUBLIC_OFFERING_BY_ADMIN } from '../../../graphql/query';
 import { FIND_MANY_PROJECT_DIVIDEND_BY_ADMIN } from '../../../graphql/query/findManyProjectDividendByAdmin';
 import { dividendmanagementColumns } from '../../../utils/columns';
 import * as S from './style';

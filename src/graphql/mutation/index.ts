@@ -10,3 +10,4 @@ export { UPDATE_FAQ_BY_ADMIN } from './updateFaqByAdmin';
 export { UPDATE_NOTICE_BY_ADMIN } from './updateNoticeByAdmin';
 export { UPDATE_VOTE_KIND_BY_ADMIN } from './updateVoteKindByAdmin';
 export { UPLOAD_NOTICE_FILE_BY_ADMIN } from './uploadNoticeFileByAdmin';
+export { CREATE_POLICY_BY_ADMIN } from './createPolicyByAdmin';

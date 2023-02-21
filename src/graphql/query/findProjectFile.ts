@@ -10,23 +10,3 @@ export const FIND_PROJECT_FILE = gql(/* GraphQL */ `
     }
   }
 `);
-
-// // 요청 분기점
-// const [findProjectFile, { loading }] = useLazyQuery(
-//   FIND_PROJECT_FILE,
-//   {
-//     onError: (error) => {
-//       notification.error({ message: error.message });
-//     },
-//     onCompleted: (data) => {
-//       console.log(data);
-//     },
-//   },
-// );
-
-// // 요청 코드
-//   findProjectFile({
-//     variables: {
-//       id:projectId
-//     },
-//   });

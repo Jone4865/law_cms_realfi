@@ -29,7 +29,8 @@ export function Inquiry() {
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [userInquiryCategoryId, setUserInquiryCategoryId] = useState<number | null>(1);
+  const [userInquiryCategoryId, setUserInquiryCategoryId] = useState<number | undefined>(undefined);
+
   const handlePagination = (e: number) => {
     setCurrent(e);
     setSkip((e - 1) * take);
@@ -105,7 +106,7 @@ export function Inquiry() {
   );
 
   useEffect(() => {
-    findManyUserInquiryCategory({});
+    findManyUserInquiryCategory();
     findManyUserInquiryByAdmin({
       variables: {
         take,
@@ -134,7 +135,7 @@ export function Inquiry() {
               handleSearch({ searchText: e });
             }}
             enterButton
-            placeholder="검색어(문의내용, 닉네임)"
+            placeholder="검색어(문의자)"
           />
         </Form.Item>
       </Form>
@@ -143,7 +144,7 @@ export function Inquiry() {
         dataSource={inquiryData}
         onChange={(v, filter) => {
           setUserInquiryCategoryId(
-            filter && filter.userInquiryCategory ? +filter.userInquiryCategory[0] : null,
+            filter && filter.userInquiryCategory ? +filter.userInquiryCategory[0] : undefined,
           );
         }}
         pagination={{

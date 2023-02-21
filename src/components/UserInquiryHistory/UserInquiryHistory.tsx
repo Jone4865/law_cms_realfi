@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { notification, Table } from 'antd';
-
-import { useLazyQuery } from '@apollo/client';
+import { Table } from 'antd';
 import { InquiryType, userInquiryColumns } from '../../utils/columns';
 
 type Props = {

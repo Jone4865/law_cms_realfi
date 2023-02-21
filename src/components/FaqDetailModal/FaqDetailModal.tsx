@@ -171,7 +171,11 @@ export function FaqDetailModal({
         }}
       >
         {faqCategory.map((v: any) => {
-          return <Select.Option value={v.id}>{v.name}</Select.Option>;
+          return (
+            <Select.Option key={v} value={v.id}>
+              {v.name}
+            </Select.Option>
+          );
         })}
       </Select>
       <TransformBox alignItems="center" justifyContent="space-between" marginTop="30px">

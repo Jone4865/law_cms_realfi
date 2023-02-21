@@ -1,21 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Image,
-  Input,
-  message,
-  Modal,
-  notification,
-  Popconfirm,
-  Table,
-  Upload,
-} from 'antd';
+import React, { useState } from 'react';
+import { Button, DatePicker, Input, message, Modal, Popconfirm, Upload } from 'antd';
 import * as S from './style';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useMutation } from '@apollo/client';
 import TransformBox from '../TransformBox';
 import moment from 'moment';
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/lib/upload';
@@ -62,7 +48,6 @@ export function SettingPopupDetailModal({ data }: Props) {
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj as RcFile, (url) => {
         setLoading(false);
         setImageUrl(url);
