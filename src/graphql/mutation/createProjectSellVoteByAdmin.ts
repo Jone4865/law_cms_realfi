@@ -7,10 +7,7 @@ export const CREATE_PROJECT_SELL_VOTE_BY_ADMIN = gql(/* GraphQL */ `
     $sellVoteEndedAt: Date!
     $soldDate: Date!
     $projectId: Int!
-    $docs: {
-      name: String!
-      file: Upload!
-    }
+    $docs: [DocInCreateProjectSellVoteArgs!]!
   ) {
     createProjectSellVoteByAdmin(
       requestSellAmount: $requestSellAmount

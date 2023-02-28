@@ -66,7 +66,9 @@ export const Hr = styled.hr`
 
 export const PopupWrap = styled.div``;
 
-export const Settings = styled.div``;
+export const Settings = styled.div`
+  padding-top: 30px;
+`;
 
 export const SettingsWrap = styled.div`
   display: flex;

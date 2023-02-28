@@ -33,6 +33,17 @@ export const policyColumns: ColumnsType<PolicyInFindManyPolicyOutput> = [
     align: 'center',
   },
   {
+    title: '분류',
+    key: 'policyCategories',
+    dataIndex: 'policyCategories',
+    align: 'center',
+    render(value) {
+      const name = value[0]?.name;
+      const length = value?.length - 1;
+      return value?.length >= 2 ? name + ' 외 ' + length + '개' : name;
+    },
+  },
+  {
     title: '작성자',
     key: 'admin',
     dataIndex: 'admin',

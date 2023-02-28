@@ -7,11 +7,17 @@ import { DocInCreateProjectByAdminArgs } from '../../graphql/generated/graphql';
 type Props = {
   handleInvestChange: (file: UploadFile<any>, index: number) => void | undefined;
   investDeleteClick: (idx: number) => () => void;
+  handleTitleChange: (idx: number, key: string, value: string) => void;
+  sellVote?: boolean;
+  lastSellVote?: boolean;
 };
 
 export const investfileColumns = ({
   handleInvestChange,
   investDeleteClick,
+  handleTitleChange,
+  sellVote = false,
+  lastSellVote = false,
 }: Props): ColumnsType<DocInCreateProjectByAdminArgs> => [
   {
     title: 'no',
@@ -24,18 +30,29 @@ export const investfileColumns = ({
     key: 'title',
     dataIndex: 'name',
     align: 'center',
-    render: (val) => {
-      return <Input placeholder="입력해주세요." value={val} />;
+    render: (val, _record, index) => {
+      return (
+        <Input
+          disabled={sellVote && true}
+          value={val}
+          onChange={(e) => handleTitleChange(index, 'docs', e.target.value)}
+          placeholder="입력해주세요."
+        />
+      );
     },
   },
   {
     title: '제출 된 파일',
     key: 'name',
-    dataIndex: 'name',
+    dataIndex: sellVote ? 'fileName' : 'file',
     align: 'center',
     render: (val, _record, index) => {
       return val ? (
-        val
+        sellVote ? (
+          val
+        ) : (
+          val.name
+        )
       ) : (
         <Upload
           showUploadList={false}
@@ -53,7 +70,8 @@ export const investfileColumns = ({
     dataIndex: 'name',
     render: (val, _record, index) => {
       return (
-        val && (
+        val &&
+        lastSellVote && (
           <Button onClick={investDeleteClick(index)} type="primary">
             삭제
           </Button>

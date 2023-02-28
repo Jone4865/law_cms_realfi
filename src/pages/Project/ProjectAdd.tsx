@@ -12,6 +12,8 @@ import { CollusionInfo } from '../../components/ProjectAdd/CollusionInfo/Collusi
 import { CollusionHistory } from '../../components/ProjectAdd/CollusionHistory/CollusionHistory';
 import { TransactioDetails } from '../../components/ProjectAdd/TransactioDetails/TransactioDetails';
 import { DividendManagement } from '../../components/ProjectAdd/DividendManagement/DividendManagement';
+import { SellVote } from '../../components/ProjectAdd/SellVote/SellVote';
+import { FindProjectQuery } from '../../graphql/generated/graphql';
 
 type Props = {
   isFix?: boolean;
@@ -30,8 +32,12 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
     '6. 매각관리',
   ];
   const btnAble = [true, true, true, true, true, true];
+  const [nowProjectState, setNowProjectState] = useState<string[]>([]);
   const [variables, setVariables] = useState<any>({});
   const [nowAble, setNowAble] = useState(0);
+  const [tabsName, setTabsName] = useState('');
+  const [publicOfferingQuantity, setPublicOfferingQuantity] =
+    useState<FindProjectQuery['findProject']['publicOfferingQuantity']>();
 
   const submitHandle = () => {
     createProjectByAdmin({
@@ -43,18 +49,6 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
       },
     });
   };
-
-  // 요청 분기점
-  const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (_data) => {
-      notification.success({ message: '프로젝트 생성을 완료했습니다.' });
-      setVariables({});
-      setNowAble(0);
-    },
-  });
 
   const handleChange = (key: string, value: any) => {
     if (key === 'name') {
@@ -81,6 +75,28 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
     btnAble[idx] && setNowAble(idx);
   };
 
+  const [findProject] = useLazyQuery(FIND_PROJECT, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setPublicOfferingQuantity(data.findProject.publicOfferingQuantity);
+      setVariables(data.findProject);
+      setTabsName(data.findProject.name);
+    },
+  });
+
+  const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '프로젝트 생성을 완료했습니다.' });
+      setVariables({});
+      setNowAble(0);
+    },
+  });
+
   useEffect(() => {
     if (isFix && params.projectId) {
       findProject({
@@ -92,23 +108,22 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
     if (isAdd) {
       setVariables({});
     }
+    setNowAble(0);
   }, [isAdd, isFix]);
-
-  const [findProject] = useLazyQuery(FIND_PROJECT, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (data) => {
-      setVariables(data.findProject);
-    },
-  });
 
   if (loading) {
     return <Loader />;
   }
+
   return (
     <div>
-      {isFix && <ProjectStateModal state={'헤헤헹'} />}
+      {isFix && (
+        <ProjectStateModal
+          setProjectState={setNowProjectState}
+          variables={variables}
+          nowProjectState={nowProjectState}
+        />
+      )}
       <Divider>{isFix ? '프로젝트 상세' : '프로젝트 등록'}</Divider>
       <S.TopBtns>
         {(isFix ? fixBtns : btns).map((item, idx) => (
@@ -123,18 +138,38 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
       </S.TopBtns>
 
       {nowAble === 0 && (
-        <BasicInfo variables={variables} handleChange={handleChange} isFix={isFix} />
+        <BasicInfo
+          projectId={params.projectId ? +params.projectId : undefined}
+          variables={variables}
+          handleChange={handleChange}
+          isFix={isFix}
+        />
       )}
       {nowAble === 1 && (
         <CollusionInfo
+          isFix={isFix}
           submitHandle={submitHandle}
           variables={variables}
           handleChange={handleChange}
         />
       )}
-      {nowAble === 2 && <CollusionHistory projectId={params.projectId && +params.projectId} />}
+      {nowAble === 2 && (
+        <CollusionHistory projectId={params.projectId && +params.projectId} variables={variables} />
+      )}
       {nowAble === 3 && <TransactioDetails projectId={params.projectId && +params.projectId} />}
-      {nowAble === 4 && <DividendManagement projectId={params.projectId && +params.projectId} />}
+      {nowAble === 4 && (
+        <DividendManagement
+          projectId={params.projectId ? +params.projectId : undefined}
+          publicOfferingQuantity={publicOfferingQuantity}
+        />
+      )}
+      {nowAble === 5 && (
+        <SellVote
+          projectState={nowProjectState}
+          projectId={params.projectId && +params.projectId}
+          tabsName={tabsName}
+        />
+      )}
     </div>
   );
 }

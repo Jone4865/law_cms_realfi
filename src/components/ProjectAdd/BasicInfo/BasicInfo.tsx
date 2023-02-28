@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Upload, Modal, Table, Input } from 'antd';
+import { Button, Upload, Modal, Table, Input, notification } from 'antd';
 import * as S from '../style';
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
@@ -9,11 +9,14 @@ import { investfileColumns, lesseeColumns, officialInfosColumns } from '../../..
 import { DocInCreateProjectByAdminArgs } from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
 import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
+import { useLazyQuery } from '@apollo/client';
+import { FIND_MANY_PROJECT_FILE } from '../../../graphql/query';
 
 type Props = {
   handleChange: (key: string, value: any) => void;
   variables: any;
   isFix?: boolean;
+  projectId: number | undefined;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -24,7 +27,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export function BasicInfo({ handleChange, variables, isFix }: Props) {
+export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) {
   var regExp = /^[0-9]/g;
   const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -71,7 +74,6 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
   const handleInvestChange = (file: UploadFile<any>, index: number) => {
     setInvestFileList((prev) => {
       prev[index].file = file;
-      prev[index].name = file.name;
       handleChange('docs', prev);
       return [...prev];
     });
@@ -80,7 +82,6 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
   const handleOfficialInfosChange = (file: UploadFile<any>, index: number) => {
     setOfficialInfosFileList((prev) => {
       prev[index].file = file;
-      prev[index].name = file.name;
       handleChange('officialInfos', prev);
       return [...prev];
     });
@@ -108,11 +109,36 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
     setVisible(false);
   };
 
-  useEffect(() => {
-    if (isFix) {
+  const handleTitleChange = (idx: number, key: string, value: string) => {
+    if (key === 'docs') {
+      setInvestFileList((prev) => {
+        prev[idx].name = value;
+        handleChange('docs', prev);
+        return [...prev];
+      });
+    } else {
+      setOfficialInfosFileList((prev) => {
+        prev[idx].name = value;
+        handleChange('officialInfos', prev);
+        return [...prev];
+      });
     }
-  }, [investFileList, officialInfosFileList, visible]);
+  };
 
+  const [findManyProjectFile] = useLazyQuery(FIND_MANY_PROJECT_FILE, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      console.log(data);
+    },
+  });
+
+  useEffect(() => {
+    findManyProjectFile({ variables: { projectId: projectId ? projectId : 0 } });
+  }, []);
+  useEffect(() => {}, [investFileList, officialInfosFileList, visible]);
+  console.log(variables);
   const uploadButton = (
     <div>
       <PlusOutlined />
@@ -270,7 +296,7 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
                 onPreview={handlePreview}
                 onChange={handleProjectimageChange}
               >
-                {projectImageFileList.length >= 10 ? null : uploadButton}
+                {projectImageFileList?.length >= 10 ? null : uploadButton}
               </Upload>
               <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
                 <img alt="프로젝트 이미지" style={{ width: '100%' }} src={previewImage} />
@@ -281,7 +307,7 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
         <S.AddTitle style={{ marginBottom: '5px' }}>투자관련문서</S.AddTitle>
         <Table
           pagination={false}
-          columns={investfileColumns({ handleInvestChange, investDeleteClick })}
+          columns={investfileColumns({ handleInvestChange, investDeleteClick, handleTitleChange })}
           dataSource={investFileList}
           onRow={(rec) => {
             return {
@@ -295,7 +321,7 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
             width: '1300px',
           }}
         />
-        {investFileList.length < 10 && (
+        {investFileList?.length < 10 && (
           <div style={{ width: '1300px', display: 'flex' }}>
             <Button
               onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
@@ -309,7 +335,7 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
         <S.AddTitle style={{ marginTop: '25px' }}>임차인 정보</S.AddTitle>
         <Table
           pagination={false}
-          columns={lesseeColumns({})}
+          columns={lesseeColumns({ handleChange, variables })}
           dataSource={lesseeNum}
           onRow={(rec) => {
             return {
@@ -330,6 +356,7 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
           columns={officialInfosColumns({
             handleOfficialInfosChange,
             officialInfosDeleteClick,
+            handleTitleChange,
           })}
           dataSource={officialInfosFileList}
           onRow={(rec) => {
@@ -344,7 +371,7 @@ export function BasicInfo({ handleChange, variables, isFix }: Props) {
             width: '1300px',
           }}
         />
-        {officialInfosFileList.length < 10 && (
+        {officialInfosFileList?.length < 10 && (
           <div style={{ width: '1300px', display: 'flex' }}>
             <Button
               onClick={() =>

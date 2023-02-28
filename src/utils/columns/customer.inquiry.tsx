@@ -8,12 +8,12 @@ import {
 } from '../../graphql/generated/graphql';
 
 type Props = {
-  setVisible: Dispatch<SetStateAction<boolean>>;
+  setUserDetailVisible: Dispatch<SetStateAction<boolean>>;
   inquiryCategorys: FindManyUserInquiryCategoryQuery['findManyUserInquiryCategory'];
 };
 
 export const inquiryColumns = ({
-  setVisible,
+  setUserDetailVisible,
   inquiryCategorys,
 }: Props): ColumnsType<UserInquiryInFindManyUserInquiryByAdminOutput> => [
   {
@@ -39,7 +39,18 @@ export const inquiryColumns = ({
     dataIndex: 'user',
     align: 'center',
     render: (val) => {
-      return val?.name ? <span onClick={(e) => setVisible(true)}>{val.name}</span> : '-';
+      return val?.name ? (
+        <span
+          onClick={(e) => {
+            setUserDetailVisible(true);
+            e.stopPropagation();
+          }}
+        >
+          {val.name}
+        </span>
+      ) : (
+        '-'
+      );
     },
   },
   {

@@ -56,6 +56,7 @@ export const FIND_PROJECT = gql(/* GraphQL */ `
       }
       dDay
       # dailyTransactionInfos {
+      #   id
       #   standardPrice
       #   openPrice
       #   closePrice
@@ -67,6 +68,7 @@ export const FIND_PROJECT = gql(/* GraphQL */ `
       #   fluctuationRatio
       #   totalVolume
       #   totalTransactionAmount
+      #   createdAt
       # }
     }
   }

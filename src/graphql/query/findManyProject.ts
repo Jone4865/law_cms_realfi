@@ -19,11 +19,46 @@ export const FIND_MANY_PROJECT = gql(/* GraphQL */ `
         publicOfferingStatus
         marketStatus
         voteStatus
+        isSold
+        zip
+        address
+        addressDetail
+        latitude
+        longitude
+        zoning
+        mainPurpose
+        grossFloorAreaMeter
+        grossFloorAreaPyeong
+        buildingCoverageRatio
+        floorAreaRatio
+        officialLandPrice
+        completionDate
+        lessee
+        leaseStartedAt
+        leaseEndedAt
+        url
+        tabsName
         totalPublicOfferingAmount
         publicOfferingPrice
         publicOfferingQuantity
+        issuer
         publicOfferingStartedAt
         publicOfferingEndedAt
+        allocationDate
+        receivingDate
+        listedDate
+        currentPublicOfferingAmount
+        currentPublicOfferingQuantity
+        totalDailyVolume
+        totalDailyTransactionAmount
+        dividendPeriod
+        createdAt
+        signId
+        projectId
+        currentPrice
+        fluctuation
+        fluctuationRatio
+        quantity
         projectFiles {
           id
           fileKind
@@ -31,17 +66,21 @@ export const FIND_MANY_PROJECT = gql(/* GraphQL */ `
           fileName
         }
         dailyTransactionInfos {
+          id
           standardPrice
-          totalTransactionAmount
-          totalVolume
+          openPrice
+          closePrice
+          upperLimitPrice
+          lowerLimitPrice
+          dayHighPrice
+          dayLowPrice
           fluctuation
           fluctuationRatio
+          totalVolume
+          totalTransactionAmount
+          createdAt
         }
-        currentPrice
-        fluctuation
-        fluctuationRatio
         dDay
-        url
       }
       totalCount
     }

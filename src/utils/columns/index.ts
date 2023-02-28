@@ -38,3 +38,5 @@ export { transactioDetailsColumns } from './project.add.transactiodetails';
 export { dividendmanagementColumns } from './project.add.dividendmanagement';
 
 export { SettingColumns } from './setting';
+
+export { sellvoteColumns } from './project.add.sellvote';

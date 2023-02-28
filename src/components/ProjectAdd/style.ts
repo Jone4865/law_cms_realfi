@@ -68,7 +68,7 @@ export const DateInputWrap = styled.div`
 `;
 
 export const DateInputTitle = styled.div`
-  width: 100px;
+  width: 140px;
 `;
 
 export const DateInputBody = styled.div`

@@ -1,7 +1,11 @@
-import { Tag } from 'antd';
+import { Form, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import { Switch } from 'antd';
+import { publicOfferingStatusToText } from '../publicOfferingStatusToText';
+import { MarketStatus, PublicOfferingStatus, VoteStatus } from '../../graphql/generated/graphql';
+import { marketStatusToText } from '../marketStatusToText';
+import { voteStatusToText } from '../voteStatusToText';
 
 export type ProjectCheckType = {
   id: number;
@@ -16,6 +20,9 @@ export type ProjectCheckType = {
   date: Date;
   manager: string;
   state: string;
+  publicOfferingStatus: PublicOfferingStatus;
+  marketStatus: MarketStatus;
+  voteStatus: VoteStatus;
 };
 
 export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
@@ -103,8 +110,8 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
   },
   {
     title: '등록일자',
-    key: 'date',
-    dataIndex: 'date',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center',
     render: (val) => {
       return val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '-';
@@ -121,14 +128,27 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     key: 'publicOfferingStatus',
     dataIndex: 'publicOfferingStatus',
     align: 'center',
+    render(_val, record) {
+      return (
+        publicOfferingStatusToText(record.publicOfferingStatus) +
+        ' / ' +
+        marketStatusToText(record.marketStatus) +
+        ' / ' +
+        voteStatusToText(record.voteStatus)
+      );
+    },
   },
   {
     title: '노출',
     key: 'see',
     dataIndex: 'see',
     align: 'center',
-    render: (val) => {
-      return <Switch></Switch>;
+    render: (_val) => {
+      return (
+        <Form onClick={(e) => e.stopPropagation()}>
+          <Switch />
+        </Form>
+      );
     },
   },
 ];

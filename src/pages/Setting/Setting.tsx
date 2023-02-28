@@ -1,9 +1,9 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { Button, Input, notification, TimePicker } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import TransformBox from '../../components/TransformBox';
 import { FindCompanyDataQuery } from '../../graphql/generated/graphql';
+import { UPDATE_FEES_BY_ADMIN, UPDATE_HOURS_BY_ADMIN } from '../../graphql/mutation';
 import { FIND_MANY_COMPANY_DATA } from '../../graphql/query/findCompanyData';
 import * as S from './style';
 
@@ -11,15 +11,6 @@ export function Setting() {
   const btns = ['수수료 관리', '설정 관리'];
   const [nowAble, setNowAble] = useState('수수료 관리');
   const [settingData, setSettingData] = useState<FindCompanyDataQuery['findCompanyData']>();
-
-  const [findCompanyData, { loading }] = useLazyQuery(FIND_MANY_COMPANY_DATA, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (data) => {
-      setSettingData({ ...data.findCompanyData });
-    },
-  });
 
   useEffect(() => {
     findCompanyData();
@@ -32,6 +23,46 @@ export function Setting() {
       return newData;
     });
   };
+
+  const handleUpdateFees = () => {
+    updateFeesByAdmin({
+      variables: settingData,
+      fetchPolicy: 'no-cache',
+    });
+  };
+
+  const handleUpdateHours = () => {
+    updateHoursByAdmin({
+      variables: settingData,
+    });
+  };
+
+  const [findCompanyData] = useLazyQuery(FIND_MANY_COMPANY_DATA, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setSettingData({ ...data.findCompanyData });
+    },
+  });
+
+  const [updateFeesByAdmin] = useMutation(UPDATE_FEES_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '수수료를 변경하였습니다.' });
+    },
+  });
+
+  const [updateHoursByAdmin] = useMutation(UPDATE_HOURS_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '시간을 변경하였습니다.' });
+    },
+  });
 
   return (
     <div>
@@ -80,7 +111,7 @@ export function Setting() {
               />
               <span>%</span>
             </S.ChargeWrap>
-            <Button type="primary" style={{ marginLeft: '100px' }}>
+            <Button onClick={handleUpdateFees} type="primary" style={{ marginLeft: '100px' }}>
               저장
             </Button>
           </S.Charge>
@@ -123,9 +154,6 @@ export function Setting() {
         )} */}
         {nowAble === '설정 관리' && (
           <S.Settings>
-            <TransformBox justifyContent="center" marginTop="15px">
-              <Button type="primary">저장</Button>
-            </TransformBox>
             <S.SettingsWrap>
               <S.SettingsTitle>공모 시간 설정</S.SettingsTitle>
               <S.SettingsRight>
@@ -136,8 +164,8 @@ export function Setting() {
                 </S.SettingsDivTitle>
                 <S.SettingsInputs>
                   <TimePicker
-                    onChange={(v) => handleChange('marketStartHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('publicOfferingStartHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.publicOfferingStartHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -146,8 +174,8 @@ export function Setting() {
                     }}
                   />
                   <TimePicker
-                    onChange={(v) => handleChange('publicOfferingEndHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('publicOfferingEndHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.publicOfferingEndHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -156,8 +184,8 @@ export function Setting() {
                     }}
                   />
                   <TimePicker
-                    onChange={(v) => handleChange('publicOfferingFinalHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('publicOfferingFinalHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.publicOfferingFinalHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -177,7 +205,7 @@ export function Setting() {
                 </S.SettingsDivTitle>
                 <S.SettingsInputs>
                   <TimePicker
-                    onChange={(v) => handleChange('marketStartHour', v)}
+                    onChange={(v) => handleChange('marketStartHour', v?.format('HH:mm'))}
                     value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
                     format={'HH:mm'}
                     style={{
@@ -187,8 +215,8 @@ export function Setting() {
                     }}
                   />
                   <TimePicker
-                    onChange={(v) => handleChange('marketEndHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('marketEndHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.marketEndHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -209,8 +237,8 @@ export function Setting() {
                 </S.SettingsDivTitle>
                 <S.SettingsInputs>
                   <TimePicker
-                    onChange={(v) => handleChange('voteStartHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('voteStartHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.voteStartHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -219,8 +247,8 @@ export function Setting() {
                     }}
                   />
                   <TimePicker
-                    onChange={(v) => handleChange('voteEndHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('voteEndHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.voteEndHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -229,8 +257,8 @@ export function Setting() {
                     }}
                   />
                   <TimePicker
-                    onChange={(v) => handleChange('voteFinalHour', v)}
-                    value={moment(`2022-01-01 ${settingData?.marketStartHour}`)}
+                    onChange={(v) => handleChange('voteFinalHour', v?.format('HH:mm'))}
+                    value={moment(`2022-01-01 ${settingData?.voteFinalHour}`)}
                     format={'HH:mm'}
                     style={{
                       width: '150px',
@@ -241,6 +269,9 @@ export function Setting() {
                 </S.SettingsInputs>
               </S.SettingsRight>
             </S.SettingsWrap>
+            <Button onClick={handleUpdateHours} type="primary" style={{ marginLeft: '190px' }}>
+              저장
+            </Button>
           </S.Settings>
         )}
       </S.Bottom>

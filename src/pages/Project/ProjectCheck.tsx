@@ -58,7 +58,7 @@ export function ProjectCheck() {
   }, []);
 
   // // 요청 분기점
-  const [findManyProject, { loading }] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
+  const [findManyProject] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
     onError: (error) => {
       notification.error({ message: error.message });
     },

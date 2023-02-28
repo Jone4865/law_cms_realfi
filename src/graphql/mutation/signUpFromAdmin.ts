@@ -5,6 +5,7 @@ export const SIGN_UP_FROM_ADMIN = gql(/* GraphQL */ `
     signUpFromAdmin(email: $email, password: $password, name: $name) {
       email
       name
+      otpSecret
       createdAt
       role
     }

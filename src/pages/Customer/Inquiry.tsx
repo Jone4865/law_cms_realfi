@@ -15,8 +15,8 @@ import {
 import { inquiryColumns } from '../../utils/columns/customer.inquiry';
 
 export function Inquiry() {
-  const [visible, setVisible] = useState(false);
-  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [userDetailVisible, setUserDetailVisible] = useState(false);
+  const [inquiryDetailVisible, setInquiryDetailVisible] = useState(false);
   const [modalData, setModalData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput>();
   const [inquiryData, setInquiryData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput[]>(
     [],
@@ -37,14 +37,16 @@ export function Inquiry() {
   };
 
   const handleRow = (data: UserInquiryInFindManyUserInquiryByAdminOutput) => {
-    setDetailModalVisible(true);
+    setInquiryDetailVisible(true);
     setModalData(data);
   };
 
-  const handleCancelDetail = () => {
-    setDetailModalVisible(false);
+  const handleCancelInquiryDetail = () => {
+    setInquiryDetailVisible(false);
   };
-  const handleCanceluserDetail = () => {};
+  const handleCancelUserDetail = () => {
+    setUserDetailVisible(false);
+  };
   const handleSearch = (values: { searchText?: string }) => {
     findManyUserInquiryByAdmin({
       variables: {
@@ -80,10 +82,10 @@ export function Inquiry() {
       },
       fetchPolicy: 'no-cache',
     });
-    setDetailModalVisible(false);
+    setInquiryDetailVisible(false);
   };
 
-  const [findManyUserInquiryCategory, { loading }] = useLazyQuery(FIND_MANY_USER_INQUIRY_CATEGORY, {
+  const [findManyUserInquiryCategory] = useLazyQuery(FIND_MANY_USER_INQUIRY_CATEGORY, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
@@ -92,7 +94,7 @@ export function Inquiry() {
     },
   });
 
-  const [findManyUserInquiryByAdmin, {}] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
+  const [findManyUserInquiryByAdmin] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
     FIND_MANY_USER_INQUIRY_BY_ADMIN,
     {
       onError: (error) => {
@@ -116,15 +118,15 @@ export function Inquiry() {
       },
       fetchPolicy: 'no-cache',
     });
-  }, [skip, take, userInquiryCategoryId, visible, searchText]);
+  }, [skip, take, userInquiryCategoryId, userDetailVisible, searchText]);
 
   return (
     <>
-      <UserDetailModal email="" handleCancel={handleCanceluserDetail} visible={visible} />
+      <UserDetailModal email="" handleCancel={handleCancelUserDetail} visible={userDetailVisible} />
       <InquiryDetailModal
         data={modalData}
-        visible={detailModalVisible}
-        handleCancel={handleCancelDetail}
+        visible={inquiryDetailVisible}
+        handleCancel={handleCancelInquiryDetail}
         refetch={handleRefetch}
       />
       <Divider>1:1 문의</Divider>
@@ -140,7 +142,7 @@ export function Inquiry() {
         </Form.Item>
       </Form>
       <Table
-        columns={inquiryColumns({ setVisible, inquiryCategorys })}
+        columns={inquiryColumns({ setUserDetailVisible, inquiryCategorys })}
         dataSource={inquiryData}
         onChange={(v, filter) => {
           setUserInquiryCategoryId(

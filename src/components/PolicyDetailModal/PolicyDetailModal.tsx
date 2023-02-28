@@ -2,13 +2,7 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { Button, Input, Modal, notification, Switch, Checkbox } from 'antd';
 
 import React, { useEffect, useState } from 'react';
-import {
-  CreatePolicyByAdminMutationVariables,
-  FindPolicyQuery,
-  FindPolicyQueryVariables,
-  PolicyModel,
-} from '../../graphql/generated/graphql';
-import { CREATE_POLICY_BY_ADMIN } from '../../graphql/mutation';
+import { CREATE_POLICY_BY_ADMIN, UPDATE_POLICY_BY_ADMIN } from '../../graphql/mutation';
 import { FIND_POLICY } from '../../graphql/query';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
@@ -18,8 +12,8 @@ type Props = {
   handleCancel: () => void;
   isEdit: boolean;
   handleRefetch: () => void;
-  policyKind: KindType[];
-  policyId: number | undefined;
+  policyData: any;
+  policyId: number;
 };
 
 export function PolicyDetailModal({
@@ -27,55 +21,114 @@ export function PolicyDetailModal({
   handleCancel,
   isEdit,
   handleRefetch,
-  policyKind,
+  policyData,
   policyId,
 }: Props) {
   const [content, setContent] = useState('');
-  const [variables, setVariables] = useState<
-    | CreatePolicyByAdminMutationVariables
-    | { id: number; title: string; content: string; isRequired: boolean; createdAt: any }
-  >();
-  const options = [
-    { label: '회원가입', value: 1 },
-    { label: '비밀번호 초기화', value: 2 },
-    { label: '투자정보 입력', value: 3 },
-    { label: '투자자격 변경', value: 4 },
-  ];
+  const [variables, setVariables] = useState<any>([]);
+  const [checkBoxDefaultVlaue, setCheckBoxDefaultVlaue] = useState<string[]>([]);
+  const options = ['회원가입', '비밀번호 초기화', '투자정보 입력', '투자자격 변경'];
 
   const handleClick = () => {
+    const categorys = options.map((option, idx) =>
+      checkBoxDefaultVlaue.includes(option) ? idx + 1 : 0,
+    );
+    const policyCategoryIds = categorys.filter((v) => v !== 0);
+    if (content.length === 0) {
+      return notification.error({ message: '내용을 입력해주세요.' });
+    }
+    if (variables?.title.length === 0) {
+      return notification.error({ message: '제목을 입력해주세요.' });
+    }
+    if (policyCategoryIds.length === 0) {
+      return notification.error({ message: '분류를 선택해주세요.' });
+    }
+
     if (!isEdit) {
       createPolicyByAdmin({
         variables: {
           content,
           isRequired: variables?.isRequired ? variables?.isRequired : false,
           title: variables?.title ? variables?.title : '',
-          policyCategoryIds: variables?.policyCategoryIds ? variables.policyCategoryIds : [],
+          policyCategoryIds,
         },
+        fetchPolicy: 'no-cache',
       });
     } else {
-      // updatePolicy({
-      //   variables: {
-      //     ...variables,
-      //     id: Number(data?.id ?? -1),
-      //   },
-      // });
+      updatePolicyByAdmin({
+        variables: {
+          id: policyId,
+          content,
+          isRequired: variables?.isRequired ? variables?.isRequired : false,
+          title: variables?.title ? variables?.title : '',
+          policyCategoryIds,
+        },
+        fetchPolicy: 'no-cache',
+      });
+      handleRefetch();
     }
   };
 
-  // update policy
-  // const [updatePolicy] = useMutation<UpdatePolicyResponse, UpdatePolicyParams>(
-  //   UPDATE_POLICY,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '약관을 수정했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
+  const handleChange = (key: string, value: any) => {
+    setVariables((prev: any) => {
+      let newData: any = { ...prev };
+      newData[key] = value;
+      return newData;
+    });
+  };
+  const handleChangeCategorys = (e: any) => {
+    setCheckBoxDefaultVlaue(e);
+  };
+
+  useEffect(() => {
+    if (isEdit) {
+      setVariables(policyData[0]);
+      setCheckBoxDefaultVlaue(policyData[0]?.policyCategories.map((v: { name: string }) => v.name));
+      findPolicy({
+        variables: {
+          id: policyId,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    } else {
+      setVariables(undefined);
+      setCheckBoxDefaultVlaue([]);
+      setContent('');
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    handleChange('content', content);
+  }, [content]);
+
+  const [findPolicy] = useLazyQuery(FIND_POLICY, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setContent(data.findPolicy.content);
+    },
+  });
+
+  const [createPolicyByAdmin] = useMutation(CREATE_POLICY_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: () => {
+      notification.success({ message: '약관을 생성했습니다.' });
+      handleRefetch();
+    },
+  });
+
+  const [updatePolicyByAdmin] = useMutation(UPDATE_POLICY_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '답변을 작성했습니다.' });
+      handleRefetch();
+    },
+  });
 
   // delete policy
   // const [deletePolicy] = useMutation<DeletePolicyResponse, DeletePolicyParams>(
@@ -94,43 +147,6 @@ export function PolicyDetailModal({
   //     },
   //   },
   // );
-
-  const [findPolicy] = useLazyQuery(FIND_POLICY, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (data) => {
-      setVariables(data.findPolicy);
-    },
-  });
-
-  const [createPolicyByAdmin] = useMutation(CREATE_POLICY_BY_ADMIN, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (data) => {
-      notification.success({ message: '약관을 생성했습니다.' });
-      handleRefetch();
-    },
-  });
-
-  const handleChange = (key: string, value: any) => {
-    setVariables((prev: any) => {
-      let newData: any = { ...prev };
-      newData[key] = value;
-      return newData;
-    });
-  };
-
-  useEffect(() => {
-    if (policyId) {
-      findPolicy({
-        variables: {
-          id: policyId,
-        },
-      });
-    }
-  }, [policyId]);
 
   return (
     <Modal
@@ -153,7 +169,11 @@ export function PolicyDetailModal({
       <h3>약관 제목</h3>
       <Input value={variables?.title} onChange={(e) => handleChange('title', e.target.value)} />
       <h3 style={{ marginTop: '15px' }}>분류</h3>
-      <Checkbox.Group options={options} onChange={(e) => handleChange('policyCategoryIds', e)} />
+      <Checkbox.Group
+        value={checkBoxDefaultVlaue}
+        options={options}
+        onChange={(e) => handleChangeCategorys(e)}
+      />
       <TransformBox alignItems="center" marginTop="30px">
         <h3
           style={{
@@ -172,7 +192,7 @@ export function PolicyDetailModal({
       </TransformBox>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>약관 내용</h3>
-        <Editor state={variables?.content ? variables?.content : ''} setState={setContent} />
+        <Editor state={content} setState={setContent} />
       </TransformBox>
     </Modal>
   );

@@ -4,13 +4,15 @@ import * as S from '../style';
 
 type Props = {
   title: string;
-  saveName: string;
-  value: string | number;
-  handleChange: (key: string, value: any) => void;
+  value: string | number | null | undefined;
+  saveName?: string;
   subTitle?: React.ReactNode;
   essential?: boolean;
   datePicker?: boolean;
   disable?: boolean;
+  placeHolder?: boolean;
+  color?: string;
+  handleChange?: (key: string, value: any) => void;
 };
 
 export function InputBasic({
@@ -22,6 +24,8 @@ export function InputBasic({
   datePicker,
   disable,
   value,
+  placeHolder = true,
+  color,
 }: Props) {
   return (
     <S.AddFormWrap>
@@ -32,16 +36,16 @@ export function InputBasic({
       </S.AddTitle>
       {datePicker ? (
         <DatePicker
-          defaultValue={value ? moment(value) : undefined}
+          disabled={disable && true}
+          value={value ? moment(value) : undefined}
           onChange={(v) => {
-            console.log(value);
             handleChange && handleChange(`${saveName}`, moment(v).format('YYYY-MM-DD'));
           }}
           style={{ width: '370px' }}
         />
       ) : (
         <Input
-          style={{ width: '371px' }}
+          style={{ width: '371px', color: `${color}` }}
           value={
             typeof value === 'string'
               ? value
@@ -52,10 +56,10 @@ export function InputBasic({
           disabled={disable && true}
           onChange={(e) => {
             typeof value === 'string'
-              ? handleChange(`${saveName}`, e.target.value)
-              : handleChange(`${saveName}`, e.target.value.replace(/\D/g, ''));
+              ? handleChange && handleChange(`${saveName}`, e.target.value)
+              : handleChange && handleChange(`${saveName}`, e.target.value.replace(/\D/g, ''));
           }}
-          placeholder="입력해주세요."
+          placeholder={placeHolder ? '입력해주세요.' : '-'}
         />
       )}
     </S.AddFormWrap>
