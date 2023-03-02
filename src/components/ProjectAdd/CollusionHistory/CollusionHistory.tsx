@@ -107,19 +107,19 @@ export function CollusionHistory({ projectId, variables }: Props) {
           <S.Right>
             <div>
               {variables.currentPublicOfferingAmount
-                .toString()
+                ?.toString()
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
                 ' / ' +
                 variables?.totalPublicOfferingAmount
-                  .toString()
+                  ?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </div>
             <div>
               {variables.currentPublicOfferingQuantity
-                .toString()
+                ?.toString()
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
                 ' / ' +
-                variables?.publicOfferingQuantity.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                variables?.publicOfferingQuantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </div>
             <div>
               {(variables.dDay != null ? variables.dDay + ' / ' : '') +

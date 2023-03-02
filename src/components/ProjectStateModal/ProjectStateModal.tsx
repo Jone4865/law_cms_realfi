@@ -20,7 +20,7 @@ export function ProjectStateModal({ variables, setProjectState, nowProjectState 
     '마켓거래중',
     '매각투표 예정',
     '매각투표 중',
-    '매각투표완료',
+    '매각투표 완료',
     '매각 완료',
   ];
 
@@ -28,10 +28,10 @@ export function ProjectStateModal({ variables, setProjectState, nowProjectState 
     setProjectState([
       marketStatusToText(variables.marketStatus),
       publicOfferingStatusToText(variables.publicOfferingStatus),
-      voteStatusToText(variables.voteStatus),
+      variables.voteStatus && voteStatusToText(variables.voteStatus),
     ]);
   }, [variables.publicOfferingStatus, variables.marketStatus, variables.voteStatus]);
-  console.log(nowProjectState.length);
+
   return (
     <S.ModalContainer>
       <S.Title>

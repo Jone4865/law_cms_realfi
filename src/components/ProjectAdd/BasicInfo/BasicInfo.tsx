@@ -130,7 +130,7 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
-      console.log(data);
+      // console.log(data);
     },
   });
 
@@ -138,7 +138,7 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
     findManyProjectFile({ variables: { projectId: projectId ? projectId : 0 } });
   }, []);
   useEffect(() => {}, [investFileList, officialInfosFileList, visible]);
-  console.log(variables);
+
   const uploadButton = (
     <div>
       <PlusOutlined />

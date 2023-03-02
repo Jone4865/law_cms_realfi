@@ -8,16 +8,14 @@ type Props = {
   handleInvestChange: (file: UploadFile<any>, index: number) => void | undefined;
   investDeleteClick: (idx: number) => () => void;
   handleTitleChange: (idx: number, key: string, value: string) => void;
-  sellVote?: boolean;
-  lastSellVote?: boolean;
+  disable?: boolean;
 };
 
 export const investfileColumns = ({
   handleInvestChange,
   investDeleteClick,
   handleTitleChange,
-  sellVote = false,
-  lastSellVote = false,
+  disable = false,
 }: Props): ColumnsType<DocInCreateProjectByAdminArgs> => [
   {
     title: 'no',
@@ -33,7 +31,7 @@ export const investfileColumns = ({
     render: (val, _record, index) => {
       return (
         <Input
-          disabled={sellVote && true}
+          disabled={disable}
           value={val}
           onChange={(e) => handleTitleChange(index, 'docs', e.target.value)}
           placeholder="입력해주세요."
@@ -44,15 +42,11 @@ export const investfileColumns = ({
   {
     title: '제출 된 파일',
     key: 'name',
-    dataIndex: sellVote ? 'fileName' : 'file',
+    dataIndex: 'file',
     align: 'center',
     render: (val, _record, index) => {
       return val ? (
-        sellVote ? (
-          val
-        ) : (
-          val.name
-        )
+        val.name
       ) : (
         <Upload
           showUploadList={false}
@@ -70,8 +64,7 @@ export const investfileColumns = ({
     dataIndex: 'name',
     render: (val, _record, index) => {
       return (
-        val &&
-        lastSellVote && (
+        val && (
           <Button onClick={investDeleteClick(index)} type="primary">
             삭제
           </Button>

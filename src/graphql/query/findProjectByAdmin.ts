@@ -1,8 +1,8 @@
 import { gql } from '../generated';
 
-export const FIND_PROJECT = gql(/* GraphQL */ `
-  query findProject($id: Int!) {
-    findProject(id: $id) {
+export const FIND_PROJECT_BY_ADMIN = gql(/* GraphQL */ `
+  query findProjectByAdmin($id: Int!) {
+    findProjectByAdmin(id: $id) {
       id
       name
       publicOfferingStatus
@@ -41,13 +41,6 @@ export const FIND_PROJECT = gql(/* GraphQL */ `
       totalDailyVolume
       totalDailyTransactionAmount
       dividendPeriod
-      createdAt
-      signId
-      projectId
-      currentPrice
-      fluctuation
-      fluctuationRatio
-      quantity
       projectFiles {
         id
         fileKind
@@ -55,21 +48,6 @@ export const FIND_PROJECT = gql(/* GraphQL */ `
         fileName
       }
       dDay
-      # dailyTransactionInfos {
-      #   id
-      #   standardPrice
-      #   openPrice
-      #   closePrice
-      #   upperLimitPrice
-      #   lowerLimitPrice
-      #   dayHighPrice
-      #   dayLowPrice
-      #   fluctuation
-      #   fluctuationRatio
-      #   totalVolume
-      #   totalTransactionAmount
-      #   createdAt
-      # }
     }
   }
 `);

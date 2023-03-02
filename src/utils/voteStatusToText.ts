@@ -3,7 +3,7 @@ import { VoteStatus } from '../graphql/generated/graphql';
 export const voteStatusToText = (kind: VoteStatus) => {
   switch (kind) {
     case VoteStatus.None:
-      return '계획 없음';
+      return undefined;
     case VoteStatus.SellVoteComplete:
       return '매각투표 완료';
     case VoteStatus.SellVoteWait:

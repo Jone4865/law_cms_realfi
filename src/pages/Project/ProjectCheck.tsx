@@ -4,7 +4,7 @@ import * as S from './style';
 import { Calendar } from '../../components/Calendar';
 import moment from 'moment';
 import { useLazyQuery } from '@apollo/client';
-import { FIND_MANY_PROJECT } from '../../graphql/query/findManyProject';
+import { FIND_MANY_PROJECT } from '../../graphql/query';
 import { FindManyProjectQuery } from '../../graphql/generated/graphql';
 import { projectCheckColumns } from '../../utils/columns';
 import { useNavigate } from 'react-router-dom';

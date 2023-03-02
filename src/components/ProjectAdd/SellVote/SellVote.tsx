@@ -8,16 +8,17 @@ import * as S from './style';
 type Props = {
   projectId: number | undefined | '';
   tabsName: string;
-  projectState: string[];
+  projectStates: string[];
 };
 
-export function SellVote({ projectId = 1, tabsName, projectState }: Props) {
-  const [totalArr, setTotalArr] = useState<number[]>([0]);
+export function SellVote({ projectId = 1, tabsName, projectStates }: Props) {
+  const [totalArr, setTotalArr] = useState<number[]>([]);
   const [variables, setVariables] = useState<any>(undefined);
   const [take, setTake] = useState(1);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(1);
   const [current, setCurrent] = useState(0);
+  const [voteState, setVoteState] = useState('매각투표 예정');
 
   const [findManyProjectSellVoteByAdmin] = useLazyQuery(FIND_MANY_PROJECT_SELL_VOTE_BY_ADMIN, {
     onError: (error) => {
@@ -34,14 +35,24 @@ export function SellVote({ projectId = 1, tabsName, projectState }: Props) {
       variables: {
         id: +projectId,
       },
+      fetchPolicy: 'no-cache',
     });
+    setVoteState(projectStates[2]);
   }, [projectId]);
 
   useEffect(() => {
-    if (totalCount !== 1) {
-      const totalArr = [];
-      for (let i = 0; i < totalCount + 1; i++) {
-        totalArr.push(i);
+    const totalArr = [];
+    if (totalCount === 0) {
+      setTotalArr([0]);
+    } else {
+      if (voteState === undefined || voteState === '매각투표 완료' || voteState === '매각투표 중') {
+        for (let i = 0; i < totalCount; i++) {
+          totalArr.push(i);
+        }
+      } else {
+        for (let i = 0; i < totalCount + 1; i++) {
+          totalArr.push(i);
+        }
       }
       setTotalArr(totalArr);
     }
@@ -65,11 +76,13 @@ export function SellVote({ projectId = 1, tabsName, projectState }: Props) {
         ))}
       </S.TitleWrap>
       <SellVoteTabs
-        projectState={projectState}
-        totalSellVoteCount={totalCount}
         projectId={projectId}
         variables={variables ? variables[current] : []}
         tabsName={tabsName}
+        voteState={voteState}
+        totalCount={totalCount}
+        current={current + 1}
+        setVariables={setVariables}
       />
     </S.Container>
   );

@@ -23,3 +23,4 @@ export { FIND_PUBLIC_OFFERING_REFUND_INFO_BY_ADMIN } from './findPublicOfferingR
 export { FIND_PUBLIC_OFFERING_BY_ADMIN } from './findPublicOfferingByAdmin';
 export { FIND_MANY_DIVIDEND_ADMIN } from './findManyDividendByAdmin';
 export { FIND_MANY_PROJECT_FILE } from './findManyProjectFile';
+export { FIND_PROJECT_BY_ADMIN } from './findProjectByAdmin';

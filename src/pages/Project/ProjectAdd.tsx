@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Divider, notification } from 'antd';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
-import { FIND_PROJECT } from '../../graphql/query/findProject';
+import { FIND_PROJECT_BY_ADMIN } from '../../graphql/query';
 import { useParams } from 'react-router-dom';
 import * as S from './style';
 import Loader from '../../components/Loader';
@@ -13,7 +13,7 @@ import { CollusionHistory } from '../../components/ProjectAdd/CollusionHistory/C
 import { TransactioDetails } from '../../components/ProjectAdd/TransactioDetails/TransactioDetails';
 import { DividendManagement } from '../../components/ProjectAdd/DividendManagement/DividendManagement';
 import { SellVote } from '../../components/ProjectAdd/SellVote/SellVote';
-import { FindProjectQuery } from '../../graphql/generated/graphql';
+import { FindProjectByAdminQuery } from '../../graphql/generated/graphql';
 
 type Props = {
   isFix?: boolean;
@@ -37,7 +37,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
   const [nowAble, setNowAble] = useState(0);
   const [tabsName, setTabsName] = useState('');
   const [publicOfferingQuantity, setPublicOfferingQuantity] =
-    useState<FindProjectQuery['findProject']['publicOfferingQuantity']>();
+    useState<FindProjectByAdminQuery['findProjectByAdmin']['publicOfferingQuantity']>();
 
   const submitHandle = () => {
     createProjectByAdmin({
@@ -75,14 +75,14 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
     btnAble[idx] && setNowAble(idx);
   };
 
-  const [findProject] = useLazyQuery(FIND_PROJECT, {
+  const [findProjectByAdmin] = useLazyQuery(FIND_PROJECT_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
-      setPublicOfferingQuantity(data.findProject.publicOfferingQuantity);
-      setVariables(data.findProject);
-      setTabsName(data.findProject.name);
+      setPublicOfferingQuantity(data.findProjectByAdmin.publicOfferingQuantity);
+      setVariables(data.findProjectByAdmin);
+      setTabsName(data.findProjectByAdmin.name);
     },
   });
 
@@ -99,7 +99,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
 
   useEffect(() => {
     if (isFix && params.projectId) {
-      findProject({
+      findProjectByAdmin({
         variables: {
           id: +params.projectId,
         },
@@ -165,7 +165,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
       )}
       {nowAble === 5 && (
         <SellVote
-          projectState={nowProjectState}
+          projectStates={nowProjectState}
           projectId={params.projectId && +params.projectId}
           tabsName={tabsName}
         />
