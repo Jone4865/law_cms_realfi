@@ -13,9 +13,10 @@ import * as S from './style';
 type Props = {
   projectId: number | undefined;
   publicOfferingQuantity: number | undefined;
+  tabsName: string;
 };
 
-export function DividendManagement({ projectId = 0, publicOfferingQuantity }: Props) {
+export function DividendManagement({ projectId = 0, publicOfferingQuantity, tabsName }: Props) {
   const [dividendData, setDividendData] = useState<
     FindManyProjectDividendByAdminQuery['findManyProjectDividendByAdmin']['projectDividends']
   >([]);
@@ -61,7 +62,7 @@ export function DividendManagement({ projectId = 0, publicOfferingQuantity }: Pr
   const handlePayClick = () => {
     payDividendByAdmin({
       variables: {
-        id: projectId,
+        id: projectDividendId,
       },
     });
   };
@@ -120,6 +121,7 @@ export function DividendManagement({ projectId = 0, publicOfferingQuantity }: Pr
         handleCancel={handleCancel}
         projectDividendId={projectDividendId}
         visible={dividendListModalVisible}
+        tabsName={tabsName}
       />
       <S.Container>
         <S.DividendCycle>

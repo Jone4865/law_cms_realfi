@@ -9,15 +9,16 @@ type Props = {
   projectId: number | undefined | '';
   tabsName: string;
   projectStates: string[];
+  handleRefetch: () => void;
 };
 
-export function SellVote({ projectId = 1, tabsName, projectStates }: Props) {
+export function SellVote({ projectId = 1, tabsName, projectStates, handleRefetch }: Props) {
   const [totalArr, setTotalArr] = useState<number[]>([]);
   const [variables, setVariables] = useState<any>(undefined);
   const [take, setTake] = useState(1);
   const [skip, setSkip] = useState(0);
-  const [totalCount, setTotalCount] = useState(1);
-  const [current, setCurrent] = useState(0);
+  const [voteTotalCount, setVoteTotalCount] = useState(1);
+  const [voteCurrent, setVoteCurrent] = useState(0);
   const [voteState, setVoteState] = useState('매각투표 예정');
 
   const [findManyProjectSellVoteByAdmin] = useLazyQuery(FIND_MANY_PROJECT_SELL_VOTE_BY_ADMIN, {
@@ -25,7 +26,7 @@ export function SellVote({ projectId = 1, tabsName, projectStates }: Props) {
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
-      setTotalCount(data.findManyProjectSellVoteByAdmin.totalCount);
+      setVoteTotalCount(data.findManyProjectSellVoteByAdmin.totalCount);
       setVariables(data.findManyProjectSellVoteByAdmin.projectSellVotes);
     },
   });
@@ -42,21 +43,21 @@ export function SellVote({ projectId = 1, tabsName, projectStates }: Props) {
 
   useEffect(() => {
     const totalArr = [];
-    if (totalCount === 0) {
+    if (voteTotalCount === 0) {
       setTotalArr([0]);
     } else {
-      if (voteState === undefined || voteState === '매각투표 완료' || voteState === '매각투표 중') {
-        for (let i = 0; i < totalCount; i++) {
+      if (voteState !== undefined) {
+        for (let i = 0; i < voteTotalCount; i++) {
           totalArr.push(i);
         }
       } else {
-        for (let i = 0; i < totalCount + 1; i++) {
+        for (let i = 0; i < voteTotalCount + 1; i++) {
           totalArr.push(i);
         }
       }
       setTotalArr(totalArr);
     }
-  }, [totalCount]);
+  }, [voteTotalCount, voteState, voteCurrent]);
 
   return (
     <S.Container>
@@ -65,10 +66,10 @@ export function SellVote({ projectId = 1, tabsName, projectStates }: Props) {
           <S.Title
             style={{
               cursor: 'pointer',
-              fontWeight: idx === current ? 'bold' : 'normal',
-              color: idx === current ? 'red' : 'black',
+              fontWeight: idx === voteCurrent ? 'bold' : 'normal',
+              color: idx === voteCurrent ? 'red' : 'black',
             }}
-            onClick={() => setCurrent(idx)}
+            onClick={() => setVoteCurrent(idx)}
             key={idx}
           >
             {number + 1}차 투표
@@ -77,12 +78,12 @@ export function SellVote({ projectId = 1, tabsName, projectStates }: Props) {
       </S.TitleWrap>
       <SellVoteTabs
         projectId={projectId}
-        variables={variables ? variables[current] : []}
+        variables={variables ? variables[voteCurrent] : []}
         tabsName={tabsName}
         voteState={voteState}
-        totalCount={totalCount}
-        current={current + 1}
-        setVariables={setVariables}
+        voteTotalCount={voteTotalCount}
+        voteCurrent={voteCurrent + 1}
+        handleRefetch={handleRefetch}
       />
     </S.Container>
   );

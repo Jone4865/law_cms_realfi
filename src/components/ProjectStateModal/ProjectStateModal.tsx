@@ -7,13 +7,13 @@ import * as S from './style';
 
 type Props = {
   variables: any;
-  setProjectState: React.Dispatch<React.SetStateAction<string[]>>;
   nowProjectState: string[];
+  setProjectState: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export function ProjectStateModal({ variables, setProjectState, nowProjectState }: Props) {
   const projectStates = [
-    '공모예정',
+    '공모 예정',
     '공모 중',
     '공모완료',
     '상장대기',
@@ -30,7 +30,7 @@ export function ProjectStateModal({ variables, setProjectState, nowProjectState 
       publicOfferingStatusToText(variables.publicOfferingStatus),
       variables.voteStatus && voteStatusToText(variables.voteStatus),
     ]);
-  }, [variables.publicOfferingStatus, variables.marketStatus, variables.voteStatus]);
+  }, [variables]);
 
   return (
     <S.ModalContainer>
@@ -38,12 +38,16 @@ export function ProjectStateModal({ variables, setProjectState, nowProjectState 
         프로젝트의 현재 상태는 <br />
         <S.State>
           [
-          {nowProjectState.map((text, idx) => (
-            <p key={idx}>
-              {text}
-              {idx < nowProjectState.length - 1 && '/'}
-            </p>
-          ))}
+          {nowProjectState.map(
+            (text, idx) =>
+              text !== undefined && (
+                <p key={idx}>
+                  {idx === 1 && '/'}
+                  {text}
+                  {idx === 1 && nowProjectState[2] !== undefined && '/'}
+                </p>
+              ),
+          )}
           ]
         </S.State>
         <br />

@@ -129,15 +129,13 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
-      // console.log(data);
-    },
   });
 
   useEffect(() => {
     findManyProjectFile({ variables: { projectId: projectId ? projectId : 0 } });
   }, []);
-  useEffect(() => {}, [investFileList, officialInfosFileList, visible]);
+
+  useEffect(() => {}, [investFileList, officialInfosFileList, visible, projectImageFileList]);
 
   const uploadButton = (
     <div>

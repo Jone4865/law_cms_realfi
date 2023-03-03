@@ -106,28 +106,36 @@ export function CollusionHistory({ projectId, variables }: Props) {
           </S.Left>
           <S.Right>
             <div>
-              {variables.currentPublicOfferingAmount
-                ?.toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
-                ' / ' +
-                variables?.totalPublicOfferingAmount
+              <S.Bold>
+                {variables.currentPublicOfferingAmount
                   ?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            </div>
-            <div>
-              {variables.currentPublicOfferingQuantity
+              </S.Bold>
+              <span>/</span>
+              {variables?.totalPublicOfferingAmount
                 ?.toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
-                ' / ' +
-                variables?.publicOfferingQuantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </div>
             <div>
-              {(variables.dDay != null ? variables.dDay + ' / ' : '') +
-                moment(variables.publicOfferingEndedAt).format('YYYY.MM.DD')}
+              <S.Bold>
+                {variables.currentPublicOfferingQuantity
+                  ?.toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              </S.Bold>
+              <span>/</span>
+              {variables?.publicOfferingQuantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </div>
             <div>
-              {variables.currentPublicOfferingQuantity / (variables?.publicOfferingQuantity / 100) +
-                '%'}
+              <S.Bold>{variables.dDay != null ? 'D-' + variables.dDay : ''}</S.Bold>
+              <span>/</span>
+              {moment(variables.publicOfferingEndedAt).format('YYYY.MM.DD')}
+            </div>
+            <div>
+              <S.Bold>
+                {variables.currentPublicOfferingQuantity /
+                  (variables?.publicOfferingQuantity / 100) +
+                  '%'}
+              </S.Bold>
             </div>
           </S.Right>
         </S.CollusionStates>

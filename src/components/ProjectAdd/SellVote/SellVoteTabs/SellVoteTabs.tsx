@@ -4,7 +4,6 @@ import { UploadFile } from 'antd/es/upload';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
-  DocInCreateProjectByAdminArgs,
   FindCompanyDataQuery,
   FindManySellVoteByAdminOutput,
   VoteKind,
@@ -15,8 +14,9 @@ import {
   UPDATE_VOTE_KIND_BY_ADMIN,
   VERIFY_VOTE_STATE_IS_SELL_VOTE_WAIT,
 } from '../../../../graphql/mutation';
-import { FIND_MANY_COMPANY_DATA } from '../../../../graphql/query/findCompanyData';
+import { FIND_MANY_COMPANY_DATA, FIND_MANY_SELL_VOTE_BY_ADMIN } from '../../../../graphql/query';
 import { investfileColumns, sellvoteColumns } from '../../../../utils/columns';
+import Loader from '../../../Loader';
 import { InputBasic } from '../../InputBasic/InputBasic';
 import { InputDate } from '../../InputDate/InputDate';
 import * as S from './style';
@@ -26,32 +26,36 @@ type Props = {
   voteState: string | undefined;
   tabsName: string;
   variables: any;
-  totalCount: number;
-  current: number;
-  setVariables: React.Dispatch<any>;
+  voteTotalCount: number;
+  voteCurrent: number;
+  handleRefetch: () => void;
 };
 
 export function SellVoteTabs({
-  projectId = 1,
+  projectId,
   tabsName,
   variables,
-  totalCount,
-  current,
+  voteTotalCount,
+  voteCurrent,
   voteState,
-  setVariables,
+  handleRefetch,
 }: Props) {
+  const nowAmount =
+    variables?.requestSellAmount - (variables?.requestSellAmount / 100) * variables?.undoRatio;
+  const requestSellAmount = +variables?.requestSellAmount;
+
   const [sellVote] = useState(true);
   const [newVariables, setNewVariables] = useState<any>(undefined);
   const [sellvoteData, setSellvoteData] = useState<FindManySellVoteByAdminOutput['sellVotes']>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
-  // const [totalCount, setTotalCount] = useState(0);
-  // const [current, setCurrent] = useState(1);
-  const [projectSellVoteId, setProjectSellVoteId] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [current, setCurrent] = useState(1);
+  const [projectSellVoteId, setProjectSellVoteId] = useState<number>(0);
   const [times, setTimes] = useState<FindCompanyDataQuery['findCompanyData']>();
   const [disable, setDisable] = useState(false);
 
-  const [investFileList, setInvestFileList] = useState<DocInCreateProjectByAdminArgs[]>([
+  const [investFileList, setInvestFileList] = useState<any[]>([
     {
       file: null,
       name: '',
@@ -87,7 +91,7 @@ export function SellVoteTabs({
   );
 
   const handlePagination = (e: number) => {
-    // setCurrent(e);
+    setCurrent(e);
     setSkip((e - 1) * take);
   };
 
@@ -155,14 +159,28 @@ export function SellVoteTabs({
     },
   });
 
-  const [createProjectSellVoteByAdmin] = useMutation(CREATE_PROJECT_SELL_VOTE_BY_ADMIN, {
+  const [findManySellVoteByAdmin] = useLazyQuery(FIND_MANY_SELL_VOTE_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (_data) => {
-      notification.success({ message: '매각투표를 생성하였습니다.' });
+    onCompleted: (data) => {
+      setTotalCount(data.findManySellVoteByAdmin.totalCount);
+      setSellvoteData(data.findManySellVoteByAdmin.sellVotes);
     },
   });
+
+  const [createProjectSellVoteByAdmin, { loading }] = useMutation(
+    CREATE_PROJECT_SELL_VOTE_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (_data) => {
+        notification.success({ message: '매각투표를 생성하였습니다.' });
+        handleRefetch();
+      },
+    },
+  );
 
   const [updateProjectSellVoteByAdmin] = useMutation(UPDATE_PROJECT_SELL_VOTE_BY_ADMIN, {
     onError: (error) => {
@@ -170,6 +188,7 @@ export function SellVoteTabs({
     },
     onCompleted: (_data) => {
       notification.success({ message: '매각정보를 수정하였습니다.' });
+      handleRefetch();
     },
   });
 
@@ -184,9 +203,9 @@ export function SellVoteTabs({
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
-      // notification.success({ message: '매각투표를 생성하였습니다.' });
-      console.log(data);
+    onCompleted: (_data) => {
+      notification.success({ message: '매각투표를 결정하였습니다.' });
+      handleRefetch();
     },
   });
 
@@ -199,11 +218,24 @@ export function SellVoteTabs({
   //   });
   // }, []);
 
-  // useEffect(() => {
-  //   verifyVoteStatusIsSellVoteWait();
-  // }, [variables]);
+  useEffect(() => {
+    verifyVoteStatusIsSellVoteWait();
+  }, [variables]);
 
   useEffect(() => {
+    if (variables?.id) {
+      setProjectSellVoteId(variables?.id);
+    }
+    if (projectSellVoteId !== 0) {
+      findManySellVoteByAdmin({
+        variables: {
+          projectSellVoteId: projectSellVoteId,
+          skip,
+          take,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    }
     findCompanyData();
     setNewVariables([]);
     if (variables) {
@@ -218,19 +250,23 @@ export function SellVoteTabs({
       ]);
     }
 
-    if (totalCount < current) {
+    if (voteTotalCount < voteCurrent) {
       setDisable(false);
     } else {
-      if (totalCount === current && voteState === '매각투표 예정') {
+      if (voteTotalCount === voteCurrent && voteState === '매각투표 예정') {
         setDisable(false);
       } else {
         setDisable(true);
       }
     }
-  }, [variables, current]);
+  }, [variables, voteCurrent, projectSellVoteId]);
 
   useEffect(() => {}, [investFileList]);
-  console.log(voteState, totalCount, current);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <S.Container>
       <S.Wrap>
@@ -240,7 +276,7 @@ export function SellVoteTabs({
         <S.Btns>
           {disable ? (
             voteState === '매각투표 중' &&
-            totalCount === current && (
+            voteTotalCount === voteCurrent && (
               <Popover
                 content={PopupContent}
                 title=""
@@ -260,27 +296,6 @@ export function SellVoteTabs({
               수정하기
             </Button>
           )}
-          {/* {disable ? (
-            voteState !== '매각투표 완료' && (
-              <Popover
-                content={PopupContent}
-                title=""
-                trigger="click"
-                placement="bottom"
-                color="white"
-              >
-                <Button type="primary">투표하기</Button>
-              </Popover>
-            )
-          ) : voteState === '매각투표 예정' ? (
-            <Button onClick={updateVoteData} type="primary">
-              수정하기
-            </Button>
-          ) : (
-            <Button onClick={createHandleClick} type="primary">
-              매각투표 생성
-            </Button>
-          )} */}
         </S.Btns>
       </S.Wrap>
       <InputBasic
@@ -380,10 +395,14 @@ export function SellVoteTabs({
         <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
           매각 투표 진행률
         </S.Title>
-        <S.Btns>숫자</S.Btns>
+        <S.Btns style={{ fontWeight: 'bold' }}>
+          {nowAmount?.toLocaleString() + ' / ' + requestSellAmount?.toLocaleString()}
+        </S.Btns>
       </S.Wrap>
       <S.Bar>
-        <S.BarState style={{ width: '30%' }}>dd</S.BarState>
+        <S.BarState style={{ width: `${100 - variables?.undoRatio}%` }}>
+          {100 - variables?.undoRatio}%
+        </S.BarState>
       </S.Bar>
       <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
         매각 투표 현황
@@ -402,8 +421,8 @@ export function SellVoteTabs({
           showSizeChanger: true,
           onChange: handlePagination,
           onShowSizeChange: (_current, size) => setTake(size),
-          total: totalCount,
-          current: current,
+          total: voteTotalCount,
+          current: voteCurrent,
         }}
       />
     </S.Container>

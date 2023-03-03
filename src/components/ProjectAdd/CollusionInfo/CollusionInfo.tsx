@@ -22,7 +22,6 @@ export function CollusionInfo({ handleChange, variables, submitHandle, isFix }: 
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
-      console.log(data);
       setTimes({ ...data.findCompanyData });
     },
   });

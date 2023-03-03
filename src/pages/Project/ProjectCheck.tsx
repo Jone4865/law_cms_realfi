@@ -57,12 +57,12 @@ export function ProjectCheck() {
     });
   }, []);
 
-  // // 요청 분기점
   const [findManyProject] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
+      console.log(data);
       setFindProjectData(data.findManyProject.projects);
     },
   });

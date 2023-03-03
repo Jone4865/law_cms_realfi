@@ -96,7 +96,7 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     dataIndex: 'fluctuationRatio',
     align: 'center',
     render: (val) => {
-      return val ? val + '%' : '-';
+      return val ? (+val === 0 ? '-' : +val < 0 ? -val + '%' : val + '%') : '-';
     },
   },
   {
@@ -129,13 +129,15 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     dataIndex: 'publicOfferingStatus',
     align: 'center',
     render(_val, record) {
-      return (
-        publicOfferingStatusToText(record.publicOfferingStatus) +
-        ' / ' +
-        marketStatusToText(record.marketStatus) +
-        ' / ' +
-        voteStatusToText(record.voteStatus)
-      );
+      return voteStatusToText(record.voteStatus)
+        ? publicOfferingStatusToText(record.publicOfferingStatus) +
+            ' / ' +
+            marketStatusToText(record.marketStatus) +
+            ' / ' +
+            voteStatusToText(record.voteStatus)
+        : publicOfferingStatusToText(record.publicOfferingStatus) +
+            ' / ' +
+            marketStatusToText(record.marketStatus);
     },
   },
   {

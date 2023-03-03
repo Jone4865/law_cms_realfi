@@ -1140,6 +1140,8 @@ export type FindSellInfoOutput = {
   sellAmount: Scalars['String'];
   /** 매각일 */
   soldDate: Scalars['Date'];
+  /** 썸네일 */
+  thumbnail?: Maybe<Scalars['String']>;
   /** 수익률 (%) */
   totalProfitRatio: Scalars['String'];
   /** 공모총액 (원) */

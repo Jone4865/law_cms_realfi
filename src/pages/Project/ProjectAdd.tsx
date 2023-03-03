@@ -39,6 +39,17 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
   const [publicOfferingQuantity, setPublicOfferingQuantity] =
     useState<FindProjectByAdminQuery['findProjectByAdmin']['publicOfferingQuantity']>();
 
+  const handleRefetch = () => {
+    if (params.projectId) {
+      findProjectByAdmin({
+        variables: {
+          id: +params.projectId,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    }
+  };
+
   const submitHandle = () => {
     createProjectByAdmin({
       variables: {
@@ -103,6 +114,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
         variables: {
           id: +params.projectId,
         },
+        fetchPolicy: 'no-cache',
       });
     }
     if (isAdd) {
@@ -161,6 +173,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
         <DividendManagement
           projectId={params.projectId ? +params.projectId : undefined}
           publicOfferingQuantity={publicOfferingQuantity}
+          tabsName={tabsName}
         />
       )}
       {nowAble === 5 && (
@@ -168,6 +181,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
           projectStates={nowProjectState}
           projectId={params.projectId && +params.projectId}
           tabsName={tabsName}
+          handleRefetch={handleRefetch}
         />
       )}
     </div>

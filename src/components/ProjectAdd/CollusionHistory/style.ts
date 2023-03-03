@@ -48,8 +48,16 @@ export const Right = styled.div`
     border-top: none;
     border-right: none;
     padding: 10px 45px;
+    display: flex;
   }
   div:last-child {
     border-bottom: none;
   }
+  span {
+    margin: 0 10px;
+  }
+`;
+
+export const Bold = styled.span`
+  font-weight: bold;
 `;

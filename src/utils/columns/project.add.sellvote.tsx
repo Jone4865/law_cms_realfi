@@ -1,7 +1,7 @@
-import { Button } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import { FindManySellVoteByAdminOutput } from '../../graphql/generated/graphql';
+import { voteKindToText } from '../voteKindToText';
 
 type Props = {};
 
@@ -56,7 +56,7 @@ export const sellvoteColumns = ({}: Props): ColumnsType<
     dataIndex: 'voteKind',
     align: 'center',
     render(value) {
-      return value;
+      return voteKindToText(value);
     },
   },
 ];

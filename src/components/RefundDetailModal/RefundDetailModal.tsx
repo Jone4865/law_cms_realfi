@@ -98,7 +98,7 @@ export function RefundDetailModal({
         <InputBasic
           placeHolder={false}
           title="공모 완료 TABS"
-          value={data ? +data?.quantity : ''}
+          value={data ? +data?.quantity - (data?.cancelQuantity ? data?.cancelQuantity : 0) : ''}
           essential={false}
           disable
         />
