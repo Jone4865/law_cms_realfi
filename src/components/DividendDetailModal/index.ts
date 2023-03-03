@@ -1,0 +1,1 @@
+export { DividendDetailModal } from './DividendDetailModal';

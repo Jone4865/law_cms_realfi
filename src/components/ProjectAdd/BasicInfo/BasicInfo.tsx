@@ -1,18 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Button, Upload, Modal, Table, Input } from 'antd';
+import { Button, Upload, Modal, Table, Input, notification } from 'antd';
 import * as S from '../style';
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
-import { ProjectAddBasicInput } from '../ProjectAddBasicInput/ProjectAddBasicInput';
+import { InputBasic } from '../InputBasic/InputBasic';
 import { investfileColumns, lesseeColumns, officialInfosColumns } from '../../../utils/columns';
 import { DocInCreateProjectByAdminArgs } from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
 import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
+import { useLazyQuery } from '@apollo/client';
+import { FIND_MANY_PROJECT_FILE } from '../../../graphql/query';
 
 type Props = {
   handleChange: (key: string, value: any) => void;
   variables: any;
+  isFix?: boolean;
+  projectId: number | undefined;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -23,7 +27,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
+export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) {
   var regExp = /^[0-9]/g;
   const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -70,7 +74,6 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
   const handleInvestChange = (file: UploadFile<any>, index: number) => {
     setInvestFileList((prev) => {
       prev[index].file = file;
-      prev[index].name = file.name;
       handleChange('docs', prev);
       return [...prev];
     });
@@ -79,18 +82,10 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
   const handleOfficialInfosChange = (file: UploadFile<any>, index: number) => {
     setOfficialInfosFileList((prev) => {
       prev[index].file = file;
-      prev[index].name = file.name;
       handleChange('officialInfos', prev);
       return [...prev];
     });
   };
-
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
 
   const handleRow = (rec: any) => {};
 
@@ -114,10 +109,40 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
     setVisible(false);
   };
 
-  useEffect(() => {
-    if (visible) {
+  const handleTitleChange = (idx: number, key: string, value: string) => {
+    if (key === 'docs') {
+      setInvestFileList((prev) => {
+        prev[idx].name = value;
+        handleChange('docs', prev);
+        return [...prev];
+      });
+    } else {
+      setOfficialInfosFileList((prev) => {
+        prev[idx].name = value;
+        handleChange('officialInfos', prev);
+        return [...prev];
+      });
     }
-  }, [investFileList, officialInfosFileList, visible]);
+  };
+
+  const [findManyProjectFile] = useLazyQuery(FIND_MANY_PROJECT_FILE, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+  });
+
+  useEffect(() => {
+    findManyProjectFile({ variables: { projectId: projectId ? projectId : 0 } });
+  }, []);
+
+  useEffect(() => {}, [investFileList, officialInfosFileList, visible, projectImageFileList]);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   return (
     <>
@@ -127,7 +152,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
         {/* <Button type="primary">저장</Button> */}
       </S.AddTitle>
       <S.AddFormContainer>
-        <ProjectAddBasicInput
+        <InputBasic
           handleChange={handleChange}
           title="프로젝트명"
           saveName="name"
@@ -191,19 +216,19 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
             />
           </S.Flex>
         </S.LocationWrap>
-        <ProjectAddBasicInput
+        <InputBasic
           title="용도지역"
           handleChange={handleChange}
           saveName="zoning"
           value={variables['zoning']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="주용도"
           handleChange={handleChange}
           saveName="mainPurpose"
           value={variables['mainPurpose']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="연면적"
           subTitle={
             <>
@@ -214,25 +239,25 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           saveName="grossFloorAreaMeter"
           value={+variables['grossFloorAreaMeter']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="연면적(평)"
           handleChange={handleChange}
           saveName="grossFloorAreaPyeong"
           value={+variables['grossFloorAreaPyeong']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="건폐율(%)"
           handleChange={handleChange}
           saveName="buildingCoverageRatio"
           value={+variables['buildingCoverageRatio']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="용적률(%)"
           handleChange={handleChange}
           saveName="floorAreaRatio"
           value={+variables['floorAreaRatio']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="공시지가"
           subTitle={
             <>
@@ -243,14 +268,14 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           saveName="officialLandPrice"
           value={+variables['officialLandPrice']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="준공일"
           datePicker={true}
           handleChange={handleChange}
           saveName="completionDate"
           value={variables['completionDate']}
         />
-        <ProjectAddBasicInput
+        <InputBasic
           title="투자정보 url"
           essential={false}
           handleChange={handleChange}
@@ -269,7 +294,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
                 onPreview={handlePreview}
                 onChange={handleProjectimageChange}
               >
-                {projectImageFileList.length >= 10 ? null : uploadButton}
+                {projectImageFileList?.length >= 10 ? null : uploadButton}
               </Upload>
               <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
                 <img alt="프로젝트 이미지" style={{ width: '100%' }} src={previewImage} />
@@ -280,7 +305,7 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
         <S.AddTitle style={{ marginBottom: '5px' }}>투자관련문서</S.AddTitle>
         <Table
           pagination={false}
-          columns={investfileColumns({ handleInvestChange, investDeleteClick })}
+          columns={investfileColumns({ handleInvestChange, investDeleteClick, handleTitleChange })}
           dataSource={investFileList}
           onRow={(rec) => {
             return {
@@ -291,21 +316,24 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
+            width: '1300px',
           }}
         />
-        {investFileList.length < 10 && (
-          <Button
-            onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
-            type="primary"
-            style={{ width: '200px', margin: '20px auto' }}
-          >
-            투자관련문서 추가
-          </Button>
+        {investFileList?.length < 10 && (
+          <div style={{ width: '1300px', display: 'flex' }}>
+            <Button
+              onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
+              type="primary"
+              style={{ width: '200px', margin: '20px auto' }}
+            >
+              투자관련문서 추가
+            </Button>
+          </div>
         )}
         <S.AddTitle style={{ marginTop: '25px' }}>임차인 정보</S.AddTitle>
         <Table
           pagination={false}
-          columns={lesseeColumns({})}
+          columns={lesseeColumns({ handleChange, variables })}
           dataSource={lesseeNum}
           onRow={(rec) => {
             return {
@@ -317,21 +345,16 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
+            width: '1300px',
           }}
         />
-        {/* <Button
-          onClick={() => setLesseeNum([...lesseeNum, { id: lesseeNum.length + 1 }])}
-          type="primary"
-          style={{ width: '200px', margin: '20px auto' }}
-        >
-          임차인 추가
-        </Button> */}
         <S.AddTitle style={{ marginTop: '25px' }}>공시</S.AddTitle>
         <Table
           pagination={false}
           columns={officialInfosColumns({
             handleOfficialInfosChange,
             officialInfosDeleteClick,
+            handleTitleChange,
           })}
           dataSource={officialInfosFileList}
           onRow={(rec) => {
@@ -343,18 +366,21 @@ export function ProjectAddBasicInfo({ handleChange, variables }: Props) {
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
+            width: '1300px',
           }}
         />
-        {officialInfosFileList.length < 10 && (
-          <Button
-            onClick={() =>
-              setOfficialInfosFileList([...officialInfosFileList, { file: null, name: '' }])
-            }
-            type="primary"
-            style={{ width: '200px', margin: '20px auto' }}
-          >
-            공시파일 추가
-          </Button>
+        {officialInfosFileList?.length < 10 && (
+          <div style={{ width: '1300px', display: 'flex' }}>
+            <Button
+              onClick={() =>
+                setOfficialInfosFileList([...officialInfosFileList, { file: null, name: '' }])
+              }
+              type="primary"
+              style={{ width: '200px', margin: '20px auto' }}
+            >
+              공시파일 추가
+            </Button>
+          </div>
         )}
       </S.AddFormContainer>
     </>

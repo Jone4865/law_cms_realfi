@@ -7,11 +7,13 @@ import { DocInCreateProjectByAdminArgs } from '../../graphql/generated/graphql';
 type Props = {
   handleOfficialInfosChange: (file: UploadFile<any>, index: number) => void | undefined;
   officialInfosDeleteClick: (idx: number) => () => void;
+  handleTitleChange: (idx: number, key: string, value: string) => void;
 };
 
 export const officialInfosColumns = ({
   handleOfficialInfosChange,
   officialInfosDeleteClick,
+  handleTitleChange,
 }: Props): ColumnsType<DocInCreateProjectByAdminArgs> => [
   {
     title: 'no',
@@ -24,18 +26,23 @@ export const officialInfosColumns = ({
     title: '제목',
     key: 'name',
     align: 'center',
-    render: (_val) => {
-      return <Input placeholder="입력해주세요." />;
+    render: (_val, _record, index) => {
+      return (
+        <Input
+          onChange={(e) => handleTitleChange(index, 'officialInfos', e.target.value)}
+          placeholder="입력해주세요."
+        />
+      );
     },
   },
   {
     title: '제출 된 파일',
     key: 'name',
-    dataIndex: 'name',
+    dataIndex: 'file',
     align: 'center',
     render: (val, _record, index) => {
       return val ? (
-        val
+        val.name
       ) : (
         <Upload
           showUploadList={false}

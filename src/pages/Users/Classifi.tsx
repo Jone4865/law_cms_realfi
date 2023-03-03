@@ -1,7 +1,6 @@
-import { useLazyQuery } from '@apollo/client';
-import { Divider, Form, Input, notification, Table, Button } from 'antd';
+import { Divider, Table, Button } from 'antd';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { UserDetailModal } from '../../components/UserDetailModal';
 import { UserType, userClassifiColumns } from '../../utils/columns';
 import TransformBox from '../../components/TransformBox';

@@ -1,19 +1,21 @@
 import { DatePicker, Input } from 'antd';
 import moment from 'moment';
-import * as S from './../style';
+import * as S from '../style';
 
 type Props = {
   title: string;
-  saveName: string;
-  value: string | number;
-  handleChange: (key: string, value: any) => void;
+  value: string | number | null | undefined;
+  saveName?: string;
   subTitle?: React.ReactNode;
   essential?: boolean;
   datePicker?: boolean;
   disable?: boolean;
+  placeHolder?: boolean;
+  color?: string;
+  handleChange?: (key: string, value: any) => void;
 };
 
-export function ProjectAddBasicInput({
+export function InputBasic({
   title,
   saveName,
   handleChange,
@@ -22,6 +24,8 @@ export function ProjectAddBasicInput({
   datePicker,
   disable,
   value,
+  placeHolder = true,
+  color,
 }: Props) {
   return (
     <S.AddFormWrap>
@@ -32,7 +36,8 @@ export function ProjectAddBasicInput({
       </S.AddTitle>
       {datePicker ? (
         <DatePicker
-          defaultValue={moment(value)}
+          disabled={disable && true}
+          value={value ? moment(value) : undefined}
           onChange={(v) => {
             handleChange && handleChange(`${saveName}`, moment(v).format('YYYY-MM-DD'));
           }}
@@ -40,19 +45,21 @@ export function ProjectAddBasicInput({
         />
       ) : (
         <Input
-          style={{ width: '371px' }}
+          style={{ width: '371px', color: `${color}` }}
           value={
             typeof value === 'string'
               ? value
-              : value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : !Number.isNaN(value)
+              ? value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              : ''
           }
           disabled={disable && true}
           onChange={(e) => {
             typeof value === 'string'
-              ? handleChange(`${saveName}`, e.target.value)
-              : handleChange(`${saveName}`, e.target.value.replace(/\D/g, ''));
+              ? handleChange && handleChange(`${saveName}`, e.target.value)
+              : handleChange && handleChange(`${saveName}`, e.target.value.replace(/\D/g, ''));
           }}
-          placeholder="입력해주세요."
+          placeholder={placeHolder ? '입력해주세요.' : '-'}
         />
       )}
     </S.AddFormWrap>

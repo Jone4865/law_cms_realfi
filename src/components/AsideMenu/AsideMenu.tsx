@@ -3,7 +3,6 @@ import { Menu } from 'antd';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as S from './style';
-import { menuItems } from '../../utils/menuItems';
 
 import {
   CustomerServiceOutlined,
@@ -112,14 +111,13 @@ export function AsideMenu() {
         </Menu.Item>
         <Menu.SubMenu key={'users'} title="회원관리" icon={<UserOutlined />}>
           <Menu.Item key={'users-columns'}>회원목록</Menu.Item>
-          <Menu.Item key={'users-change'}>한도변경 신청</Menu.Item>
+          <Menu.Item key={'users-change'}>자격변경 신청</Menu.Item>
           <Menu.Item key={'users-classifi'}>회원분류</Menu.Item>
         </Menu.SubMenu>
         <Menu.SubMenu key={'project'} title="프로젝트관리" icon={<ProjectOutlined />}>
           <Menu.Item key={'project-check'}>프로젝트 조회</Menu.Item>
           <Menu.Item key={'project-add'}>프로젝트 등록</Menu.Item>
         </Menu.SubMenu>
-        {/* <Menu.Item key={'contract'}>체결내역관리</Menu.Item> */}
         <Menu.SubMenu key={'customer'} title="고객센터" icon={<CustomerServiceOutlined />}>
           <Menu.Item key={'customer-inquiry'}>1:1 문의</Menu.Item>
           <Menu.Item key={'customer-faq'}>FAQ 관리</Menu.Item>

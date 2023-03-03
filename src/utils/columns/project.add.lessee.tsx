@@ -1,19 +1,23 @@
 import { Button, DatePicker, Input } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import moment from 'moment';
 
 export type LesseeType = {
   id: number;
 };
 
-type Props = {};
+type Props = {
+  handleChange: (key: string, value: any) => void;
+  variables: any;
+};
 
-export const lesseeColumns = ({}: Props): ColumnsType<LesseeType> => [
+export const lesseeColumns = ({ handleChange, variables }: Props): ColumnsType<LesseeType> => [
   {
     title: 'no',
     key: 'id',
     dataIndex: 'id',
     align: 'center',
-    render: (val, record, index) => {
+    render: (_val, _record, index) => {
       return index + 1;
     },
   },
@@ -22,8 +26,14 @@ export const lesseeColumns = ({}: Props): ColumnsType<LesseeType> => [
     key: 'lessee',
     dataIndex: 'lessee',
     align: 'center',
-    render: (val, record, index) => {
-      return <Input placeholder="입력해주세요." />;
+    render: () => {
+      return (
+        <Input
+          value={variables['lessee']}
+          onChange={(e) => handleChange('lessee', e.target.value)}
+          placeholder="입력해주세요."
+        />
+      );
     },
   },
   {
@@ -31,15 +41,20 @@ export const lesseeColumns = ({}: Props): ColumnsType<LesseeType> => [
     key: 'leaseStartedAt',
     dataIndex: 'leaseStartedAt',
     align: 'center',
-    render: (val, record, index) => {
-      return <DatePicker />;
+    render: () => {
+      return (
+        <DatePicker
+          value={variables['leaseStartedAt'] ? moment(variables['leaseStartedAt']) : undefined}
+          onChange={(v) => handleChange('leaseStartedAt', moment(v).format('YYYY-MM-DD'))}
+        />
+      );
     },
   },
   {
     key: 'string',
     dataIndex: 'string',
     align: 'center',
-    render: (val, record, index) => {
+    render: () => {
       return '~';
     },
   },
@@ -48,8 +63,13 @@ export const lesseeColumns = ({}: Props): ColumnsType<LesseeType> => [
     key: 'leaseEndedAt',
     dataIndex: 'leaseEndedAt',
     align: 'center',
-    render: (val, record, index) => {
-      return <DatePicker />;
+    render: () => {
+      return (
+        <DatePicker
+          value={variables['leaseEndedAt'] ? moment(variables['leaseEndedAt']) : undefined}
+          onChange={(v) => handleChange('leaseEndedAt', moment(v).format('YYYY-MM-DD'))}
+        />
+      );
     },
   },
 ];

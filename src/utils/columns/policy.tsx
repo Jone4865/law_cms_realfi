@@ -1,6 +1,7 @@
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { Button, Divider, Form, Input, Tag, Table, notification } from 'antd';
+import { Tag } from 'antd';
+import { PolicyInFindManyPolicyOutput } from '../../graphql/generated/graphql';
 
 export type PolicyType = {
   id: number;
@@ -16,31 +17,32 @@ export type PolicyType = {
   createdAt: string;
 };
 
-export const policyColumns: ColumnsType<PolicyType> = [
+export const policyColumns: ColumnsType<PolicyInFindManyPolicyOutput> = [
   {
     title: 'no',
     key: 'id',
     dataIndex: 'id',
-    align: 'center',
+    render: (val) => {
+      return val;
+    },
   },
   {
     title: '약관 제목',
-    key: 'policyKind',
-    dataIndex: 'policyKind',
+    key: 'title',
+    dataIndex: 'title',
     align: 'center',
-    render: (val: { name: string }) => {
-      return val.name;
+  },
+  {
+    title: '분류',
+    key: 'policyCategories',
+    dataIndex: 'policyCategories',
+    align: 'center',
+    render(value) {
+      const name = value[0]?.name;
+      const length = value?.length - 1;
+      return value?.length >= 2 ? name + ' 외 ' + length + '개' : name;
     },
   },
-  // {
-  //   title: '약관 내용',
-  //   key: 'content',
-  //   dataIndex: 'content',
-  //   align: 'center',
-  //   render: (val: string) => {
-  //     return val.length > 40 ? val.substr(0, 40) + '...' : val;
-  //   },
-  // },
   {
     title: '작성자',
     key: 'admin',
@@ -61,8 +63,8 @@ export const policyColumns: ColumnsType<PolicyType> = [
   },
   {
     title: '필수여부',
-    key: 'essential',
-    dataIndex: 'essential',
+    key: 'isRequired',
+    dataIndex: 'isRequired',
     align: 'center',
     render: (val) => {
       return val ? <Tag color="blue">필수</Tag> : <Tag color="error">선택</Tag>;

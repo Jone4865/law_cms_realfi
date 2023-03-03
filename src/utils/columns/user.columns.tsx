@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
+import { Dispatch, SetStateAction } from 'react';
 import { UserInFindManyUserByAdminOutput } from '../../graphql/generated/graphql';
 
 export type UserType = {
@@ -22,7 +23,13 @@ export type UserType = {
   }[];
 };
 
-export const userListColumns: ColumnsType<UserInFindManyUserByAdminOutput> = [
+type Props = {
+  setVisible: Dispatch<SetStateAction<boolean>>;
+};
+
+export const userListColumns = ({
+  setVisible,
+}: Props): ColumnsType<UserInFindManyUserByAdminOutput> => [
   {
     render: (_val, _record, idx) => {
       return idx + 1;
@@ -81,14 +88,18 @@ export const userListColumns: ColumnsType<UserInFindManyUserByAdminOutput> = [
       return value ? 'O' : 'X';
     },
   },
-  { title: '이용제한', key: 'block', dataIndex: 'block', align: 'center' },
+  // { title: '이용제한', key: 'block', dataIndex: 'block', align: 'center' },
   {
     title: '행동',
     key: 'do',
     dataIndex: 'do',
     align: 'center',
     render: (val: string, record) => {
-      return <Button type="primary">자세히보기</Button>;
+      return (
+        <Button type="primary" onClick={() => setVisible(true)}>
+          자세히보기
+        </Button>
+      );
     },
   },
 ];

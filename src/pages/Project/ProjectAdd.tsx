@@ -1,16 +1,54 @@
 import { useEffect, useState } from 'react';
 import { Divider, notification } from 'antd';
-import * as S from './style';
-import { ProjectAddBasicInfo } from '../../components/ProjectAdd/ProjectAddBasicInfo/ProjectAddBasicInfo';
-import { ProjectAddCollusionInfo } from '../../components/ProjectAdd/ProjectAddCollusionInfo/ProjectAddCollusionInfo';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
-import moment from 'moment';
+import { FIND_PROJECT_BY_ADMIN } from '../../graphql/query';
+import { useParams } from 'react-router-dom';
+import * as S from './style';
+import Loader from '../../components/Loader';
+import { ProjectStateModal } from '../../components/ProjectStateModal';
+import { BasicInfo } from '../../components/ProjectAdd/BasicInfo/BasicInfo';
+import { CollusionInfo } from '../../components/ProjectAdd/CollusionInfo/CollusionInfo';
+import { CollusionHistory } from '../../components/ProjectAdd/CollusionHistory/CollusionHistory';
+import { TransactioDetails } from '../../components/ProjectAdd/TransactioDetails/TransactioDetails';
+import { DividendManagement } from '../../components/ProjectAdd/DividendManagement/DividendManagement';
+import { SellVote } from '../../components/ProjectAdd/SellVote/SellVote';
+import { FindProjectByAdminQuery } from '../../graphql/generated/graphql';
 
-export function ProjectAdd() {
+type Props = {
+  isFix?: boolean;
+  isAdd?: boolean;
+};
+
+export function ProjectAdd({ isFix, isAdd }: Props) {
+  const params = useParams();
   const btns = ['1. 기본정보', '2. 공모정보'];
+  const fixBtns = [
+    '1. 기본정보',
+    '2. 공모정보',
+    '3. 공모내역',
+    '4. 거래내역',
+    '5. 배당관리',
+    '6. 매각관리',
+  ];
+  const btnAble = [true, true, true, true, true, true];
+  const [nowProjectState, setNowProjectState] = useState<string[]>([]);
   const [variables, setVariables] = useState<any>({});
-  const [nowAble, setNowAble] = useState('1. 기본정보');
+  const [nowAble, setNowAble] = useState(0);
+  const [tabsName, setTabsName] = useState('');
+  const [publicOfferingQuantity, setPublicOfferingQuantity] =
+    useState<FindProjectByAdminQuery['findProjectByAdmin']['publicOfferingQuantity']>();
+
+  const handleRefetch = () => {
+    if (params.projectId) {
+      findProjectByAdmin({
+        variables: {
+          id: +params.projectId,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    }
+  };
 
   const submitHandle = () => {
     createProjectByAdmin({
@@ -22,18 +60,6 @@ export function ProjectAdd() {
       },
     });
   };
-
-  // 요청 분기점
-  const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (data) => {
-      console.log(data);
-    },
-  });
-
-  useEffect(() => {}, []);
 
   const handleChange = (key: string, value: any) => {
     if (key === 'name') {
@@ -56,14 +82,66 @@ export function ProjectAdd() {
     });
   };
 
+  const onClickHandle = (idx: number) => {
+    btnAble[idx] && setNowAble(idx);
+  };
+
+  const [findProjectByAdmin] = useLazyQuery(FIND_PROJECT_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setPublicOfferingQuantity(data.findProjectByAdmin.publicOfferingQuantity);
+      setVariables(data.findProjectByAdmin);
+      setTabsName(data.findProjectByAdmin.name);
+    },
+  });
+
+  const [createProjectByAdmin, { loading }] = useMutation(CREATE_PROJECT_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '프로젝트 생성을 완료했습니다.' });
+      setVariables({});
+      setNowAble(0);
+    },
+  });
+
+  useEffect(() => {
+    if (isFix && params.projectId) {
+      findProjectByAdmin({
+        variables: {
+          id: +params.projectId,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    }
+    if (isAdd) {
+      setVariables({});
+    }
+    setNowAble(0);
+  }, [isAdd, isFix]);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <div>
-      <Divider>프로젝트 등록</Divider>
+      {isFix && (
+        <ProjectStateModal
+          setProjectState={setNowProjectState}
+          variables={variables}
+          nowProjectState={nowProjectState}
+        />
+      )}
+      <Divider>{isFix ? '프로젝트 상세' : '프로젝트 등록'}</Divider>
       <S.TopBtns>
-        {btns.map((item, idx) => (
+        {(isFix ? fixBtns : btns).map((item, idx) => (
           <S.AddBtn
-            onClick={() => setNowAble(item)}
-            style={{ backgroundColor: `${nowAble === item ? '#5d28dd' : ''}` }}
+            onClick={() => onClickHandle(idx)}
+            style={{ backgroundColor: `${nowAble === idx ? '#5d28dd' : ''}` }}
             key={item}
           >
             {item}
@@ -71,13 +149,39 @@ export function ProjectAdd() {
         ))}
       </S.TopBtns>
 
-      {nowAble === '1. 기본정보' ? (
-        <ProjectAddBasicInfo variables={variables} handleChange={handleChange} />
-      ) : (
-        <ProjectAddCollusionInfo
+      {nowAble === 0 && (
+        <BasicInfo
+          projectId={params.projectId ? +params.projectId : undefined}
+          variables={variables}
+          handleChange={handleChange}
+          isFix={isFix}
+        />
+      )}
+      {nowAble === 1 && (
+        <CollusionInfo
+          isFix={isFix}
           submitHandle={submitHandle}
           variables={variables}
           handleChange={handleChange}
+        />
+      )}
+      {nowAble === 2 && (
+        <CollusionHistory projectId={params.projectId && +params.projectId} variables={variables} />
+      )}
+      {nowAble === 3 && <TransactioDetails projectId={params.projectId && +params.projectId} />}
+      {nowAble === 4 && (
+        <DividendManagement
+          projectId={params.projectId ? +params.projectId : undefined}
+          publicOfferingQuantity={publicOfferingQuantity}
+          tabsName={tabsName}
+        />
+      )}
+      {nowAble === 5 && (
+        <SellVote
+          projectStates={nowProjectState}
+          projectId={params.projectId && +params.projectId}
+          tabsName={tabsName}
+          handleRefetch={handleRefetch}
         />
       )}
     </div>

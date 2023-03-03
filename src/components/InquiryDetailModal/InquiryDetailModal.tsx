@@ -31,6 +31,7 @@ export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Pro
         id: Number(data?.id ?? 0),
         reply,
       },
+      fetchPolicy: 'no-cache',
     });
     refetch();
   };
@@ -51,7 +52,8 @@ export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Pro
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
+      refetch();
       notification.success({ message: '답변을 등록하였습니다.' });
     },
   });

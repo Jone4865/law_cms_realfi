@@ -4,13 +4,10 @@ import * as S from './style';
 import { Calendar } from '../../components/Calendar';
 import moment from 'moment';
 import { useLazyQuery } from '@apollo/client';
-import { FIND_MANY_PROJECT } from '../../graphql/query/findManyProject';
-import {
-  FindManyProjectQuery,
-  MarketStatus,
-  PublicOfferingStatus,
-} from '../../graphql/generated/graphql';
+import { FIND_MANY_PROJECT } from '../../graphql/query';
+import { FindManyProjectQuery } from '../../graphql/generated/graphql';
 import { projectCheckColumns } from '../../utils/columns';
+import { useNavigate } from 'react-router-dom';
 
 export function ProjectCheck() {
   const [take, setTake] = useState(10);
@@ -28,6 +25,7 @@ export function ProjectCheck() {
   const five = ['매각투표예정', '매각투표중', '매각투표완료'];
   const six = ['매각완료'];
   const [able, setAble] = useState<string[]>([]);
+  const navigator = useNavigate();
 
   const clickHandel = (item: string) => {
     if (item !== '전체') {
@@ -49,39 +47,22 @@ export function ProjectCheck() {
     }
   };
 
-  // const handleSearch = (values: { searchText?: string }) => {
-  //   findManyUserInquiryByAdmin({
-  //     variables: {
-  //       take,
-  //       skip,
-  //       searchText,
-  //       userInquiryCategoryId,
-  //     },
-  //     fetchPolicy: 'no-cache',
-  //   });
-  //   setCurrent(1);
-  //   setSkip(0);
-  //   setSearchText(values.searchText ?? '');
-  // };
-
   useEffect(() => {}, [able]);
   useEffect(() => {
     findManyProject({
       variables: {
         take: 10,
         skip: 0,
-        publicOfferingStatus: PublicOfferingStatus.Wait,
-        marketStatus: MarketStatus.Unlisted,
       },
     });
   }, []);
 
-  // // 요청 분기점
-  const [findManyProject, { loading }] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
+  const [findManyProject] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
+      console.log(data);
       setFindProjectData(data.findManyProject.projects);
     },
   });
@@ -213,6 +194,11 @@ export function ProjectCheck() {
         columns={projectCheckColumns}
         scroll={{ x: 800 }}
         dataSource={findProjectData}
+        onRow={(rec) => {
+          return {
+            onClick: () => navigator(`/project/detail/${rec.id}`),
+          };
+        }}
         // loading={loading}
         pagination={{ position: ['bottomCenter'] }}
       />

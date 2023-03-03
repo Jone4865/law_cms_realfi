@@ -2,17 +2,20 @@ import { Button, Input } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { ColumnsType } from 'antd/lib/table';
 import Upload from 'antd/lib/upload';
-import { DocInCreateProjectByAdminArgs } from '../../graphql/generated/graphql';
 
 type Props = {
   handleInvestChange: (file: UploadFile<any>, index: number) => void | undefined;
   investDeleteClick: (idx: number) => () => void;
+  handleTitleChange: (idx: number, key: string, value: string) => void;
+  disable?: boolean;
 };
 
 export const investfileColumns = ({
   handleInvestChange,
   investDeleteClick,
-}: Props): ColumnsType<DocInCreateProjectByAdminArgs> => [
+  handleTitleChange,
+  disable,
+}: Props): ColumnsType<any> => [
   {
     title: 'no',
     key: 'no',
@@ -24,18 +27,27 @@ export const investfileColumns = ({
     key: 'title',
     dataIndex: 'name',
     align: 'center',
-    render: (val) => {
-      return <Input placeholder="입력해주세요." value={val} />;
+    render: (val, _record, index) => {
+      return (
+        <Input
+          disabled={disable}
+          value={val}
+          onChange={(e) => handleTitleChange(index, 'docs', e.target.value)}
+          placeholder="입력해주세요."
+        />
+      );
     },
   },
   {
     title: '제출 된 파일',
     key: 'name',
-    dataIndex: 'name',
+    dataIndex: 'file',
     align: 'center',
-    render: (val, _record, index) => {
+    render: (val, record, index) => {
       return val ? (
-        val
+        val?.name
+      ) : record?.fileName ? (
+        record?.fileName
       ) : (
         <Upload
           showUploadList={false}
@@ -53,7 +65,8 @@ export const investfileColumns = ({
     dataIndex: 'name',
     render: (val, _record, index) => {
       return (
-        val && (
+        val &&
+        !disable && (
           <Button onClick={investDeleteClick(index)} type="primary">
             삭제
           </Button>

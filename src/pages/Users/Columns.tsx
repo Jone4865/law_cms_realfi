@@ -2,6 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
+import { UserDetailModal } from '../../components/UserDetailModal';
 import {
   FindManyUserByAdminQuery,
   UserInFindManyUserByAdminOutput,
@@ -19,14 +20,13 @@ export function Columns() {
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
-  console.log(userData);
+
   const handleCancel = () => {
     setVisible(false);
   };
 
   const handleClickRow = (rec: UserInFindManyUserByAdminOutput) => {
     setModalData(rec);
-    setVisible(true);
   };
 
   const handleSearch = (value: { searchText?: string }) => {
@@ -48,7 +48,6 @@ export function Columns() {
     setCurrent(e);
   };
 
-  // // 요청 분기점
   const [findManyUserByAdmin, { loading }] = useLazyQuery<FindManyUserByAdminQuery>(
     FIND_MANY_USERS_BY_ADMIN,
     {
@@ -62,7 +61,6 @@ export function Columns() {
     },
   );
 
-  // 요청 코드
   useEffect(() => {
     findManyUserByAdmin({
       variables: {
@@ -76,6 +74,7 @@ export function Columns() {
 
   return (
     <>
+      <UserDetailModal email="dad" handleCancel={handleCancel} visible={visible} />
       <Divider>회원목록</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
@@ -89,7 +88,7 @@ export function Columns() {
         </Form.Item>
       </Form>
       <Table
-        columns={userListColumns}
+        columns={userListColumns({ setVisible })}
         dataSource={userData}
         pagination={{
           position: ['bottomCenter'],
@@ -108,7 +107,6 @@ export function Columns() {
             onClick: () => handleClickRow(rec),
           };
         }}
-        // rowKey={(rec) => rec.email}
         scroll={{ x: 800 }}
       />
     </>

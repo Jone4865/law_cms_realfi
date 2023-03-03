@@ -1,11 +1,11 @@
 import { DatePicker, TimePicker } from 'antd';
-import * as S from './../style';
+import * as S from '../style';
 import moment from 'moment';
 
 type Props = {
   titles: string[];
   title: string;
-  values?: string[];
+  values?: any[];
   saveNames?: string[];
   essential?: boolean;
   timePicker?: boolean;
@@ -13,7 +13,7 @@ type Props = {
   handleChange?: (key: string, value: any) => void;
 };
 
-export function ProjectAddDateInput({
+export function InputDate({
   titles,
   title,
   saveNames,
@@ -36,25 +36,27 @@ export function ProjectAddDateInput({
               <S.DateInputTitle>{title} :</S.DateInputTitle>
               {timePicker ? (
                 <TimePicker
+                  value={values && values[idx]}
                   onChange={(v) => {
                     handleChange &&
                       saveNames &&
                       handleChange(saveNames[idx], moment(v).format('HH:mm'));
                   }}
                   disabled={disable && true}
-                  format={'HH:mm a'}
-                  style={{ width: '270px' }}
+                  format={'HH:mm'}
+                  style={{ width: '230px' }}
                 />
               ) : (
                 <DatePicker
-                  defaultValue={values && moment(values[idx])}
+                  defaultValue={undefined}
+                  value={values && values[idx] ? values[idx] : undefined}
                   disabled={disable && true}
                   onChange={(v) => {
                     handleChange &&
                       saveNames &&
                       handleChange(saveNames[idx], moment(v).format('YYYY-MM-DD'));
                   }}
-                  style={{ width: '270px' }}
+                  style={{ width: '230px' }}
                 />
               )}
             </S.DateInputWrap>

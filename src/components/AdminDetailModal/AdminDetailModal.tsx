@@ -3,15 +3,15 @@ import { Button, Checkbox, Input, Modal, notification, Popconfirm, Table } from 
 import * as S from './style';
 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useMutation } from '@apollo/client';
 import { validateEmail, validataPassword } from '../../utils/valitation';
 import TransformBox from '../TransformBox';
+import { useMutation } from '@apollo/client';
+import { SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
 
 export type SubmitType = {
   email?: string;
   password?: string;
   name?: string;
-  phone?: string;
   adminRoles: KindType[];
 };
 
@@ -43,7 +43,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     email: '',
     name: '',
     password: '',
-    phone: '',
   });
 
   const inputStyle = {
@@ -135,9 +134,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     if (!adminInfo.name?.length) {
       return notification.error({ message: '이름을 입력해주세요' });
     }
-    if (!adminInfo.phone?.length) {
-      return notification.error({ message: '연락처를 입력해주세요' });
-    }
     if (!adminInfo.adminRoles?.[0].name.length) {
       return notification.error({ message: '권한을 선택해주세요' });
     }
@@ -146,14 +142,15 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       email: adminInfo.email,
       name: adminInfo.name,
       password: adminInfo.password,
-      phone: adminInfo.phone,
     };
+
     if (!admin) {
-      // createAdmin({
-      //   variables: {
-      //     ...variables,
-      //   },
-      // });
+      signUpFromAdmin({
+        variables: {
+          ...variables,
+        },
+      });
+      refetch();
     } else {
       // updateAdmin({
       //   variables: {
@@ -164,22 +161,14 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     }
   };
 
-  // create admin account
-  // const [createAdmin] = useMutation<CreateAdminResponse, CreateAdminParams>(
-  //   CREATE_ADMIN,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '관리자를 생성했습니다' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-
-  //       refetch();
-  //     },
-  //   },
-  // );
+  const [signUpFromAdmin] = useMutation(SIGN_UP_FROM_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      notification.success({ message: '관리자를 생성하였습니다.' });
+    },
+  });
 
   // delete admin account
   // const [deleteAdmin] = useMutation<DeleteAdminResponse, DeleteAdminParams>(
@@ -242,7 +231,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
         email: '',
         name: '',
         password: '',
-        phone: '',
       });
       setPasswordChange(false);
     }
@@ -251,7 +239,7 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     <Modal
       visible={visible}
       onCancel={handleCancel}
-      title="관리자 생성"
+      title={admin ? '관리자 상세' : '관리자 생성'}
       centered
       width={800}
       footer={false}
@@ -273,29 +261,14 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
         <TransformBox width="100%">
           <Input.Password
             disabled={isPasswordChange}
-            style={admin ? inputStyle : undefined}
             value={adminInfo.password}
             onChange={(e) => handleChange(e, 'password')}
           />
-          {admin && (
-            <Button
-              style={{
-                marginLeft: 30,
-              }}
-              onClick={handleClick}
-            >
-              {isPasswordChange ? '변경' : '취소'}
-            </Button>
-          )}
         </TransformBox>
       </S.FormWrap>
       <S.FormWrap>
         <S.Label>이름</S.Label>
         <Input value={adminInfo.name} onChange={(e) => handleChange(e, 'name')} />
-      </S.FormWrap>
-      <S.FormWrap>
-        <S.Label>연락처</S.Label>
-        <Input value={adminInfo.phone} onChange={(e) => handleChange(e, 'phone')} />
       </S.FormWrap>
       <S.TableWrap>
         <S.Label>권한</S.Label>

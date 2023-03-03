@@ -1,21 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Image,
-  Input,
-  message,
-  Modal,
-  notification,
-  Popconfirm,
-  Table,
-  Upload,
-} from 'antd';
+import React, { useState } from 'react';
+import { Button, DatePicker, Input, message, Modal, Popconfirm, Upload } from 'antd';
 import * as S from './style';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useMutation } from '@apollo/client';
 import TransformBox from '../TransformBox';
 import moment from 'moment';
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/lib/upload';
@@ -29,13 +15,10 @@ export type SubmitType = {
 };
 
 type Props = {
-  visible: boolean;
-  handleCancel: () => void;
   data?: any;
-  refetch: () => void;
 };
 
-export function SettingPopupDetailModal({ handleCancel, visible, data, refetch }: Props) {
+export function SettingPopupDetailModal({ data }: Props) {
   const [startDate, setStartDate] = useState<moment.Moment>();
   const [endDate, setEndDate] = useState<moment.Moment>();
   const getBase64 = (img: RcFile, callback: (url: string) => void) => {
@@ -65,7 +48,6 @@ export function SettingPopupDetailModal({ handleCancel, visible, data, refetch }
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj as RcFile, (url) => {
         setLoading(false);
         setImageUrl(url);
@@ -82,8 +64,6 @@ export function SettingPopupDetailModal({ handleCancel, visible, data, refetch }
 
   return (
     <Modal
-      visible={visible}
-      onCancel={handleCancel}
       title="팝업 관리"
       centered
       width={800}

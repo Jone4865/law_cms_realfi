@@ -1,26 +1,16 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
 import { Modal, notification, Image, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import TransformBox from '../TransformBox';
 import * as S from './style';
 
 type Props = {
-  email: string;
   visible: boolean;
   handleCancel: () => void;
   handleNext: () => void;
   otpSecret: string;
-  setOtpSecret: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export function OtpQrModal({
-  email,
-  visible,
-  handleNext,
-  handleCancel,
-  otpSecret,
-  setOtpSecret,
-}: Props) {
+export function OtpQrModal({ visible, handleNext, handleCancel, otpSecret }: Props) {
   const [imageUrl, setImageUrl] = useState('');
 
   const handleCopy = () => {
@@ -34,29 +24,7 @@ export function OtpQrModal({
       });
   };
 
-  // get google otp secret qrcode url
-  // const [getOtpQr] = useLazyQuery<
-  //   CreateOtpQrCodeResponse,
-  //   CreateOtpQrCodeParams
-  // >(CREATE_OTP_QR_CODE, {
-  //   onCompleted: (data) => {
-  //     setImageUrl(data.createOtpQrCode.url);
-  //     setOtpSecret(data.createOtpQrCode.otpSecret);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  // });
-
-  useEffect(() => {
-    if (email.length && visible === true) {
-      // getOtpQr({
-      //   variables: {
-      //     email,
-      //   },
-      // });
-    }
-  }, [visible]);
+  useEffect(() => {}, [visible]);
 
   return (
     <Modal

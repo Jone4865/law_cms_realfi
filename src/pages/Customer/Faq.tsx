@@ -1,11 +1,15 @@
 import { useLazyQuery } from '@apollo/client';
-import { Button, Divider, Form, Input, notification, Table } from 'antd';
+import { Button, Divider, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import { FaqDetailModal } from '../../components/FaqDetailModal';
 import TransformBox from '../../components/TransformBox';
-import { FindManyFaqByAdminOutput, FindManyFaqByAdminQuery } from '../../graphql/generated/graphql';
-import { FIND_MANY_FAQ_BY_ADMIN } from '../../graphql/query';
+import {
+  FindManyFaqByAdminOutput,
+  FindManyFaqByAdminQuery,
+  FindManyFaqCategoryQuery,
+} from '../../graphql/generated/graphql';
+import { FIND_MANY_FAQ_BY_ADMIN, FIND_MANY_FAQ_CATEGORY } from '../../graphql/query';
 import { FaqType, faqColumns } from '../../utils/columns';
 
 export function Faq() {
@@ -18,8 +22,10 @@ export function Faq() {
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [faqKind, setFaqKind] = useState<FaqType[]>([]);
   const [faqCategoryId, setFaqCategoryId] = useState(1);
+  const [faqCategorys, setFaqCategorys] = useState<FindManyFaqCategoryQuery['findManyFaqCategory']>(
+    [],
+  );
 
   const handlePagination = (e: number) => {
     setCurrent(e);
@@ -60,18 +66,6 @@ export function Faq() {
     // }
   };
 
-  // get faq kind list
-  // useQuery<SeeFaqKindResponse>(SEE_FAQ_KIND, {
-  //   onCompleted: (data) => {
-  //     setFaqKind(data.seeFaqKind);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
-  // 요청 분기점
   const [findManyFaqByAdmin, { loading }] = useLazyQuery<FindManyFaqByAdminQuery>(
     FIND_MANY_FAQ_BY_ADMIN,
     {
@@ -85,7 +79,15 @@ export function Faq() {
     },
   );
 
-  // 요청 코드
+  const [findManyFaqCategory, {}] = useLazyQuery(FIND_MANY_FAQ_CATEGORY, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setFaqCategorys(data.findManyFaqCategory);
+    },
+  });
+
   useEffect(() => {
     findManyFaqByAdmin({
       variables: {
@@ -96,6 +98,7 @@ export function Faq() {
       },
       fetchPolicy: 'no-cache',
     });
+    findManyFaqCategory({});
   }, [skip, take, faqCategoryId, visible]);
 
   return (
@@ -106,29 +109,16 @@ export function Faq() {
         handleCancel={handleCancel}
         isEdit={isEdit}
         refetch={handleRefetch}
-        faqCategory={faqKind}
+        faqCategory={faqCategorys}
       />
       <Divider>FAQ</Divider>
-      {/* <Form layout="inline" onFinish={handleSearch}>
-        <Form.Item name="searchText">
-          <Input.Search
-            enterButton
-            placeholder="검색어(질문)"
-            onSearch={(e) => {
-              handleSearch({
-                searchText: e,
-              });
-            }}
-          />
-        </Form.Item>
-      </Form> */}
       <TransformBox justifyContent="flex-end">
         <Button type="primary" onClick={handleClick}>
           FAQ 등록
         </Button>
       </TransformBox>
       <Table
-        columns={faqColumns}
+        columns={faqColumns({ faqCategorys })}
         dataSource={faqData}
         pagination={{
           position: ['bottomCenter'],

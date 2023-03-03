@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import useInterval from '../../utils/useInterval';
 
 import * as S from './style';
@@ -48,7 +47,7 @@ function Layout() {
               </S.NoticeWrap>
             </S.NoticeContainer>
             <S.Time>
-              <FieldTimeOutlined style={{ color: 'white' }} />
+              <FieldTimeOutlined style={{ color: 'white', marginRight: 10 }} />
               <span>
                 {Min}:{Sec < 10 ? '0' + Sec : Sec}
               </span>

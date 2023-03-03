@@ -1,6 +1,9 @@
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { FaqInFindManyFaqByAdminOutput } from '../../graphql/generated/graphql';
+import {
+  FaqInFindManyFaqByAdminOutput,
+  FindManyFaqCategoryQuery,
+} from '../../graphql/generated/graphql';
 import { deleteTag } from '../deleteTag';
 
 export type FaqType = {
@@ -14,7 +17,11 @@ export type FaqType = {
   createdAt: string;
 };
 
-export const faqColumns: ColumnsType<FaqInFindManyFaqByAdminOutput> = [
+type Props = {
+  faqCategorys: FindManyFaqCategoryQuery['findManyFaqCategory'];
+};
+
+export const faqColumns = ({ faqCategorys }: Props): ColumnsType<FaqInFindManyFaqByAdminOutput> => [
   {
     title: 'no',
     key: 'id',
@@ -29,20 +36,8 @@ export const faqColumns: ColumnsType<FaqInFindManyFaqByAdminOutput> = [
     render: (val) => {
       return val.name;
     },
-    filters: [
-      {
-        text: 'Joe',
-        value: 'Joe',
-      },
-      {
-        text: 'Category 1',
-        value: 'Category 1',
-      },
-      {
-        text: 'Category 2',
-        value: 'Category 2',
-      },
-    ],
+    filters: faqCategorys.map((v) => ({ text: v.name, value: v.id })),
+    filterMultiple: false,
   },
   {
     title: '답변',

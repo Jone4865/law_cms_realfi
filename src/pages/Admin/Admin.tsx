@@ -1,5 +1,5 @@
-import { Button, Divider, Form, Input, notification, Table } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import { Button, Divider, notification, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
@@ -11,61 +11,14 @@ import { OtpQrModal } from '../../components/OtpQrModal';
 import TransformBox from '../../components/TransformBox';
 import { AuthDescType, authDescColumns } from '../../utils/columns';
 import { AdminType } from '../../utils/columns/admin';
+import { useLazyQuery } from '@apollo/client';
+import { FIND_MANY_ADMIN_BY_ADMIN } from '../../graphql/query';
+import { AdminInFindManyAdminByAdminOutput } from '../../graphql/generated/graphql';
 
 export function Admin() {
   const [visible, setVisible] = useState(false);
-  const [modalData, setModalData] = useState<AdminType>();
-  const [adminData, setAdminData] = useState<AdminType[]>([
-    {
-      id: '0',
-      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@dadaw.co',
-      name: 'string',
-      phone: '01099999999',
-      otpSecret: 'string',
-      adminRoles: [{ name: 'dawdawd', id: 1 }],
-    },
-    {
-      id: '1',
-      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@dadww.co',
-      name: 'string',
-      phone: '01099999999',
-      otpSecret: 'string',
-      adminRoles: [{ name: 'dawdawd', id: 1 }],
-    },
-    {
-      id: '2',
-      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@daw.co',
-      name: 'string',
-      phone: '01099999999',
-      otpSecret: 'string',
-      adminRoles: [{ name: 'dawdawd', id: 1 }],
-    },
-    {
-      id: '3',
-      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@daw.co',
-      name: 'string',
-      phone: '01099999999',
-      otpSecret: 'string',
-      adminRoles: [{ name: 'dawdawd', id: 1 }],
-    },
-    {
-      id: '4',
-      createdAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      updatedAt: 'Mon Feb 06 2023 09:32:26 GMT+0900 (한국 표준시)',
-      email: 'dwadw@daw.co',
-      name: 'string',
-      phone: '01099999999',
-      adminRoles: [{ name: 'dawdawd', id: 1 }],
-    },
-  ]);
+  const [modalData, setModalData] = useState<AdminInFindManyAdminByAdminOutput>();
+  const [adminData, setAdminData] = useState<AdminInFindManyAdminByAdminOutput[]>([]);
   const [adminAuths, setAdminAuths] = useState<KindType[]>([]);
   const [secret, setSecret] = useState('');
   const [otpModalVisible, setOtpModalVisible] = useState(false);
@@ -88,7 +41,7 @@ export function Admin() {
     setCurrent(e);
   };
 
-  const columns: ColumnsType<AdminType> = [
+  const columns: ColumnsType<AdminInFindManyAdminByAdminOutput> = [
     {
       title: 'no',
       key: 'no',
@@ -115,7 +68,7 @@ export function Admin() {
       render: (val) => {
         return (
           <TransformBox alignItems="center" flexDirection="column">
-            {val.map((v: AdminType) => {
+            {val?.map((v: AdminType) => {
               return <div key={v.id}>{v.name}</div>;
             })}
           </TransformBox>
@@ -132,16 +85,16 @@ export function Admin() {
           <S.OtpWrap>
             {val?.length ? (
               <Tag
-                color="green"
+                color="red"
                 style={{
                   margin: 0,
+                  cursor: 'pointer',
                 }}
               >
-                등록
+                삭제
               </Tag>
             ) : (
               <Tag
-                color="error"
                 style={{
                   margin: 0,
                 }}
@@ -149,21 +102,6 @@ export function Admin() {
                 미등록
               </Tag>
             )}
-
-            <Button
-              type="primary"
-              size="small"
-              style={{
-                marginTop: 10,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setEmail(record.email);
-                setQrModalVisible(true);
-              }}
-            >
-              {val?.length ? '재설정' : '설정'}
-            </Button>
           </S.OtpWrap>
         );
       },
@@ -173,15 +111,6 @@ export function Admin() {
       title: '생성일',
       key: 'createdAt',
       dataIndex: 'createdAt',
-      render: (val) => {
-        return moment(val).format('YYYY-MM-DD hh:mm');
-      },
-      align: 'center',
-    },
-    {
-      title: '수정일',
-      key: 'updatedAt',
-      dataIndex: 'updatedAt',
       render: (val) => {
         return moment(val).format('YYYY-MM-DD hh:mm');
       },
@@ -198,7 +127,7 @@ export function Admin() {
     setModalData(undefined);
   };
 
-  const handleRow = (record: AdminType) => {
+  const handleRow = (record: AdminInFindManyAdminByAdminOutput) => {
     setVisible(true);
     setModalData(record);
   };
@@ -227,15 +156,15 @@ export function Admin() {
   };
 
   const handleRefetch = () => {
-    // if (refetch) {
-    //   refetch()
-    //     .then((data) => {
-    //       setAdminData(data.data.seeAdminHistoryByAdmin.admins);
-    //     })
-    //     .catch((e) => {
-    //       notification.error({ message: e.message });
-    //     });
-    // }
+    setVisible(false);
+    setModalData(undefined);
+    findManyAdminByAdmin({
+      variables: {
+        take,
+        skip,
+      },
+      fetchPolicy: 'no-cache',
+    });
   };
 
   const handleSearch = (value: { searchText?: string }) => {
@@ -250,20 +179,6 @@ export function Admin() {
     setCurrent(1);
     setSearchText(value.searchText ?? '');
   };
-
-  // get admin list
-  // const [getAllAdmins, { refetch, loading }] = useLazyQuery<
-  //   SeeAdminHistoryByAdminResponse,
-  //   SeeAdminHistoryByAdminParams
-  // >(SEE_ADMIN_HISTORY_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setAdminData(data.seeAdminHistoryByAdmin.admins);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
 
   // get admin roles
   // useQuery<SeeAdminRoleResponse>(SEE_ADMIN_ROLE, {
@@ -314,6 +229,25 @@ export function Admin() {
   //   getAdminAuthDesc();
   // }, [adminAuths]);
 
+  useEffect(() => {
+    findManyAdminByAdmin({
+      variables: {
+        take,
+        skip,
+      },
+      fetchPolicy: 'no-cache',
+    });
+  }, [visible]);
+
+  const [findManyAdminByAdmin] = useLazyQuery(FIND_MANY_ADMIN_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setAdminData(data.findManyAdminByAdmin.admins);
+    },
+  });
+
   return (
     <>
       <AdminDetailModal
@@ -327,9 +261,7 @@ export function Admin() {
         visible={qrModalVisible}
         handleCancel={handleCancelQr}
         handleNext={handleNext}
-        email={email}
         otpSecret={secret}
-        setOtpSecret={setSecret}
       />
       <OtpInputModal
         loading={false}
@@ -338,23 +270,6 @@ export function Admin() {
         handleFinish={handleFinish}
       />
       <Divider>관리자 계정</Divider>
-      <Form
-        layout="inline"
-        onFinish={handleSearch}
-        style={{
-          marginBottom: 30,
-        }}
-      >
-        <Form.Item name="searchText">
-          <Input.Search
-            enterButton
-            placeholder="검색어(이메일, 이름, 연락처)"
-            onSearch={(e) => {
-              handleSearch({ searchText: e });
-            }}
-          />
-        </Form.Item>
-      </Form>
 
       <TransformBox justifyContent="flex-end" marginBottom={'30px'}>
         <Button type="primary" onClick={handleClick}>

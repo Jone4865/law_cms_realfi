@@ -7,7 +7,7 @@ export const CREATE_PROJECT_SELL_VOTE_BY_ADMIN = gql(/* GraphQL */ `
     $sellVoteEndedAt: Date!
     $soldDate: Date!
     $projectId: Int!
-    $docs: [Upload!]!
+    $docs: [DocInCreateProjectSellVoteArgs!]!
   ) {
     createProjectSellVoteByAdmin(
       requestSellAmount: $requestSellAmount
@@ -19,25 +19,3 @@ export const CREATE_PROJECT_SELL_VOTE_BY_ADMIN = gql(/* GraphQL */ `
     )
   }
 `);
-
-// // 요청 분기점
-// const [createProjectSellVoteByAdmin, { loading }] = useMutation(CREATE_PROJECT_SELL_VOTE_BY_ADMIN, {
-//   onError: (error) => {
-//     notification.error({ message: error.message });
-//   },
-//   onCompleted: (data) => {
-//     console.log(data);
-//   },
-// });
-
-// // 요청 코드
-// createProjectSellVoteByAdmin({
-//   variables: {
-//     requestSellAmount,
-//     sellVoteStartedAt,
-//     sellVoteEndedAt,
-//     soldDate,
-//     projectId,
-//     docs,
-//   },
-// });

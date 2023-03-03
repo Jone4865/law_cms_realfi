@@ -1,11 +1,8 @@
 import styled from 'styled-components';
 import { Layout as AntdLayout } from 'antd';
+import { PRIMARY } from '../../styles/colors';
 
-const {
-  Sider: AntdSider,
-  Content: AntdContent,
-  Footer: AntdFooter,
-} = AntdLayout;
+const { Sider: AntdSider, Content: AntdContent, Footer: AntdFooter } = AntdLayout;
 
 export const Container = styled.div`
   height: 100vh;
@@ -46,6 +43,7 @@ export const StatusBar = styled.div`
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
   margin-top: 30px;
   justify-content: space-between;
+  align-items: center;
   @media only screen and (max-width: 768px) {
     height: auto;
     box-shadow: none;
@@ -104,15 +102,14 @@ export const Num = styled.div`
 `;
 
 export const Time = styled.div`
-  width: 100px;
-  height: 50px;
-  background-color: brown;
-  font-size: 20px;
+  padding: 10px;
+  background-color: ${PRIMARY};
+  font-size: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  /* padding: 8px; */
   color: #fff;
-  margin: auto 10px;
+  margin-right: 20px;
   border-radius: 7px;
 `;
