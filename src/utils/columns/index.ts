@@ -42,3 +42,5 @@ export { SettingColumns } from './setting';
 export { sellvoteColumns } from './project.add.sellvote';
 
 export { dividendListColumns } from './project.add.dividendList';
+
+export { walletTransferColumns } from './user.detail.walletTransfer';

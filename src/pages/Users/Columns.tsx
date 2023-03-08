@@ -2,7 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, notification, Table } from 'antd';
 
 import React, { useEffect, useState } from 'react';
-import { UserDetailModal } from '../../components/UserDetailModal';
+import { useNavigate } from 'react-router-dom';
 import {
   FindManyUserByAdminQuery,
   UserInFindManyUserByAdminOutput,
@@ -13,20 +13,15 @@ import { userListColumns } from '../../utils/columns';
 
 export function Columns() {
   const [userData, setUserData] = useState<UserInFindManyUserByAdminOutput[]>([]);
-  const [visible, setVisible] = useState(false);
-  const [modalData, setModalData] = useState<UserInFindManyUserByAdminOutput>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
-
-  const handleCancel = () => {
-    setVisible(false);
-  };
+  const navigator = useNavigate();
 
   const handleClickRow = (rec: UserInFindManyUserByAdminOutput) => {
-    setModalData(rec);
+    navigator(`/users/${rec.email}`);
   };
 
   const handleSearch = (value: { searchText?: string }) => {
@@ -74,7 +69,6 @@ export function Columns() {
 
   return (
     <>
-      <UserDetailModal email="dad" handleCancel={handleCancel} visible={visible} />
       <Divider>회원목록</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
@@ -88,7 +82,7 @@ export function Columns() {
         </Form.Item>
       </Form>
       <Table
-        columns={userListColumns({ setVisible })}
+        columns={userListColumns({})}
         dataSource={userData}
         pagination={{
           position: ['bottomCenter'],

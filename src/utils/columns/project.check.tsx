@@ -48,7 +48,7 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     align: 'center',
     render: (val) => {
       const newVal = +val;
-      return newVal.toLocaleString() + ' 원';
+      return newVal.toLocaleString();
     },
   },
   {
@@ -58,23 +58,23 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     align: 'center',
     render: (val) => {
       const newVal = +val;
-      return newVal.toLocaleString() + ' 원';
+      return newVal.toLocaleString();
     },
   },
-  {
-    title: 'TABS 수',
-    key: 'publicOfferingQuantity',
-    dataIndex: 'publicOfferingQuantity',
-    align: 'center',
-    render: (val) => {
-      const newVal = +val;
-      return newVal.toLocaleString() + ' 개';
-    },
-  },
+  // {
+  //   title: 'TABS 수',
+  //   key: 'publicOfferingQuantity',
+  //   dataIndex: 'publicOfferingQuantity',
+  //   align: 'center',
+  //   render: (val) => {
+  //     const newVal = +val;
+  //     return newVal.toLocaleString() + ' 개';
+  //   },
+  // },
   {
     title: '공모율',
-    key: 'percent',
-    dataIndex: 'percent',
+    key: 'publicOfferingRatio',
+    dataIndex: 'publicOfferingRatio',
     align: 'center',
     render: (val) => {
       return val ? val + '%' : '-';
@@ -82,8 +82,8 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
   },
   {
     title: '체결가',
-    key: 'closingPrice',
-    dataIndex: 'closingPrice',
+    key: 'currentPrice',
+    dataIndex: 'currentPrice',
     align: 'center',
     render: (val) => {
       const newVal = +val;
@@ -96,7 +96,7 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
     dataIndex: 'fluctuationRatio',
     align: 'center',
     render: (val) => {
-      return val ? (+val === 0 ? '-' : +val < 0 ? -val + '%' : val + '%') : '-';
+      return val < 0 ? '▼' + -val + '%' : +val === 0 || val === null ? '-' : '▲' + val + '%';
     },
   },
   {
@@ -117,12 +117,12 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
       return val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '-';
     },
   },
-  {
-    title: '등록관리자',
-    key: 'manager',
-    dataIndex: 'manager',
-    align: 'center',
-  },
+  // {
+  //   title: '등록관리자',
+  //   key: 'manager',
+  //   dataIndex: 'manager',
+  //   align: 'center',
+  // },
   {
     title: '상태',
     key: 'publicOfferingStatus',

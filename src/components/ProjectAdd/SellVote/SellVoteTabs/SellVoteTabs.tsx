@@ -40,11 +40,11 @@ export function SellVoteTabs({
   voteState,
   handleRefetch,
 }: Props) {
-  const nowAmount =
-    variables?.requestSellAmount - (variables?.requestSellAmount / 100) * variables?.undoRatio;
-  const requestSellAmount = +variables?.requestSellAmount;
+  const nowAmount = variables
+    ? variables?.requestSellAmount - (variables?.requestSellAmount / 100) * variables?.undoRatio
+    : 0;
+  const requestSellAmount = variables ? +variables?.requestSellAmount : 0;
 
-  const [sellVote] = useState(true);
   const [newVariables, setNewVariables] = useState<any>(undefined);
   const [sellvoteData, setSellvoteData] = useState<FindManySellVoteByAdminOutput['sellVotes']>();
   const [take, setTake] = useState(10);
@@ -212,15 +212,16 @@ export function SellVoteTabs({
   // useEffect(() => {
   //   updateVoteKindByAdmin({
   //     variables: {
-  //       projectId: +projectId,
+  //       projectId: projectId ? projectId : 0,
   //       voteKind: VoteKind.Against,
   //     },
   //   });
   // }, []);
 
-  useEffect(() => {
-    verifyVoteStatusIsSellVoteWait();
-  }, [variables]);
+  // 매각투표 예정 => 중으로 수정
+  // useEffect(() => {
+  //   verifyVoteStatusIsSellVoteWait();
+  // }, [variables]);
 
   useEffect(() => {
     if (variables?.id) {
@@ -400,8 +401,8 @@ export function SellVoteTabs({
         </S.Btns>
       </S.Wrap>
       <S.Bar>
-        <S.BarState style={{ width: `${100 - variables?.undoRatio}%` }}>
-          {100 - variables?.undoRatio}%
+        <S.BarState style={{ width: `${variables ? 100 - variables?.undoRatio : 0}%` }}>
+          <span>{variables ? 100 - variables?.undoRatio : 0}%</span>
         </S.BarState>
       </S.Bar>
       <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>

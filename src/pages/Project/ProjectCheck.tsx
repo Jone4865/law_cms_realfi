@@ -4,17 +4,16 @@ import * as S from './style';
 import { Calendar } from '../../components/Calendar';
 import moment from 'moment';
 import { useLazyQuery } from '@apollo/client';
-import { FIND_MANY_PROJECT } from '../../graphql/query';
-import { FindManyProjectQuery } from '../../graphql/generated/graphql';
+import { FIND_MANY_PROJECT_BY_ADMIN } from '../../graphql/query';
 import { projectCheckColumns } from '../../utils/columns';
 import { useNavigate } from 'react-router-dom';
+import { FindManyProjectByAdminQuery } from '../../graphql/generated/graphql';
 
 export function ProjectCheck() {
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchText, setSearchText] = useState('');
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
   const [findProjectData, setFindProjectData] = useState<any[]>([]);
@@ -26,6 +25,11 @@ export function ProjectCheck() {
   const six = ['매각완료'];
   const [able, setAble] = useState<string[]>([]);
   const navigator = useNavigate();
+
+  const handlePagination = (e: number) => {
+    setSkip((e - 1) * take);
+    setCurrent(e);
+  };
 
   const clickHandel = (item: string) => {
     if (item !== '전체') {
@@ -49,23 +53,28 @@ export function ProjectCheck() {
 
   useEffect(() => {}, [able]);
   useEffect(() => {
-    findManyProject({
+    findManyProjectByAdmin({
       variables: {
-        take: 10,
-        skip: 0,
+        take: take,
+        skip: skip,
+        searchText: '',
+        isSold: false,
       },
     });
   }, []);
 
-  const [findManyProject] = useLazyQuery<FindManyProjectQuery>(FIND_MANY_PROJECT, {
-    onError: (error) => {
-      notification.error({ message: error.message });
+  const [findManyProjectByAdmin] = useLazyQuery<FindManyProjectByAdminQuery>(
+    FIND_MANY_PROJECT_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setTotalCount(data.findManyProjectByAdmin.totalCount);
+        setFindProjectData(data.findManyProjectByAdmin.projects);
+      },
     },
-    onCompleted: (data) => {
-      console.log(data);
-      setFindProjectData(data.findManyProject.projects);
-    },
-  });
+  );
 
   return (
     <>
@@ -196,11 +205,18 @@ export function ProjectCheck() {
         dataSource={findProjectData}
         onRow={(rec) => {
           return {
-            onClick: () => navigator(`/project/detail/${rec.id}`),
+            onClick: () => navigator(`/project/${rec.id}`),
           };
         }}
         // loading={loading}
-        pagination={{ position: ['bottomCenter'] }}
+        pagination={{
+          position: ['bottomCenter'],
+          showSizeChanger: true,
+          onChange: handlePagination,
+          onShowSizeChange: (_current, size) => setTake(size),
+          total: totalCount,
+          current: current,
+        }}
       />
     </>
   );

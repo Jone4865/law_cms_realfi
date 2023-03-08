@@ -79,7 +79,7 @@ export function Dashboard() {
         take: 10,
         skip: 0,
         searchText: '',
-        userInquiryCategoryId: 1,
+        userInquiryCategoryId: undefined,
       },
     });
   }, []);

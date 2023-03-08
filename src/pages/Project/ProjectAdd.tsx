@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Divider, notification } from 'antd';
 import { useLazyQuery, useMutation } from '@apollo/client';
+import { useParams } from 'react-router-dom';
+import { Divider, notification } from 'antd';
+import * as S from './style';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
 import { FIND_PROJECT_BY_ADMIN } from '../../graphql/query';
-import { useParams } from 'react-router-dom';
-import * as S from './style';
-import Loader from '../../components/Loader';
+import { FindProjectByAdminQuery } from '../../graphql/generated/graphql';
 import { ProjectStateModal } from '../../components/ProjectStateModal';
 import { BasicInfo } from '../../components/ProjectAdd/BasicInfo/BasicInfo';
 import { CollusionInfo } from '../../components/ProjectAdd/CollusionInfo/CollusionInfo';
@@ -13,7 +13,7 @@ import { CollusionHistory } from '../../components/ProjectAdd/CollusionHistory/C
 import { TransactioDetails } from '../../components/ProjectAdd/TransactioDetails/TransactioDetails';
 import { DividendManagement } from '../../components/ProjectAdd/DividendManagement/DividendManagement';
 import { SellVote } from '../../components/ProjectAdd/SellVote/SellVote';
-import { FindProjectByAdminQuery } from '../../graphql/generated/graphql';
+import Loader from '../../components/Loader';
 
 type Props = {
   isFix?: boolean;

@@ -7,6 +7,12 @@ import { AsideMenu } from '../AsideMenu';
 import Main from '../Main';
 import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
+import { useLazyQuery } from '@apollo/client';
+import {
+  FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
+  FIND_USER_INQUIRY_COUNT_BY_ADMIN,
+} from '../../graphql/query';
+import { notification } from 'antd';
 
 export type BadgeType = {
   [index: string]: number;
@@ -18,6 +24,9 @@ function Layout() {
   const navigator = useNavigate();
   const [, setCookie] = useCookies(['accessToken', 'refreshToken']);
   const [time, setTime] = useState(3600000);
+  const [changeCount, setChangeCount] = useState(0);
+  const [inquiryCount, setInquiryCount] = useState(0);
+
   useInterval(() => setTime((prev) => prev - 1000), 1000);
   let Min = Math.floor((time / (1000 * 60)) % 60);
   let Sec = (time / 1000) % 60;
@@ -30,6 +39,31 @@ function Layout() {
     }
   }, [time]);
 
+  useEffect(() => {
+    findChangeInvestmentQualificationCountByAdmin({});
+  }, []);
+
+  const [findChangeInvestmentQualificationCountByAdmin] = useLazyQuery(
+    FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (data) => {
+        setChangeCount(data.findChangeInvestmentQualificationCountByAdmin);
+      },
+    },
+  );
+
+  const [findUserInquiryCountByAdmin] = useLazyQuery(FIND_USER_INQUIRY_COUNT_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setInquiryCount(data.findUserInquiryCountByAdmin);
+    },
+  });
+
   return (
     <S.Layout>
       <AsideMenu />
@@ -39,11 +73,11 @@ function Layout() {
             <S.NoticeContainer>
               <S.NoticeWrap>
                 <S.Notice onClick={() => navigator('/users/change')}>한도변경 신청</S.Notice>
-                <S.Num>3</S.Num>
+                <S.Num>{changeCount}</S.Num>
               </S.NoticeWrap>
               <S.NoticeWrap>
                 <S.Notice onClick={() => navigator('/customer/inquiry')}>1:1 문의 알림</S.Notice>
-                <S.Num>2</S.Num>
+                <S.Num>{inquiryCount}</S.Num>
               </S.NoticeWrap>
             </S.NoticeContainer>
             <S.Time>

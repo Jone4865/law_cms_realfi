@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import Layout from '../components/Layout';
 import { Admin } from '../pages/Admin';
 import { Inquiry, Faq, Notice } from '../pages/Customer';
@@ -7,7 +6,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { Login } from '../pages/Login';
 import { Policy } from '../pages/Policy';
 import { ProjectAdd, ProjectCheck } from '../pages/Project';
-import { Columns } from '../pages/Users';
+import { Columns, UserDetail } from '../pages/Users';
 import { Change } from '../pages/Users';
 import { Classifi } from '../pages/Users';
 import { useCookies } from 'react-cookie';
@@ -33,6 +32,7 @@ function Root() {
                 <Route path="columns" element={<Columns />} />
                 <Route path="change" element={<Change />} />
                 <Route path="classifi" element={<Classifi />} />
+                <Route path=":userEamil" element={<UserDetail />} />
               </Route>
 
               <Route path="/customer">
@@ -44,7 +44,7 @@ function Root() {
               <Route path="/project">
                 <Route path="check" element={<ProjectCheck />} />
                 <Route path="add" element={<ProjectAdd isAdd={true} />} />
-                <Route path="detail/:projectId" element={<ProjectAdd isFix={true} />} />
+                <Route path=":projectId" element={<ProjectAdd isFix={true} />} />
               </Route>
               <Route path="setting" element={<Setting />} />
             </Route>

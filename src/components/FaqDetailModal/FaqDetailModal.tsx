@@ -71,7 +71,6 @@ export function FaqDetailModal({
       notification.success({ message: '수정을 완료했습니다.' });
       handleCancel();
       refetch();
-      console.log(data);
     },
     onError: (e) => {
       notification.error({ message: e.message });
@@ -83,7 +82,6 @@ export function FaqDetailModal({
       notification.success({ message: 'FAQ를 생성했습니다.' });
       handleCancel();
       refetch();
-      console.log(data);
     },
     onError: (e) => {
       notification.error({ message: e.message });

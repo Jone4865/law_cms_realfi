@@ -1,7 +1,7 @@
-import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, notification, Table } from 'antd';
-import moment from 'moment';
 import { useEffect, useState } from 'react';
+import React, { useLazyQuery, useMutation } from '@apollo/client';
+import moment from 'moment';
+import { Button, notification, Table } from 'antd';
 import { FindManyPublicOfferingByAdminQuery } from '../../../graphql/generated/graphql';
 import { REFUND_PUBLIC_OFFERING_BY_ADMIN } from '../../../graphql/mutation';
 import { FIND_MANY_PUBLIC_OFFERING_BY_ADMIN } from '../../../graphql/query';
@@ -126,9 +126,7 @@ export function CollusionHistory({ projectId, variables }: Props) {
               {variables?.publicOfferingQuantity?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             </div>
             <div>
-              <S.Bold>{variables.dDay != null ? 'D-' + variables.dDay : ''}</S.Bold>
-              <span>/</span>
-              {moment(variables.publicOfferingEndedAt).format('YYYY.MM.DD')}
+              <S.Bold>{moment(variables.publicOfferingEndedAt).format('YYYY.MM.DD')}</S.Bold>
             </div>
             <div>
               <S.Bold>
