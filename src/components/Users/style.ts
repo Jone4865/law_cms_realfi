@@ -10,7 +10,7 @@ export const Wrap = styled.div`
 `;
 
 export const SubTitle = styled.p`
-  margin-bottom: 10px;
+  margin: 10px 0;
 `;
 
 export const BottomWrap = styled.div`
@@ -44,4 +44,27 @@ export const Right = styled.div`
   &:last-child {
     border-bottom: none;
   }
+`;
+
+export const Flex = styled.div`
+  display: flex;
+  font-weight: bold;
+`;
+
+export const DividendBox = styled.p`
+  width: 120px;
+  height: 50px;
+  border: solid 1px black;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+`;
+
+export const DividendBoxRight = styled.p`
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  height: 50px;
 `;

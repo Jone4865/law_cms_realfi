@@ -16,6 +16,7 @@ export function ProjectCheck() {
   const [totalCount, setTotalCount] = useState(0);
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
+  const [searchText, setSearchText] = useState('');
   const [findProjectData, setFindProjectData] = useState<any[]>([]);
   const one = ['전체'];
   const two = ['공모예정', '공모중', '공모완료'];
@@ -29,6 +30,10 @@ export function ProjectCheck() {
   const handlePagination = (e: number) => {
     setSkip((e - 1) * take);
     setCurrent(e);
+  };
+
+  const handleSearch = (e: string) => {
+    setSearchText(e);
   };
 
   const clickHandel = (item: string) => {
@@ -55,13 +60,13 @@ export function ProjectCheck() {
   useEffect(() => {
     findManyProjectByAdmin({
       variables: {
-        take: take,
-        skip: skip,
-        searchText: '',
+        take,
+        skip,
+        searchText,
         isSold: false,
       },
     });
-  }, []);
+  }, [searchText, skip]);
 
   const [findManyProjectByAdmin] = useLazyQuery<FindManyProjectByAdminQuery>(
     FIND_MANY_PROJECT_BY_ADMIN,
@@ -83,11 +88,11 @@ export function ProjectCheck() {
         <Form layout="inline">
           <Form.Item name="searchText">
             <Input.Search
-              // onSearch={(e) => {
-              //   handleSearch({ searchText: e });
-              // }}
+              onSearch={(e) => {
+                handleSearch(e);
+              }}
               enterButton
-              placeholder="검색어(문의내용, 닉네임)"
+              placeholder="검색어(프로젝트명)"
             />
           </Form.Item>
         </Form>
@@ -99,7 +104,7 @@ export function ProjectCheck() {
           등록하기
         </Button> */}
       </S.FormWrap>
-      <S.Span>Total: 총 00개</S.Span>
+      <S.Span>Total: 총 {totalCount}개</S.Span>
       <S.BtnContainer>
         <S.BtnWrap>
           <S.Title>0. 기타</S.Title>
@@ -192,12 +197,12 @@ export function ProjectCheck() {
           ))}
         </S.BtnWrap>
       </S.BtnContainer>
-      <Calendar
+      {/* <Calendar
         setEndDate={setEndDate}
         setStartDate={setStartDate}
         startDate={startDate}
         endDate={endDate}
-      />
+      /> */}
       <Table
         rowKey={(rec) => rec.id}
         columns={projectCheckColumns}

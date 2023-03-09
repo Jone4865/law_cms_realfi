@@ -1,11 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 import { notification, Table } from 'antd';
 import { useEffect, useState } from 'react';
-import {
-  FindManyPublicOfferingByAdminQuery,
-  FindManySignedOrderByAdminOutput,
-  FindManySignedOrderByAdminQuery,
-} from '../../../graphql/generated/graphql';
+import { FindManySignedOrderByAdminQuery } from '../../../graphql/generated/graphql';
 import { FIND_MANY_SIGNED_ORDER_BY_ADMIN } from '../../../graphql/query';
 import { transactioDetailsColumns } from '../../../utils/columns';
 import * as S from './style';
@@ -21,7 +17,6 @@ export function TransactioDetails({ projectId }: Props) {
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
-  const [cursorId, setCursorId] = useState(0);
 
   useEffect(() => {
     findManySignedOrderByAdmin({
@@ -31,7 +26,7 @@ export function TransactioDetails({ projectId }: Props) {
         projectId: projectId ? projectId : 0,
       },
     });
-  }, [skip]);
+  }, [skip, projectId]);
 
   const handlePagination = (e: number) => {
     setCurrent(e);
@@ -51,7 +46,6 @@ export function TransactioDetails({ projectId }: Props) {
   return (
     <S.Container>
       <S.Title>거래 내역</S.Title>
-
       <Table
         columns={transactioDetailsColumns({})}
         dataSource={transactioDetailsData}

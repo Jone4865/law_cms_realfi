@@ -61,7 +61,7 @@ export function Policy() {
       },
       fetchPolicy: 'no-cache',
     });
-  }, [visible]);
+  }, [visible, skip]);
 
   const [findManyPolicyByAdmin] = useLazyQuery(FIND_MANY_POLICY_BY_ADMIN, {
     onError: (error) => {

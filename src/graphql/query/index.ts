@@ -29,3 +29,4 @@ export { FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN } from './findChang
 export { FIND_USER_INQUIRY_COUNT_BY_ADMIN } from './findUserInquiryCountByAdmin';
 export { FIND_USER_BY_ADMIN } from './findUserByAdmin';
 export { FIND_MANY_WALLET_TRANSFER_BY_ADMIN } from './findManyWalletTransferByAdmin';
+export { FIND_MANY_DIVIDEND_IN_USER_BY_ADMIN } from './findManyDividendInUserByAdmin';

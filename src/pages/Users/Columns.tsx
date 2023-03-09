@@ -70,7 +70,7 @@ export function Columns() {
   return (
     <>
       <Divider>회원목록</Divider>
-      <Form layout="inline" onFinish={handleSearch}>
+      <Form style={{ width: '300px' }} onFinish={handleSearch}>
         <Form.Item name="searchText">
           <Input.Search
             enterButton

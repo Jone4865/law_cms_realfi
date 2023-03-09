@@ -13,7 +13,7 @@ type Props = {
 
 export function WalletTransfer({ email }: Props) {
   const [startDate, setStarteDate] = useState<Moment>(moment(new Date()));
-  const [endDate, setEndDate] = useState<Moment>(moment(new Date()));
+  const [endDate, setEndDate] = useState<Moment>(moment());
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
@@ -26,24 +26,21 @@ export function WalletTransfer({ email }: Props) {
     setCurrent(e);
   };
 
-  const [findManyWalletTransferByAdmin, { loading }] = useLazyQuery(
-    FIND_MANY_WALLET_TRANSFER_BY_ADMIN,
-    {
-      onError: (error) => {
-        notification.error({ message: error.message });
-      },
-      onCompleted: (data) => {
-        setTotalCount(data.findManyWalletTransferByAdmin.totalCount);
-        setWalletData(data.findManyWalletTransferByAdmin.walletTransfers);
-      },
+  const [findManyWalletTransferByAdmin] = useLazyQuery(FIND_MANY_WALLET_TRANSFER_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
     },
-  );
+    onCompleted: (data) => {
+      setTotalCount(data.findManyWalletTransferByAdmin.totalCount);
+      setWalletData(data.findManyWalletTransferByAdmin.walletTransfers);
+    },
+  });
 
   useEffect(() => {
     findManyWalletTransferByAdmin({
       variables: {
         email: email ? email : '',
-        gte: startDate,
+        gte: new Date(moment(startDate).format('YYYY-MM-DD 00:00:00')),
         lt: endDate,
         skip: skip,
         take: take,
@@ -61,7 +58,7 @@ export function WalletTransfer({ email }: Props) {
       />
       <Table
         columns={walletTransferColumns({})}
-        dataSource={[]}
+        dataSource={walletData}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: true,
