@@ -41,6 +41,7 @@ function Layout() {
 
   useEffect(() => {
     findChangeInvestmentQualificationCountByAdmin({});
+    findUserInquiryCountByAdmin({});
   }, []);
 
   const [findChangeInvestmentQualificationCountByAdmin] = useLazyQuery(
@@ -73,11 +74,11 @@ function Layout() {
             <S.NoticeContainer>
               <S.NoticeWrap>
                 <S.Notice onClick={() => navigator('/users/change')}>한도변경 신청</S.Notice>
-                <S.Num>{changeCount}</S.Num>
+                {changeCount !== 0 && <S.Num>{changeCount}</S.Num>}
               </S.NoticeWrap>
               <S.NoticeWrap>
                 <S.Notice onClick={() => navigator('/customer/inquiry')}>1:1 문의 알림</S.Notice>
-                <S.Num>{inquiryCount}</S.Num>
+                {inquiryCount !== 0 && <S.Num>{inquiryCount}</S.Num>}
               </S.NoticeWrap>
             </S.NoticeContainer>
             <S.Time>

@@ -1,7 +1,6 @@
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import { FindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
-import { transferKindToText } from '../transferKindToText';
 
 export const userDetailInquiryColumns = ({}): ColumnsType<
   FindManyUserInquiryByAdminOutput['userInquiries'][0]

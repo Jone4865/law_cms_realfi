@@ -43,18 +43,15 @@ export function Columns() {
     setCurrent(e);
   };
 
-  const [findManyUserByAdmin, { loading }] = useLazyQuery<FindManyUserByAdminQuery>(
-    FIND_MANY_USERS_BY_ADMIN,
-    {
-      onError: (error) => {
-        notification.error({ message: error.message });
-      },
-      onCompleted: (data) => {
-        setUserData(data.findManyUserByAdmin.users);
-        setTotalCount(data.findManyUserByAdmin.totalCount);
-      },
+  const [findManyUserByAdmin] = useLazyQuery<FindManyUserByAdminQuery>(FIND_MANY_USERS_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
     },
-  );
+    onCompleted: (data) => {
+      setUserData(data.findManyUserByAdmin.users);
+      setTotalCount(data.findManyUserByAdmin.totalCount);
+    },
+  });
 
   useEffect(() => {
     findManyUserByAdmin({

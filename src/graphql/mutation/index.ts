@@ -21,3 +21,4 @@ export { PAY_DIVIDEND_BY_ADMIN } from './payDividendByAdmin';
 export { UPDATE_PROJECT_SELL_VOTE_BY_ADMIN } from './updateProjectSellVoteByAdmin';
 export { VERIFY_VOTE_STATE_IS_SELL_VOTE_WAIT } from './verifyVoteStatusIsSellVoteWait';
 export { VERIFY_MARKET_STATUS_IS_UNLISTED } from './verifyMarketStatusIsUnlisted';
+export { PROJECT_IS_VISIBLE_TOGGLE_BY_ADMIN } from './projectIsVisibleToggleByAdmin';

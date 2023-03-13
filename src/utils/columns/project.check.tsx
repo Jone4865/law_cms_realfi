@@ -6,6 +6,7 @@ import { publicOfferingStatusToText } from '../publicOfferingStatusToText';
 import { MarketStatus, PublicOfferingStatus, VoteStatus } from '../../graphql/generated/graphql';
 import { marketStatusToText } from '../marketStatusToText';
 import { voteStatusToText } from '../voteStatusToText';
+import { Dispatch, SetStateAction } from 'react';
 
 export type ProjectCheckType = {
   id: number;
@@ -25,7 +26,13 @@ export type ProjectCheckType = {
   voteStatus: VoteStatus;
 };
 
-export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
+type Props = {
+  ToggleClickhandle: (id: number) => void;
+};
+
+export const projectCheckColumns = ({
+  ToggleClickhandle,
+}: Props): ColumnsType<ProjectCheckType> => [
   {
     title: 'no',
     key: 'id',
@@ -142,13 +149,13 @@ export const projectCheckColumns: ColumnsType<ProjectCheckType> = [
   },
   {
     title: '노출',
-    key: 'see',
-    dataIndex: 'see',
+    key: 'isVisible',
+    dataIndex: 'isVisible',
     align: 'center',
-    render: (_val) => {
+    render: (val, record) => {
       return (
         <Form onClick={(e) => e.stopPropagation()}>
-          <Switch />
+          <Switch defaultChecked={val} onChange={() => ToggleClickhandle(record.id)} />
         </Form>
       );
     },

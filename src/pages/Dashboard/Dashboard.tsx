@@ -35,31 +35,11 @@ export function Dashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardStats>();
   const navigator = useNavigate();
 
-  // get dashboard stats
-  // const { loading: statLoading } = useQuery<SeeDashboardStatsByAdminResponse>(
-  //   SEE_DASHBOARD_STATS_BY_ADMIN,
-  //   {
-  //     onCompleted: (data) => {
-  //       setDashboardData(data.seeDashboardStatsByAdmin);
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //     fetchPolicy: 'no-cache',
-  //   },
-  // );
-
   const chartTitle = [
     { title: '회원수', keyword: 'userCount' },
     // { title: '어게인 등록 번호 개수', keyword: 'registrationInfoCount' },
     // { title: '제휴 문의수', keyword: 'partnershipInquiryCount' },
   ];
-
-  // useEffect(() => {
-
-  //     seeInquiry();
-
-  // }, []);
 
   const [findManyUserInquiryByAdmin, { loading }] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
     FIND_MANY_USER_INQUIRY_BY_ADMIN,
@@ -76,7 +56,7 @@ export function Dashboard() {
   useEffect(() => {
     findManyUserInquiryByAdmin({
       variables: {
-        take: 10,
+        take: 5,
         skip: 0,
         searchText: '',
         userInquiryCategoryId: undefined,
@@ -111,6 +91,11 @@ export function Dashboard() {
         </Button>
       </S.Head>
       <Table
+        onRow={() => {
+          return {
+            onClick: () => navigator('/customer/inquiry'),
+          };
+        }}
         rowKey={(rec) => rec.id}
         columns={dashboardInquiryColumns}
         scroll={{ x: 800 }}

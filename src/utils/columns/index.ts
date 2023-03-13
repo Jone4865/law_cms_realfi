@@ -4,7 +4,8 @@ export type { AuthDescType } from './admin';
 export { authDescColumns } from './admin';
 
 export type { UserType } from './user.columns';
-export type { UserChangeType } from './user.change';
+// export type { UserChangeType } from './user.change';
+export type { ClassifiType } from './user.classifi';
 export { userListColumns } from './user.columns';
 export { userChangeColumns } from './user.change';
 export { userClassifiColumns } from './user.classifi';
@@ -50,3 +51,5 @@ export { tabsWalletClumns } from './user.detail.tabsWallet';
 export { userDividendClumns } from './user.detail.dividend';
 
 export { userDetailInquiryColumns } from './user.detail.userinquiry';
+
+export { userChangeFileColumns } from './user.change.file';

@@ -1,8 +1,8 @@
 import { gql } from '../generated';
 
 export const FIND_MANY_USERS_BY_ADMIN = gql(/* GraphQL */ `
-  query findManyUserByAdmin($take: Int!, $skip: Int!) {
-    findManyUserByAdmin(take: $take, skip: $skip) {
+  query findManyUserByAdmin($take: Int!, $skip: Int!, $searchText: String!) {
+    findManyUserByAdmin(take: $take, skip: $skip, searchText: $searchText) {
       totalCount
       users {
         email

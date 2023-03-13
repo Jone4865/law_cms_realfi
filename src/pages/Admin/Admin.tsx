@@ -145,15 +145,7 @@ export function Admin() {
     setOtpModalVisible(true);
   };
 
-  const handleFinish = (otp: string[]) => {
-    // setOtpSecret({
-    //   variables: {
-    //     email,
-    //     otpSecret: secret,
-    //     code: otp.concat().join().replaceAll(',', ''),
-    //   },
-    // });
-  };
+  const handleFinish = (otp: string[]) => {};
 
   const handleRefetch = () => {
     setVisible(false);
@@ -168,66 +160,10 @@ export function Admin() {
   };
 
   const handleSearch = (value: { searchText?: string }) => {
-    // getAllAdmins({
-    //   variables: {
-    //     take,
-    //     skip: 0,
-    //     ...value,
-    //   },
-    // });
     setSkip(0);
     setCurrent(1);
     setSearchText(value.searchText ?? '');
   };
-
-  // get admin roles
-  // useQuery<SeeAdminRoleResponse>(SEE_ADMIN_ROLE, {
-  //   onCompleted: (data) => {
-  //     setAdminAuths(data.seeAdminRole);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
-  // update admin otpSecret
-  // const [setOtpSecret, { loading: otpLoading }] = useMutation<
-  //   UpdateOtpSecretResponse,
-  //   UpdateOtpSecretParams
-  // >(UPDATE_OTP_SECRET, {
-  //   onCompleted: () => {
-  //     notification.success({ message: 'OTP를 재설정했습니다.' });
-  //     handleCancelOtp();
-  //     handleRefetch();
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //     setOtp((prev) => {
-  //       if (prev.length) {
-  //         prev.map((_v, i) => (prev[i] = ''));
-  //       }
-  //       return [...prev];
-  //     });
-  //     handleFocus(0);
-  //   },
-  // });
-
-  //pagination
-  // useEffect(() => {
-  //   getAllAdmins({
-  //     variables: {
-  //       take,
-  //       skip,
-  //       searchText,
-  //     },
-  //   });
-  // }, [take, skip]);
-
-  // create admin roles description
-  // useEffect(() => {
-  //   getAdminAuthDesc();
-  // }, [adminAuths]);
 
   useEffect(() => {
     findManyAdminByAdmin({

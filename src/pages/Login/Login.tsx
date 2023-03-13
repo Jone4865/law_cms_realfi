@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Input, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useRecoilState } from 'recoil';
@@ -18,11 +18,15 @@ type SubmitType = {
 };
 
 export function Login() {
-  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken']);
+  const [cookies, setCookie] = useCookies(['Authentication']);
   const [visible, setVisible] = useState(false);
   const [otpImg, setOtpImg] = useState('');
   const [form] = useForm<SubmitType>();
-  const [, setToken] = useRecoilState(userTokenState);
+  // const [, setToken] = useRecoilState(userTokenState);
+
+  useEffect(() => {
+    console.log(cookies);
+  }, [cookies]);
 
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -78,12 +82,12 @@ export function Login() {
       notification.error({ message: error?.message });
     },
     onCompleted: (data) => {
-      setCookie('accessToken', data.signInFromAdmin.accessToken);
-      setCookie('refreshToken', data.signInFromAdmin.refreshToken);
-      setToken({
-        accessToken: data.signInFromAdmin.accessToken,
-      });
-      return (window.location.href = '/');
+      // setCookie('accessToken', data.signInFromAdmin.accessToken);
+      // setCookie('refreshToken', data.signInFromAdmin.refreshToken);
+      // setToken({
+      //   accessToken: data.signInFromAdmin.accessToken,
+      // });
+      // return (window.location.href = '/');
     },
     fetchPolicy: 'no-cache',
     notifyOnNetworkStatusChange: true,

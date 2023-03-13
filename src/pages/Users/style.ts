@@ -23,3 +23,9 @@ export const Title = styled.div`
   font-weight: bold;
   margin: 20px 0;
 `;
+
+export const Wrap = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+`;

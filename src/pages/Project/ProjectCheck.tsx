@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Divider, Form, Input, notification, Table } from 'antd';
 import * as S from './style';
-import { Calendar } from '../../components/Calendar';
 import moment from 'moment';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { FIND_MANY_PROJECT_BY_ADMIN } from '../../graphql/query';
 import { projectCheckColumns } from '../../utils/columns';
 import { useNavigate } from 'react-router-dom';
 import { FindManyProjectByAdminQuery } from '../../graphql/generated/graphql';
+import { PROJECT_IS_VISIBLE_TOGGLE_BY_ADMIN } from '../../graphql/mutation';
 
 export function ProjectCheck() {
   const [take, setTake] = useState(10);
@@ -18,6 +18,7 @@ export function ProjectCheck() {
   const [endDate, setEndDate] = useState(moment());
   const [searchText, setSearchText] = useState('');
   const [findProjectData, setFindProjectData] = useState<any[]>([]);
+
   const one = ['전체'];
   const two = ['공모예정', '공모중', '공모완료'];
   const three = ['상장대기'];
@@ -56,17 +57,13 @@ export function ProjectCheck() {
     }
   };
 
-  useEffect(() => {}, [able]);
-  useEffect(() => {
-    findManyProjectByAdmin({
+  const ToggleClickhandle = (id: number) => {
+    projectIsVisibleToggleByAdmin({
       variables: {
-        take,
-        skip,
-        searchText,
-        isSold: false,
+        id,
       },
     });
-  }, [searchText, skip]);
+  };
 
   const [findManyProjectByAdmin] = useLazyQuery<FindManyProjectByAdminQuery>(
     FIND_MANY_PROJECT_BY_ADMIN,
@@ -80,6 +77,28 @@ export function ProjectCheck() {
       },
     },
   );
+
+  const [projectIsVisibleToggleByAdmin] = useMutation(PROJECT_IS_VISIBLE_TOGGLE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '프로젝트의 노출여부를 수정했습니다.' });
+    },
+  });
+
+  useEffect(() => {}, [able]);
+
+  useEffect(() => {
+    findManyProjectByAdmin({
+      variables: {
+        take,
+        skip,
+        searchText,
+        isSold: false,
+      },
+    });
+  }, [searchText, skip]);
 
   return (
     <>
@@ -205,7 +224,7 @@ export function ProjectCheck() {
       /> */}
       <Table
         rowKey={(rec) => rec.id}
-        columns={projectCheckColumns}
+        columns={projectCheckColumns({ ToggleClickhandle })}
         scroll={{ x: 800 }}
         dataSource={findProjectData}
         onRow={(rec) => {

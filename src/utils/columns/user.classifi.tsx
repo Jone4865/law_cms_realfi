@@ -1,25 +1,14 @@
 import { ColumnsType } from 'antd/lib/table';
-import moment from 'moment';
-import { Button } from 'antd';
+// import { Button } from 'antd';
 
-export type UserType = {
-  nickname: string;
-  email: string;
+export type ClassifiType = {
   name: string;
-  createdAt: string;
-  phone: string;
-  content?: string;
-  max?: string;
-  do?: string;
-  shippingAddresses: {
-    id: number;
-    address: string;
-    addressDetail: string;
-    isDefault: boolean;
-  }[];
+  content: string;
+  max: string;
+  id: number;
 };
 
-export const userClassifiColumns: ColumnsType<UserType> = [
+export const userClassifiColumns: ColumnsType<ClassifiType> = [
   {
     title: 'no',
     key: 'no',
@@ -47,13 +36,13 @@ export const userClassifiColumns: ColumnsType<UserType> = [
     dataIndex: 'max',
     align: 'center',
   },
-  {
-    title: '행동',
-    key: 'do',
-    dataIndex: 'do',
-    align: 'center',
-    render: (val: string, record) => {
-      return <Button type="primary">삭제</Button>;
-    },
-  },
+  // {
+  //   title: '행동',
+  //   key: 'do',
+  //   dataIndex: 'do',
+  //   align: 'center',
+  //   render: (val: string, record) => {
+  //     return <Button type="primary">삭제</Button>;
+  //   },
+  // },
 ];

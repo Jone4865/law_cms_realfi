@@ -1,8 +1,6 @@
 import { Button } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { Dispatch, SetStateAction } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { UserInFindManyUserByAdminOutput } from '../../graphql/generated/graphql';
 
 export type UserType = {

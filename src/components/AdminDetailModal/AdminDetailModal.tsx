@@ -152,12 +152,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       });
       refetch();
     } else {
-      // updateAdmin({
-      //   variables: {
-      //     ...variables,
-      //     password: !isPasswordChange ? variables.password : undefined,
-      //   },
-      // });
     }
   };
 
@@ -169,41 +163,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       notification.success({ message: '관리자를 생성하였습니다.' });
     },
   });
-
-  // delete admin account
-  // const [deleteAdmin] = useMutation<DeleteAdminResponse, DeleteAdminParams>(
-  //   DELETE_ADMIN,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '관리자를 삭제했습니다' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-
-  //       refetch();
-  //     },
-  //     variables: {
-  //       email: admin?.email ?? '',
-  //     },
-  //   },
-  // );
-
-  // update admin account
-  // const [updateAdmin] = useMutation<UpdateAdminResponse, UpdateAdminParams>(
-  //   UPDATE_ADMIN,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '관리자 계정을 수정했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
 
   useEffect(() => {
     if (admin) {
