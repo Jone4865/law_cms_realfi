@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import * as S from './style';
 
 import moment from 'moment';
-
 import { useMutation } from '@apollo/client';
 import TransformBox from '../TransformBox';
 import { UserInquiryInFindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';

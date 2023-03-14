@@ -143,6 +143,9 @@ export function CollusionHistory({ projectId, variables }: Props) {
             <Button style={{ marginRight: '10px' }} type="primary">
               알림톡 보내기
             </Button>
+            <Button style={{ marginRight: '10px' }} type="primary">
+              전체 환불
+            </Button>
             <Button type="primary" onClick={() => setDoModalVisible(true)}>
               환불
             </Button>

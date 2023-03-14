@@ -1,8 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
-import { Menu } from 'antd';
-
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as S from './style';
+import { Menu } from 'antd';
 
 import {
   CustomerServiceOutlined,

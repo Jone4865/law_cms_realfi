@@ -41,7 +41,7 @@ export function WalletTransfer({ email }: Props) {
       variables: {
         email: email ? email : '',
         gte: new Date(moment(startDate).format('YYYY-MM-DD 00:00:00')),
-        lt: endDate,
+        lt: endDate.add(1, 'd'),
         skip: skip,
         take: take,
       },

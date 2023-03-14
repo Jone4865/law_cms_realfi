@@ -15,15 +15,15 @@ import { useEffect } from 'react';
 import { Setting } from '../pages/Setting';
 
 function Root() {
-  const [cookies, setCookie] = useCookies(['Authentication']);
+  const [cookies, setCookie] = useCookies(['accessToken']);
 
-  // useEffect(() => {}, [cookies.accessToken]);
+  useEffect(() => {}, [cookies.accessToken]);
 
   return (
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
-          {cookies?.Authentication && (
+          {cookies?.accessToken && (
             <Route path="/" element={<Layout />}>
               <Route path="*" element={<Navigate to="/" />} />
               <Route index element={<Dashboard />} />
@@ -50,7 +50,7 @@ function Root() {
               <Route path="setting" element={<Setting />} />
             </Route>
           )}
-          {!cookies?.Authentication && (
+          {!cookies?.accessToken && (
             <>
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<Navigate to="/login" />} />

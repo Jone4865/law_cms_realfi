@@ -74,9 +74,9 @@ export function Change() {
         skip,
         searchText,
         gte: startDate.format('YYYY-MM-DD'),
-        lt: endDate.format('YYYY-MM-DD'),
-        fetchPolicy: 'no-cache',
+        lt: endDate.add(1, 'd').format('YYYY-MM-DD'),
       },
+      fetchPolicy: 'no-cache',
     });
   }, [take, skip, startDate, endDate]);
 

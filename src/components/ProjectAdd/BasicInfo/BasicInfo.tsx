@@ -6,17 +6,25 @@ import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { InputBasic } from '../InputBasic/InputBasic';
 import { investfileColumns, lesseeColumns, officialInfosColumns } from '../../../utils/columns';
-import { DocInCreateProjectByAdminArgs } from '../../../graphql/generated/graphql';
+import {
+  DocInCreateProjectByAdminArgs,
+  FileKind,
+  FindManyProjectFileQuery,
+} from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
 import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
 import { useLazyQuery } from '@apollo/client';
 import { FIND_MANY_PROJECT_FILE } from '../../../graphql/query';
 
 type Props = {
-  handleChange: (key: string, value: any) => void;
   variables: any;
-  isFix?: boolean;
   projectId: number | undefined;
+  investFileList: DocInCreateProjectByAdminArgs[];
+  officialInfosFileList: DocInCreateProjectByAdminArgs[];
+  setInvestFileList: React.Dispatch<React.SetStateAction<DocInCreateProjectByAdminArgs[]>>;
+  setOfficialInfosFileList: React.Dispatch<React.SetStateAction<DocInCreateProjectByAdminArgs[]>>;
+  handleChange: (key: string, value: any) => void;
+  isFix?: boolean;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -27,29 +35,33 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) {
+export function BasicInfo({
+  handleChange,
+  variables,
+  isFix,
+  projectId,
+  investFileList,
+  setInvestFileList,
+  officialInfosFileList,
+  setOfficialInfosFileList,
+}: Props) {
   var regExp = /^[0-9]/g;
   const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [projectImageFileList, setProjectImageFileList] = useState<any>([]);
-  const [investFileList, setInvestFileList] = useState<DocInCreateProjectByAdminArgs[]>([
-    {
-      file: null,
-      name: '',
-    },
-  ]);
-  const [officialInfosFileList, setOfficialInfosFileList] = useState<
-    DocInCreateProjectByAdminArgs[]
+  const [newInvestFileList, setNewInvestFileList] = useState<
+    FindManyProjectFileQuery['findManyProjectFile']
   >([
     {
-      file: null,
+      fileKind: FileKind.Docs,
+      fileName: '',
+      id: 0,
       name: '',
     },
   ]);
-
-  const [lesseeNum, setLesseeNum] = useState([
+  const [lesseeNum] = useState([
     {
       id: 1,
     },
@@ -128,6 +140,9 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
   const [findManyProjectFile] = useLazyQuery(FIND_MANY_PROJECT_FILE, {
     onError: (error) => {
       notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      // setNewInvestFileList(data.findManyProjectFile[1]);
     },
   });
 

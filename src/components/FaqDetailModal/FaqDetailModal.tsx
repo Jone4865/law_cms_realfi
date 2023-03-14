@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useMutation } from '@apollo/client';
 import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
+import { useMutation } from '@apollo/client';
 import { CREATE_FAQ_BY_ADMIN, UPDATE_FAQ_BY_ADMIN } from '../../graphql/mutation';
+import { FindManyFaqCategoryQuery } from '../../graphql/generated/graphql';
+import TransformBox from '../TransformBox';
 import { FaqType } from '../../utils/columns';
 import { Editor } from '../Editor';
-import TransformBox from '../TransformBox';
-import { FindManyFaqCategoryQuery } from '../../graphql/generated/graphql';
 
 type Props = {
   visible: boolean;

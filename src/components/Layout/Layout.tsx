@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useInterval from '../../utils/useInterval';
-
 import * as S from './style';
-import { FieldTimeOutlined } from '@ant-design/icons';
-import { AsideMenu } from '../AsideMenu';
-import Main from '../Main';
+
 import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
 import { useLazyQuery } from '@apollo/client';
@@ -13,6 +10,9 @@ import {
   FIND_USER_INQUIRY_COUNT_BY_ADMIN,
 } from '../../graphql/query';
 import { notification } from 'antd';
+import { FieldTimeOutlined } from '@ant-design/icons';
+import Main from '../Main';
+import { AsideMenu } from '../AsideMenu';
 
 export type BadgeType = {
   [index: string]: number;
@@ -22,7 +22,7 @@ export type BadgeType = {
 
 function Layout() {
   const navigator = useNavigate();
-  const [, setCookie] = useCookies(['accessToken', 'refreshToken']);
+  const [cookies, setCookie, removeCookie] = useCookies(['accessToken', 'refreshToken', 'time']);
   const [time, setTime] = useState(3600000);
   const [changeCount, setChangeCount] = useState(0);
   const [inquiryCount, setInquiryCount] = useState(0);
@@ -32,9 +32,11 @@ function Layout() {
   let Sec = (time / 1000) % 60;
 
   useEffect(() => {
+    setCookie('time', time);
     if (time <= 0) {
       setCookie('accessToken', '');
       setCookie('refreshToken', '');
+      removeCookie('time');
       window.location.href = '/login';
     }
   }, [time]);
@@ -42,6 +44,7 @@ function Layout() {
   useEffect(() => {
     findChangeInvestmentQualificationCountByAdmin({});
     findUserInquiryCountByAdmin({});
+    setTime(cookies.time ? cookies.time : 3600000);
   }, []);
 
   const [findChangeInvestmentQualificationCountByAdmin] = useLazyQuery(

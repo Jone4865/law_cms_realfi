@@ -40,18 +40,26 @@ export function UserDetailInfo({ detailData }: Props) {
           </S.LeftWrap>
           <S.RightWrap>
             <S.Right>
-              {detailData?.wallet?.balance.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              {detailData?.wallet?.balance
+                ? detailData?.wallet?.balance.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                : 0}
             </S.Right>
             <S.Right>
-              {detailData?.wallet?.totalDeposit.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              {detailData?.wallet?.totalDeposit
+                ? detailData?.wallet?.totalDeposit.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                : 0}
             </S.Right>
             <S.Right>
               {detailData?.wallet?.publicOfferingDeposit
-                .toString()
-                ?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                ? detailData?.wallet?.publicOfferingDeposit
+                    .toString()
+                    ?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                : 0}
             </S.Right>
             <S.Right>
-              {detailData?.wallet?.buyDeposit.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              {detailData?.wallet?.buyDeposit
+                ? detailData?.wallet?.buyDeposit.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                : 0}
             </S.Right>
           </S.RightWrap>
         </S.BottomWrap>

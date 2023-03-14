@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, Divider, notification, Popover, Table } from 'antd';
+import axios, { AxiosResponse, AxiosError } from 'axios';
+import { Button, notification, Popover, Table } from 'antd';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import {
@@ -14,9 +15,11 @@ import { userChangeColumns, userChangeFileColumns } from '../../utils/columns';
 import { ChangeQualificationModal } from '../../components/Users/ChangeQualificationModal/ChangeQualificationModal';
 import * as S from './style';
 import { TREAT_CHANGE_INVESTMENT_QUILIFICATION_BY_ADMIN } from '../../graphql/mutation';
+import { useCookies } from 'react-cookie';
 
 export function ChangeDetail() {
   const params = useParams();
+  const [cookies] = useCookies(['accessToken']);
   const [modalVisible, setModalVisible] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [startDate] = useState(moment());
@@ -97,7 +100,6 @@ export function ChangeDetail() {
           notification.error({ message: error.message });
         },
         onCompleted: (data) => {
-          console.log(data);
           setInvestmentDocuments(
             data.findManyChangeInvestmentQualificationByAdmin.changeInvestmentQualifications[0]
               .investmentDocuments,
@@ -129,6 +131,25 @@ export function ChangeDetail() {
       },
     );
 
+  // const handleClickDownload = async () => {
+  //   axios
+  //     .get(
+  //       `${process.env.REACT_APP_SERVER}/investment-document?name=0e69dbf9-4de7-4dd6-b843-a0dca4258d65.pdf`,
+  //       {
+  //         withCredentials: true,
+  //         headers: {
+  //           'content-type': 'application/json',
+  //           connection: 'keep-alive',
+  //           'Sec-Fetch-Dest': 'empty',
+  //           'Sec-Fetch-Mode': 'cors',
+  //           'Sec-Fetch-Site': 'same-origin',
+  //         },
+  //       },
+  //     )
+  //     .then(() => console.log('s'))
+  //     .catch((err) => console.log(err));
+  // };
+
   useEffect(() => {
     findManyChangeInvestmentQualificationByAdmin({
       variables: {
@@ -136,9 +157,9 @@ export function ChangeDetail() {
         skip: 0,
         searchText: params.userName,
         gte: startDate.subtract(2, 'year').format('YYYY-MM-DD'),
-        lt: endDate.format('YYYY-MM-DD'),
-        fetchPolicy: 'no-cache',
+        lt: endDate.add(1, 'd').format('YYYY-MM-DD'),
       },
+      fetchPolicy: 'no-cache',
     });
   }, [startDate, endDate, modalVisible, popoverVisible]);
 
@@ -154,6 +175,7 @@ export function ChangeDetail() {
         />
       )}
       <S.Title>{params.userName} 회원 자격변경 상세정보</S.Title>
+      {/* <Button onClick={handleClickDownload}>ㅌㅅㅌ</Button> */}
       <S.Wrap>
         <Button
           onClick={() => {

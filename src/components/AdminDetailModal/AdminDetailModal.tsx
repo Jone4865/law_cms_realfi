@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Input, Modal, notification, Popconfirm, Table } from 'antd';
 import * as S from './style';
 
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { validateEmail, validataPassword } from '../../utils/valitation';
 import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
 import { SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
+import { AuthDescType } from '../../utils/columns';
 
 export type SubmitType = {
   email?: string;
@@ -21,9 +21,19 @@ type Props = {
   admin?: any;
   refetch: () => void;
   adminRoles: KindType[];
+  authDescData: AuthDescType[];
+  handleCheckBox: (val: string) => void;
 };
 
-export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminRoles }: Props) {
+export function AdminDetailModal({
+  handleCancel,
+  visible,
+  admin,
+  refetch,
+  adminRoles,
+  authDescData,
+  handleCheckBox,
+}: Props) {
   const [isPasswordChange, setPasswordChange] = useState(false);
   const [adminInfo, setAdminInfo] = useState<SubmitType>({
     adminRoles: [
@@ -45,10 +55,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     password: '',
   });
 
-  const inputStyle = {
-    width: '548px',
-  };
-
   const columns = [
     {
       title: '권한명',
@@ -58,62 +64,20 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     },
     {
       title: '선택',
-      key: 'auth',
-      dataIndex: 'id',
-      render: (val: number) => {
-        return (
-          <Checkbox
-            checked={adminInfo.adminRoles.findIndex((v) => v.id === val) > -1}
-            value={val}
-            onChange={handleChangeRole}
-            disabled={val === 1 || val === 2 || val === 7 || val === 17}
-          />
-        );
+      key: 'name',
+      dataIndex: 'name',
+      render: (val: string) => {
+        return <Checkbox onChange={() => handleCheckBox(val)} />;
       },
       align: 'center' as const,
     },
   ];
-
-  const handleClick = () => {
-    if (isPasswordChange) {
-      setAdminInfo({
-        ...adminInfo,
-        password: '',
-      });
-    } else {
-      setAdminInfo({
-        ...adminInfo,
-        password: 'qweasd123@',
-      });
-    }
-    setPasswordChange(!isPasswordChange);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, keyword: string) => {
     setAdminInfo({
       ...adminInfo,
       [keyword]: e.target.value,
     });
-  };
-
-  const handleChangeRole = (e: CheckboxChangeEvent) => {
-    if (e.target.checked) {
-      setAdminInfo({
-        ...adminInfo,
-        adminRoles: [
-          ...adminInfo.adminRoles,
-          {
-            name: adminRoles.find((v) => v.id === e.target.value)?.name ?? '',
-            id: e.target.value,
-          },
-        ],
-      });
-    } else {
-      setAdminInfo({
-        ...adminInfo,
-        adminRoles: adminInfo.adminRoles.filter((v) => v.id !== e.target.value),
-      });
-    }
   };
 
   const handleFinish = () => {
@@ -159,7 +123,7 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
       notification.success({ message: '관리자를 생성하였습니다.' });
     },
   });
@@ -194,6 +158,7 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       setPasswordChange(false);
     }
   }, [visible]);
+
   return (
     <Modal
       visible={visible}
@@ -233,13 +198,13 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
         <S.Label>권한</S.Label>
         <Table
           columns={columns}
-          dataSource={adminRoles}
+          dataSource={authDescData}
           pagination={false}
           style={{
             width: 750,
           }}
           bordered
-          rowKey={(rec) => rec.id}
+          // rowKey={(rec) => rec.id}
           // scroll={{ x: 500 }}
         />
       </S.TableWrap>

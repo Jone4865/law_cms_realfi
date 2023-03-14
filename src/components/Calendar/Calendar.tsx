@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from 'react';
 import { DatePicker } from 'antd';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
 import * as S from './style';
 
 type Props = {

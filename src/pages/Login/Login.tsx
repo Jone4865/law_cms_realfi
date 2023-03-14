@@ -18,15 +18,13 @@ type SubmitType = {
 };
 
 export function Login() {
-  const [cookies, setCookie] = useCookies(['Authentication']);
+  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'Authentication']);
   const [visible, setVisible] = useState(false);
   const [otpImg, setOtpImg] = useState('');
   const [form] = useForm<SubmitType>();
-  // const [, setToken] = useRecoilState(userTokenState);
+  const [, setToken] = useRecoilState(userTokenState);
 
-  useEffect(() => {
-    console.log(cookies);
-  }, [cookies]);
+  useEffect(() => {}, [cookies]);
 
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -82,12 +80,12 @@ export function Login() {
       notification.error({ message: error?.message });
     },
     onCompleted: (data) => {
-      // setCookie('accessToken', data.signInFromAdmin.accessToken);
-      // setCookie('refreshToken', data.signInFromAdmin.refreshToken);
-      // setToken({
-      //   accessToken: data.signInFromAdmin.accessToken,
-      // });
-      // return (window.location.href = '/');
+      setCookie('accessToken', data.signInFromAdmin.accessToken);
+      setCookie('refreshToken', data.signInFromAdmin.refreshToken);
+      setToken({
+        accessToken: data.signInFromAdmin.accessToken,
+      });
+      return (window.location.href = '/');
     },
     fetchPolicy: 'no-cache',
     notifyOnNetworkStatusChange: true,

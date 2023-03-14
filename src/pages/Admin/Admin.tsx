@@ -31,15 +31,34 @@ export function Admin() {
   const [searchText, setSearchText] = useState('');
   const [authDescData, setAuthDescData] = useState<AuthDescType[]>([
     {
-      desc: 'ㅇㅁㅈㅇㅈㅁ',
-      name: 'daw',
+      name: 'MASTER',
+      desc: '마스터',
+    },
+    {
+      name: 'READ_ADMIN',
+      desc: '관리자 조회',
+    },
+    {
+      name: 'WRITE_ADMIN',
+      desc: '관리자 수정',
+    },
+    {
+      name: 'READ_USER',
+      desc: '유저 조회',
+    },
+    {
+      name: 'WRITE_USER',
+      desc: '유저 수정',
+    },
+    {
+      name: 'READ_PROJECT',
+      desc: '프로젝트 조회',
+    },
+    {
+      name: 'WRITE_PROJECT',
+      desc: '프로젝트 수정',
     },
   ]);
-
-  const handlePagination = (e: number) => {
-    setSkip((e - 1) * take);
-    setCurrent(e);
-  };
 
   const columns: ColumnsType<AdminInFindManyAdminByAdminOutput> = [
     {
@@ -118,6 +137,22 @@ export function Admin() {
     },
   ];
 
+  const handlePagination = (e: number) => {
+    setSkip((e - 1) * take);
+    setCurrent(e);
+  };
+
+  const [authDeskArr, setAuthDeskArr] = useState<string[]>([]);
+
+  const handleCheckBox = (val: string) => {
+    if (authDeskArr.includes(val)) {
+      const newArr = authDeskArr.filter((data) => data !== val);
+      return setAuthDeskArr(newArr);
+    } else {
+      return setAuthDeskArr([...authDeskArr, val]);
+    }
+  };
+
   const handleCancel = () => {
     setVisible(false);
   };
@@ -192,6 +227,8 @@ export function Admin() {
         admin={modalData}
         refetch={handleRefetch}
         adminRoles={adminAuths}
+        authDescData={authDescData}
+        handleCheckBox={handleCheckBox}
       />
       <OtpQrModal
         visible={qrModalVisible}

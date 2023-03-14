@@ -6,8 +6,16 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { FIND_MANY_PROJECT_BY_ADMIN } from '../../graphql/query';
 import { projectCheckColumns } from '../../utils/columns';
 import { useNavigate } from 'react-router-dom';
-import { FindManyProjectByAdminQuery } from '../../graphql/generated/graphql';
+import {
+  FindManyProjectByAdminQuery,
+  MarketStatus,
+  PublicOfferingStatus,
+  VoteKind,
+  VoteStatus,
+} from '../../graphql/generated/graphql';
 import { PROJECT_IS_VISIBLE_TOGGLE_BY_ADMIN } from '../../graphql/mutation';
+import { publicOfferingStatusToKind } from '../../utils/publicOfferingStatusToKind';
+import { voteStatusKindToText } from '../../utils/voteStatusKindToText';
 
 export function ProjectCheck() {
   const [take, setTake] = useState(10);
@@ -18,14 +26,19 @@ export function ProjectCheck() {
   const [endDate, setEndDate] = useState(moment());
   const [searchText, setSearchText] = useState('');
   const [findProjectData, setFindProjectData] = useState<any[]>([]);
+  const [publicOfferingStatus, setPublicOfferingStatus] = useState<
+    PublicOfferingStatus | undefined
+  >(undefined);
+  const [marketStatus, setMarketStatus] = useState<MarketStatus | undefined>(undefined);
+  const [voteStatus, setVoteStatus] = useState<VoteStatus | undefined>(undefined);
+  const [isSold, setIsSold] = useState(false);
 
   const one = ['전체'];
   const two = ['공모예정', '공모중', '공모완료'];
-  const three = ['상장대기'];
-  const four = ['마켓 거래중'];
-  const five = ['매각투표예정', '매각투표중', '매각투표완료'];
-  const six = ['매각완료'];
-  const [able, setAble] = useState<string[]>([]);
+  const three = ['마켓 거래중'];
+  const four = ['매각투표예정', '매각투표중', '매각투표완료'];
+  const five = ['매각완료', '매각중'];
+  const [able, setAble] = useState<string[]>(['전체']);
   const navigator = useNavigate();
 
   const handlePagination = (e: number) => {
@@ -39,6 +52,26 @@ export function ProjectCheck() {
 
   const clickHandel = (item: string) => {
     if (item !== '전체') {
+      if (able.includes(item)) {
+        setPublicOfferingStatus(undefined);
+        setVoteStatus(undefined);
+      } else {
+        setPublicOfferingStatus(
+          publicOfferingStatusToKind(item) !== undefined
+            ? publicOfferingStatusToKind(item)
+            : publicOfferingStatus,
+        );
+        setVoteStatus(
+          voteStatusKindToText(item) !== undefined ? voteStatusKindToText(item) : voteStatus,
+        );
+      }
+      if (item === '마켓 거래중') {
+        if (able.includes(item)) {
+          setMarketStatus(undefined);
+        } else {
+          setMarketStatus(MarketStatus.Listed);
+        }
+      }
       if (able.includes('전체')) {
         setAble([item]);
       } else {
@@ -49,10 +82,22 @@ export function ProjectCheck() {
             }),
           );
         } else {
-          setAble([...able, item]);
+          if (two.includes(item)) {
+            const newArr = able.filter((label) => !two.includes(label));
+            newArr.push(item);
+            setAble(newArr);
+          } else if (four.includes(item)) {
+            const newArr = able.filter((label) => !four.includes(label));
+            newArr.push(item);
+            setAble(newArr);
+          } else {
+            setAble([...able, item]);
+          }
         }
       }
     } else {
+      setPublicOfferingStatus(undefined);
+      setVoteStatus(undefined);
       setAble([item]);
     }
   };
@@ -95,10 +140,14 @@ export function ProjectCheck() {
         take,
         skip,
         searchText,
-        isSold: false,
+        isSold,
+        publicOfferingStatus,
+        voteStatus,
+        marketStatus,
       },
+      fetchPolicy: 'no-cache',
     });
-  }, [searchText, skip]);
+  }, [searchText, skip, able]);
 
   return (
     <>
@@ -156,7 +205,7 @@ export function ProjectCheck() {
           ))}
         </S.BtnWrap>
         <S.BtnWrap>
-          <S.Title>2. 상장</S.Title>
+          <S.Title>2. 마켓</S.Title>
           {three.map((item, idx) => (
             <S.Btn
               style={{
@@ -171,7 +220,7 @@ export function ProjectCheck() {
           ))}
         </S.BtnWrap>
         <S.BtnWrap>
-          <S.Title>3. 마켓</S.Title>
+          <S.Title>3. 투표</S.Title>
           {four.map((item, idx) => (
             <S.Btn
               style={{
@@ -186,23 +235,8 @@ export function ProjectCheck() {
           ))}
         </S.BtnWrap>
         <S.BtnWrap>
-          <S.Title>4. 투표</S.Title>
+          <S.Title>4. 매각</S.Title>
           {five.map((item, idx) => (
-            <S.Btn
-              style={{
-                backgroundColor: `${able.includes(item) ? '#5d28dd' : 'white'}`,
-                color: `${able.includes(item) ? 'white' : 'black'}`,
-              }}
-              onClick={() => clickHandel(item)}
-              key={idx}
-            >
-              {item}
-            </S.Btn>
-          ))}
-        </S.BtnWrap>
-        <S.BtnWrap>
-          <S.Title>5. 매각</S.Title>
-          {six.map((item, idx) => (
             <S.Btn
               style={{
                 backgroundColor: `${able.includes(item) ? '#5d28dd' : 'white'}`,
