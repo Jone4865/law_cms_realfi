@@ -11,8 +11,6 @@ export const FIND_PUBLIC_OFFERING_BY_ADMIN = gql(/* GraphQL */ `
       cancelAmount
       status
       adminName
-      # succesQuantity
-      # successAmount
       user {
         name
         phone

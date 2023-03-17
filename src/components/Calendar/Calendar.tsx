@@ -1,13 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import { DatePicker } from 'antd';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
 import * as S from './style';
 
 type Props = {
-  setEndDate: React.Dispatch<React.SetStateAction<moment.Moment>>;
-  setStartDate: React.Dispatch<React.SetStateAction<moment.Moment>>;
   startDate: moment.Moment;
   endDate: moment.Moment;
+  setEndDate: React.Dispatch<React.SetStateAction<moment.Moment>>;
+  setStartDate: React.Dispatch<React.SetStateAction<moment.Moment>>;
 };
 
 export function Calendar({ setEndDate, setStartDate, startDate, endDate }: Props) {

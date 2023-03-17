@@ -82,6 +82,7 @@ function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userToken
     cache: new InMemoryCache({
       addTypename: false,
     }),
+    credentials: 'includes',
   });
 
   return client;

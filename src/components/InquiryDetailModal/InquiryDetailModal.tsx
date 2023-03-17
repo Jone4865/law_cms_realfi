@@ -1,19 +1,17 @@
-import { Button, Input, Modal, notification, Image } from 'antd';
 import React, { useEffect, useState } from 'react';
-import * as S from './style';
-
-import moment from 'moment';
-
-import { useMutation } from '@apollo/client';
+import { Button, Input, Modal, notification } from 'antd';
 import TransformBox from '../TransformBox';
+import moment from 'moment';
+import { useMutation } from '@apollo/client';
 import { UserInquiryInFindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
 import { REPLY_USER_INQUIRY_BY_ADMIN } from '../../graphql/mutation';
+import * as S from './style';
 
 type Props = {
-  handleCancel: () => void;
   visible: boolean;
   data: UserInquiryInFindManyUserInquiryByAdminOutput | undefined;
   refetch: () => void;
+  handleCancel: () => void;
 };
 
 export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Props) {

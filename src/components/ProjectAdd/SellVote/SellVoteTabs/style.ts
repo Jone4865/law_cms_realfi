@@ -74,6 +74,5 @@ export const BarState = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 30px;
   font-weight: bold;
 `;

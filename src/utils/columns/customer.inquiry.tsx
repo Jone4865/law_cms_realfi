@@ -1,19 +1,16 @@
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { Dispatch, SetStateAction } from 'react';
 import {
   FindManyUserInquiryCategoryQuery,
   UserInquiryInFindManyUserInquiryByAdminOutput,
 } from '../../graphql/generated/graphql';
 
 type Props = {
-  setUserDetailVisible: Dispatch<SetStateAction<boolean>>;
   inquiryCategorys: FindManyUserInquiryCategoryQuery['findManyUserInquiryCategory'];
 };
 
 export const inquiryColumns = ({
-  setUserDetailVisible,
   inquiryCategorys,
 }: Props): ColumnsType<UserInquiryInFindManyUserInquiryByAdminOutput> => [
   {
@@ -39,18 +36,7 @@ export const inquiryColumns = ({
     dataIndex: 'user',
     align: 'center',
     render: (val) => {
-      return val?.name ? (
-        <span
-          onClick={(e) => {
-            setUserDetailVisible(true);
-            e.stopPropagation();
-          }}
-        >
-          {val.name}
-        </span>
-      ) : (
-        '-'
-      );
+      return val?.name ? <span>{val.name}</span> : '-';
     },
   },
   {

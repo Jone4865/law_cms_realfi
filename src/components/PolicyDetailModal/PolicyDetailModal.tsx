@@ -125,7 +125,7 @@ export function PolicyDetailModal({
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '답변을 작성했습니다.' });
+      notification.success({ message: '답변을 수정했습니다.' });
       handleRefetch();
     },
   });

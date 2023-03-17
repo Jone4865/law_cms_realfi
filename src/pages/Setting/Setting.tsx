@@ -17,6 +17,7 @@ export function Setting() {
   }, []);
 
   const handleChange = (key: string, value: any) => {
+    console.log(typeof value);
     setSettingData((prev: any) => {
       let newData: any = { ...prev };
       newData[key] = value;

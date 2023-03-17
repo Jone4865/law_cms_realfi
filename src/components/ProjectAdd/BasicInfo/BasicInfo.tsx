@@ -5,18 +5,27 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { InputBasic } from '../InputBasic/InputBasic';
-import { investfileColumns, lesseeColumns, officialInfosColumns } from '../../../utils/columns';
-import { DocInCreateProjectByAdminArgs } from '../../../graphql/generated/graphql';
+import { investfileColumns, lesseeColumns } from '../../../utils/columns';
+import { DocInCreateProjectByAdminArgs, FileKind } from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
 import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { FIND_MANY_PROJECT_FILE } from '../../../graphql/query';
+import {
+  CREATE_PROJECT_FILE_BY_ADMIN,
+  DELETE_PROJECT_FILE_BY_ADMIN,
+} from '../../../graphql/mutation';
+import axios from 'axios';
 
 type Props = {
-  handleChange: (key: string, value: any) => void;
   variables: any;
-  isFix?: boolean;
   projectId: number | undefined;
+  investFileList: DocInCreateProjectByAdminArgs[];
+  officialInfosFileList: DocInCreateProjectByAdminArgs[];
+  setInvestFileList: React.Dispatch<React.SetStateAction<DocInCreateProjectByAdminArgs[]>>;
+  setOfficialInfosFileList: React.Dispatch<React.SetStateAction<DocInCreateProjectByAdminArgs[]>>;
+  handleChange: (key: string, value: any) => void;
+  isFix?: boolean;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -27,29 +36,51 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) {
+export function BasicInfo({
+  handleChange,
+  variables,
+  isFix,
+  projectId,
+  investFileList,
+  setInvestFileList,
+  officialInfosFileList,
+  setOfficialInfosFileList,
+}: Props) {
+  const handleClickDownload = async () => {
+    axios
+      .get(
+        `${process.env.REACT_APP_BASIC_SERVER}/investment-document?name=46b05739-233a-49f6-86d0-afd639a45644.pdf`,
+        {
+          withCredentials: true,
+        },
+      )
+      .then(() => console.log('s'))
+      .catch((err) => console.log(err));
+  };
+
   var regExp = /^[0-9]/g;
   const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [projectImageFileList, setProjectImageFileList] = useState<any>([]);
-  const [investFileList, setInvestFileList] = useState<DocInCreateProjectByAdminArgs[]>([
+  const [newInvestFileList, setNewInvestFileList] = useState<any>([
     {
-      file: null,
+      fileKind: FileKind.Docs,
+      fileName: '',
+      id: 0,
       name: '',
     },
   ]);
-  const [officialInfosFileList, setOfficialInfosFileList] = useState<
-    DocInCreateProjectByAdminArgs[]
-  >([
+  const [newOfficialInfosFileList, setNewOfficialInfosFileList] = useState<any>([
     {
-      file: null,
+      fileKind: FileKind.OfficialInfo,
+      fileName: '',
+      id: 0,
       name: '',
     },
   ]);
-
-  const [lesseeNum, setLesseeNum] = useState([
+  const [lesseeNum] = useState([
     {
       id: 1,
     },
@@ -71,30 +102,67 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
     handleChange('images', newFileList);
   };
 
-  const handleInvestChange = (file: UploadFile<any>, index: number) => {
-    setInvestFileList((prev) => {
-      prev[index].file = file;
-      handleChange('docs', prev);
-      return [...prev];
-    });
+  const handleFileChange = (
+    file: UploadFile<DocInCreateProjectByAdminArgs>,
+    index: number,
+    key: string,
+  ) => {
+    if (isFix) {
+      if (key === 'docs') {
+        setNewInvestFileList((prev: any) => {
+          prev[index].file = file;
+          handleChange('docs', prev);
+          return [...prev];
+        });
+      } else {
+        setNewOfficialInfosFileList((prev: any) => {
+          prev[index].file = file;
+          handleChange('officialInfos', prev);
+          return [...prev];
+        });
+      }
+      const variables = key === 'docs' ? newInvestFileList[index] : newOfficialInfosFileList[index];
+      createProjectFileByAdmin({
+        variables: {
+          ...variables,
+          projectId,
+        },
+      });
+    } else {
+      if (key === 'docs') {
+        setInvestFileList((prev) => {
+          prev[index].file = file;
+          handleChange('docs', prev);
+          return [...prev];
+        });
+      } else if (key === 'officialInfos') {
+        setOfficialInfosFileList((prev) => {
+          prev[index].file = file;
+          handleChange('officialInfos', prev);
+          return [...prev];
+        });
+      }
+    }
   };
 
-  const handleOfficialInfosChange = (file: UploadFile<any>, index: number) => {
-    setOfficialInfosFileList((prev) => {
-      prev[index].file = file;
-      handleChange('officialInfos', prev);
-      return [...prev];
-    });
-  };
-
-  const handleRow = (rec: any) => {};
-
-  const investDeleteClick = (idx: number) => () => {
-    setInvestFileList(investFileList.filter((_v, i) => i !== idx));
-  };
-
-  const officialInfosDeleteClick = (idx: number) => () => {
-    setOfficialInfosFileList(officialInfosFileList.filter((_v, i) => i !== idx));
+  const handleDeleteFile = (idx: number, key: string) => {
+    if (isFix) {
+      if (key === 'docs') {
+        setNewInvestFileList(newInvestFileList.filter((_v: any, i: any) => i !== idx));
+      } else if (key === 'officialInfos') {
+        setNewOfficialInfosFileList(
+          newOfficialInfosFileList.filter((_v: any, i: any) => i !== idx),
+        );
+      }
+      const id = key === 'docs' ? newInvestFileList[idx]?.id : newOfficialInfosFileList[idx]?.id;
+      deleteProjectFileByAdmin({ variables: { id } });
+    } else {
+      if (key === 'docs') {
+        setInvestFileList(investFileList.filter((_v, i) => i !== idx));
+      } else if (key === 'officialInfos') {
+        setOfficialInfosFileList(officialInfosFileList.filter((_v, i) => i !== idx));
+      }
+    }
   };
 
   const setCoordinateHandle = (longitude: number, latitude: number) => {
@@ -110,18 +178,34 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
   };
 
   const handleTitleChange = (idx: number, key: string, value: string) => {
-    if (key === 'docs') {
-      setInvestFileList((prev) => {
-        prev[idx].name = value;
-        handleChange('docs', prev);
-        return [...prev];
-      });
+    if (isFix) {
+      if (key === 'docs') {
+        setNewInvestFileList((prev: any) => {
+          prev[idx].name = value;
+          handleChange('docs', prev);
+          return [...prev];
+        });
+      } else {
+        setNewOfficialInfosFileList((prev: any) => {
+          prev[idx].name = value;
+          handleChange('docs', prev);
+          return [...prev];
+        });
+      }
     } else {
-      setOfficialInfosFileList((prev) => {
-        prev[idx].name = value;
-        handleChange('officialInfos', prev);
-        return [...prev];
-      });
+      if (key === 'docs') {
+        setInvestFileList((prev) => {
+          prev[idx].name = value;
+          handleChange('docs', prev);
+          return [...prev];
+        });
+      } else {
+        setOfficialInfosFileList((prev) => {
+          prev[idx].name = value;
+          handleChange('officialInfos', prev);
+          return [...prev];
+        });
+      }
     }
   };
 
@@ -129,10 +213,37 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
     onError: (error) => {
       notification.error({ message: error.message });
     },
+    onCompleted: (data) => {
+      setNewInvestFileList(data.findManyProjectFile.filter((item) => item.fileKind === 'DOCS'));
+      setNewOfficialInfosFileList(
+        data.findManyProjectFile.filter((item) => item.fileKind === 'OFFICIAL_INFO'),
+      );
+    },
+  });
+
+  const [createProjectFileByAdmin] = useMutation(CREATE_PROJECT_FILE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      findManyProjectFile({
+        variables: { projectId: projectId ? projectId : 0 },
+        fetchPolicy: 'no-cache',
+      });
+    },
+  });
+
+  const [deleteProjectFileByAdmin] = useMutation(DELETE_PROJECT_FILE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
   });
 
   useEffect(() => {
-    findManyProjectFile({ variables: { projectId: projectId ? projectId : 0 } });
+    findManyProjectFile({
+      variables: { projectId: projectId ? projectId : 0 },
+      fetchPolicy: 'no-cache',
+    });
   }, []);
 
   useEffect(() => {}, [investFileList, officialInfosFileList, visible, projectImageFileList]);
@@ -146,6 +257,7 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
 
   return (
     <>
+      <Button onClick={handleClickDownload}>테스트</Button>
       {visible && <GetZipApi complteSerchZipHandle={complteSerchZipHandle} />}
       <S.AddTitle style={{ marginTop: '25px' }}>
         기본 정보
@@ -305,13 +417,14 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
         <S.AddTitle style={{ marginBottom: '5px' }}>투자관련문서</S.AddTitle>
         <Table
           pagination={false}
-          columns={investfileColumns({ handleInvestChange, investDeleteClick, handleTitleChange })}
-          dataSource={investFileList}
-          onRow={(rec) => {
-            return {
-              onClick: () => handleRow(rec),
-            };
-          }}
+          columns={investfileColumns({
+            handleFileChange,
+            handleTitleChange,
+            handleDeleteFile,
+            docs: true,
+            isFix: isFix ? isFix : false,
+          })}
+          dataSource={isFix ? newInvestFileList : investFileList}
           // loading={loading}
           scroll={{ x: 800 }}
           style={{
@@ -322,7 +435,19 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
         {investFileList?.length < 10 && (
           <div style={{ width: '1300px', display: 'flex' }}>
             <Button
-              onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
+              onClick={() =>
+                isFix
+                  ? setNewInvestFileList([
+                      ...newInvestFileList,
+                      {
+                        fileKind: FileKind.Docs,
+                        fileName: '',
+                        id: 0,
+                        name: '',
+                      },
+                    ])
+                  : setInvestFileList([...investFileList, { file: null, name: '' }])
+              }
               type="primary"
               style={{ width: '200px', margin: '20px auto' }}
             >
@@ -335,11 +460,6 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
           pagination={false}
           columns={lesseeColumns({ handleChange, variables })}
           dataSource={lesseeNum}
-          onRow={(rec) => {
-            return {
-              onClick: () => handleRow(rec),
-            };
-          }}
           // loading={loading}
           rowKey={(rec) => rec.id}
           scroll={{ x: 800 }}
@@ -351,17 +471,13 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
         <S.AddTitle style={{ marginTop: '25px' }}>공시</S.AddTitle>
         <Table
           pagination={false}
-          columns={officialInfosColumns({
-            handleOfficialInfosChange,
-            officialInfosDeleteClick,
+          columns={investfileColumns({
+            handleFileChange,
             handleTitleChange,
+            handleDeleteFile,
+            isFix: isFix ? isFix : false,
           })}
-          dataSource={officialInfosFileList}
-          onRow={(rec) => {
-            return {
-              onClick: () => handleRow(rec),
-            };
-          }}
+          dataSource={isFix ? newOfficialInfosFileList : officialInfosFileList}
           // loading={loading}
           scroll={{ x: 800 }}
           style={{
@@ -373,7 +489,17 @@ export function BasicInfo({ handleChange, variables, isFix, projectId }: Props) 
           <div style={{ width: '1300px', display: 'flex' }}>
             <Button
               onClick={() =>
-                setOfficialInfosFileList([...officialInfosFileList, { file: null, name: '' }])
+                isFix
+                  ? setNewOfficialInfosFileList([
+                      ...newOfficialInfosFileList,
+                      {
+                        fileKind: FileKind.OfficialInfo,
+                        fileName: '',
+                        id: 0,
+                        name: '',
+                      },
+                    ])
+                  : setOfficialInfosFileList([...officialInfosFileList, { file: null, name: '' }])
               }
               type="primary"
               style={{ width: '200px', margin: '20px auto' }}

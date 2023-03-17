@@ -31,15 +31,34 @@ export function Admin() {
   const [searchText, setSearchText] = useState('');
   const [authDescData, setAuthDescData] = useState<AuthDescType[]>([
     {
-      desc: 'ㅇㅁㅈㅇㅈㅁ',
-      name: 'daw',
+      name: 'MASTER',
+      desc: '마스터',
+    },
+    {
+      name: 'READ_ADMIN',
+      desc: '관리자 조회',
+    },
+    {
+      name: 'WRITE_ADMIN',
+      desc: '관리자 수정',
+    },
+    {
+      name: 'READ_USER',
+      desc: '유저 조회',
+    },
+    {
+      name: 'WRITE_USER',
+      desc: '유저 수정',
+    },
+    {
+      name: 'READ_PROJECT',
+      desc: '프로젝트 조회',
+    },
+    {
+      name: 'WRITE_PROJECT',
+      desc: '프로젝트 수정',
     },
   ]);
-
-  const handlePagination = (e: number) => {
-    setSkip((e - 1) * take);
-    setCurrent(e);
-  };
 
   const columns: ColumnsType<AdminInFindManyAdminByAdminOutput> = [
     {
@@ -80,7 +99,7 @@ export function Admin() {
       title: 'OTP 설정',
       key: 'OTP',
       dataIndex: 'otpSecret',
-      render: (val, record) => {
+      render: (val) => {
         return (
           <S.OtpWrap>
             {val?.length ? (
@@ -118,6 +137,22 @@ export function Admin() {
     },
   ];
 
+  const handlePagination = (e: number) => {
+    setSkip((e - 1) * take);
+    setCurrent(e);
+  };
+
+  const [authDeskArr, setAuthDeskArr] = useState<string[]>([]);
+
+  const handleCheckBox = (val: string) => {
+    if (authDeskArr.includes(val)) {
+      const newArr = authDeskArr.filter((data) => data !== val);
+      return setAuthDeskArr(newArr);
+    } else {
+      return setAuthDeskArr([...authDeskArr, val]);
+    }
+  };
+
   const handleCancel = () => {
     setVisible(false);
   };
@@ -145,15 +180,7 @@ export function Admin() {
     setOtpModalVisible(true);
   };
 
-  const handleFinish = (otp: string[]) => {
-    // setOtpSecret({
-    //   variables: {
-    //     email,
-    //     otpSecret: secret,
-    //     code: otp.concat().join().replaceAll(',', ''),
-    //   },
-    // });
-  };
+  const handleFinish = (otp: string[]) => {};
 
   const handleRefetch = () => {
     setVisible(false);
@@ -166,68 +193,6 @@ export function Admin() {
       fetchPolicy: 'no-cache',
     });
   };
-
-  const handleSearch = (value: { searchText?: string }) => {
-    // getAllAdmins({
-    //   variables: {
-    //     take,
-    //     skip: 0,
-    //     ...value,
-    //   },
-    // });
-    setSkip(0);
-    setCurrent(1);
-    setSearchText(value.searchText ?? '');
-  };
-
-  // get admin roles
-  // useQuery<SeeAdminRoleResponse>(SEE_ADMIN_ROLE, {
-  //   onCompleted: (data) => {
-  //     setAdminAuths(data.seeAdminRole);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
-  // update admin otpSecret
-  // const [setOtpSecret, { loading: otpLoading }] = useMutation<
-  //   UpdateOtpSecretResponse,
-  //   UpdateOtpSecretParams
-  // >(UPDATE_OTP_SECRET, {
-  //   onCompleted: () => {
-  //     notification.success({ message: 'OTP를 재설정했습니다.' });
-  //     handleCancelOtp();
-  //     handleRefetch();
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //     setOtp((prev) => {
-  //       if (prev.length) {
-  //         prev.map((_v, i) => (prev[i] = ''));
-  //       }
-  //       return [...prev];
-  //     });
-  //     handleFocus(0);
-  //   },
-  // });
-
-  //pagination
-  // useEffect(() => {
-  //   getAllAdmins({
-  //     variables: {
-  //       take,
-  //       skip,
-  //       searchText,
-  //     },
-  //   });
-  // }, [take, skip]);
-
-  // create admin roles description
-  // useEffect(() => {
-  //   getAdminAuthDesc();
-  // }, [adminAuths]);
 
   useEffect(() => {
     findManyAdminByAdmin({
@@ -256,6 +221,8 @@ export function Admin() {
         admin={modalData}
         refetch={handleRefetch}
         adminRoles={adminAuths}
+        authDescData={authDescData}
+        handleCheckBox={handleCheckBox}
       />
       <OtpQrModal
         visible={qrModalVisible}
@@ -286,7 +253,6 @@ export function Admin() {
           };
         }}
         rowKey={(rec) => rec.email}
-        // loading={loading}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: true,

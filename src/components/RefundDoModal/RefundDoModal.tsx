@@ -10,12 +10,14 @@ type Props = {
   visible: boolean;
   projectId: number;
   handleCancel: () => void;
-  onClickHandle: () => void;
+  onClickHandle: (all: boolean) => void;
+  isAll: boolean;
 };
 
-export function RefundDoModal({ visible, handleCancel, projectId, onClickHandle }: Props) {
+export function RefundDoModal({ visible, handleCancel, projectId, onClickHandle, isAll }: Props) {
   const [data, setData] =
     useState<FindPublicOfferingRefundInfoByAdminQuery['findPublicOfferingRefundInfoByAdmin']>();
+
   const [findPublicOfferingRefundInfoByAdmin] = useLazyQuery(
     FIND_PUBLIC_OFFERING_REFUND_INFO_BY_ADMIN,
     {
@@ -34,6 +36,7 @@ export function RefundDoModal({ visible, handleCancel, projectId, onClickHandle 
       variables: {
         projectId,
       },
+      fetchPolicy: 'no-cache',
     });
   }, []);
 
@@ -45,12 +48,18 @@ export function RefundDoModal({ visible, handleCancel, projectId, onClickHandle 
       closable
       centered
       footer={
-        <Button style={{ margin: 'auto', display: 'flex' }} onClick={onClickHandle} type="primary">
+        <Button
+          style={{ margin: 'auto', display: 'flex' }}
+          onClick={() => onClickHandle(isAll)}
+          type="primary"
+        >
           환불 진행
         </Button>
       }
     >
-      <p style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '30px' }}>환불</p>
+      <p style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '30px' }}>
+        {isAll ? '전체 환불' : '환불'}
+      </p>
       <InputBasic
         title="환불 TABS 수"
         value={data ? data?.refundQuantity : ''}

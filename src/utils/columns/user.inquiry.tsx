@@ -69,11 +69,7 @@ export const userInquiryColumns: ColumnsType<InquiryType> = [
     dataIndex: 'reply',
     align: 'center',
     render: (val) => {
-      return val ? (
-        <Tag color="blue">완료</Tag>
-      ) : (
-        <Tag color="error">미처리</Tag>
-      );
+      return val ? <Tag color="blue">완료</Tag> : <Tag color="error">미처리</Tag>;
     },
   },
 ];

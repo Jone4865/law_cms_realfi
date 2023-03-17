@@ -2,7 +2,6 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, Table, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { InquiryDetailModal } from '../../components/InquiryDetailModal';
-import { UserDetailModal } from '../../components/UserDetailModal';
 import {
   FindManyUserInquiryByAdminQuery,
   FindManyUserInquiryCategoryQuery,
@@ -15,7 +14,6 @@ import {
 import { inquiryColumns } from '../../utils/columns/customer.inquiry';
 
 export function Inquiry() {
-  const [userDetailVisible, setUserDetailVisible] = useState(false);
   const [inquiryDetailVisible, setInquiryDetailVisible] = useState(false);
   const [modalData, setModalData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput>();
   const [inquiryData, setInquiryData] = useState<UserInquiryInFindManyUserInquiryByAdminOutput[]>(
@@ -44,9 +42,7 @@ export function Inquiry() {
   const handleCancelInquiryDetail = () => {
     setInquiryDetailVisible(false);
   };
-  const handleCancelUserDetail = () => {
-    setUserDetailVisible(false);
-  };
+
   const handleSearch = (values: { searchText?: string }) => {
     findManyUserInquiryByAdmin({
       variables: {
@@ -118,11 +114,10 @@ export function Inquiry() {
       },
       fetchPolicy: 'no-cache',
     });
-  }, [skip, take, userInquiryCategoryId, userDetailVisible, searchText]);
+  }, [skip, take, userInquiryCategoryId, searchText]);
 
   return (
     <>
-      <UserDetailModal email="" handleCancel={handleCancelUserDetail} visible={userDetailVisible} />
       <InquiryDetailModal
         data={modalData}
         visible={inquiryDetailVisible}
@@ -142,7 +137,7 @@ export function Inquiry() {
         </Form.Item>
       </Form>
       <Table
-        columns={inquiryColumns({ setUserDetailVisible, inquiryCategorys })}
+        columns={inquiryColumns({ inquiryCategorys })}
         dataSource={inquiryData}
         onChange={(v, filter) => {
           setUserInquiryCategoryId(

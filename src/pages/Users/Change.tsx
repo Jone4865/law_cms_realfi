@@ -2,7 +2,6 @@ import { useLazyQuery } from '@apollo/client';
 import { Divider, Form, Input, notification, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Calendar } from '../../components/Calendar';
-import { UserDetailModal } from '../../components/UserDetailModal';
 import { userChangeColumns } from '../../utils/columns';
 import moment from 'moment';
 import { FIND_MANY_CHANGE_INVESTMENT_QUALIFICATION_BY_ADMIN } from '../../graphql/query';
@@ -10,31 +9,25 @@ import {
   ChangeInvestmentQualificationInFindManyChangeInvestmentQualificationByAdminOutput,
   FindManyChangeInvestmentQualificationByAdminQuery,
 } from '../../graphql/generated/graphql';
+import { useNavigate } from 'react-router-dom';
 
 export function Change() {
+  const navigator = useNavigate();
   const [startDate, setStartDate] = useState(moment());
   const [endDate, setEndDate] = useState(moment());
   const [userData, setUserData] = useState<
     ChangeInvestmentQualificationInFindManyChangeInvestmentQualificationByAdminOutput[]
   >([]);
-  const [visible, setVisible] = useState(false);
-  const [modalData, setModalData] =
-    useState<ChangeInvestmentQualificationInFindManyChangeInvestmentQualificationByAdminOutput>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
   const [searchText, setSearchText] = useState('');
 
-  const handleCancel = () => {
-    setVisible(false);
-  };
-
   const handleClickRow = (
     rec: ChangeInvestmentQualificationInFindManyChangeInvestmentQualificationByAdminOutput,
   ) => {
-    setModalData(rec);
-    setVisible(true);
+    navigator(`/users/change/${rec.user?.name}`);
   };
 
   const handleSearch = (value: { searchText?: string }) => {
@@ -43,8 +36,8 @@ export function Change() {
         take,
         skip,
         searchText,
-        gte: startDate.format('YYYY-MM-DD'),
-        lt: endDate.format('YYYY-MM-DD'),
+        gte: new Date(moment(startDate).format('YYYY-MM-DD 00:00:00')),
+        lt: endDate,
       },
       fetchPolicy: 'no-cache',
     });
@@ -58,8 +51,7 @@ export function Change() {
     setCurrent(e);
   };
 
-  // 요청 분기점
-  const [findManyChangeInvestmentQualificationByAdmin, { loading }] =
+  const [findManyChangeInvestmentQualificationByAdmin] =
     useLazyQuery<FindManyChangeInvestmentQualificationByAdminQuery>(
       FIND_MANY_CHANGE_INVESTMENT_QUALIFICATION_BY_ADMIN,
       {
@@ -75,7 +67,6 @@ export function Change() {
       },
     );
 
-  // 요청 코드
   useEffect(() => {
     findManyChangeInvestmentQualificationByAdmin({
       variables: {
@@ -83,25 +74,20 @@ export function Change() {
         skip,
         searchText,
         gte: startDate.format('YYYY-MM-DD'),
-        lt: endDate.format('YYYY-MM-DD'),
-        fetchPolicy: 'no-cache',
+        lt: endDate.add(1, 'd').format('YYYY-MM-DD'),
       },
+      fetchPolicy: 'no-cache',
     });
   }, [take, skip, startDate, endDate]);
 
   return (
     <>
-      <UserDetailModal
-        visible={visible}
-        handleCancel={handleCancel}
-        email={modalData?.user.name ?? ''}
-      />
       <Divider>한도변경 신청</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
           <Input.Search
             enterButton
-            placeholder="이름, 닉네임, 상호명, 휴대폰번호"
+            placeholder="이름, 휴대폰번호"
             onSearch={(e) => {
               handleSearch({ searchText: e });
             }}
@@ -115,7 +101,7 @@ export function Change() {
         endDate={endDate}
       />
       <Table
-        columns={userChangeColumns}
+        columns={userChangeColumns({})}
         dataSource={userData}
         pagination={{
           position: ['bottomCenter'],
@@ -134,7 +120,6 @@ export function Change() {
             onClick: () => handleClickRow(rec),
           };
         }}
-        // rowKey={(rec) => rec.email}
         scroll={{ x: 800 }}
       />
     </>

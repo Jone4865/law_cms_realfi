@@ -44,7 +44,7 @@ export const Left = styled.div`
 export const Right = styled.div`
   div {
     border: solid 1px black;
-    width: 900px;
+    width: 400px;
     border-top: none;
     border-right: none;
     padding: 10px 45px;
@@ -60,4 +60,8 @@ export const Right = styled.div`
 
 export const Bold = styled.span`
   font-weight: bold;
+`;
+
+export const BtnWrap = styled.p`
+  margin-left: 100px;
 `;

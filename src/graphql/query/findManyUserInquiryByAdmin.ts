@@ -6,12 +6,14 @@ export const FIND_MANY_USER_INQUIRY_BY_ADMIN = gql(/* GraphQL */ `
     $skip: Int!
     $searchText: String!
     $userInquiryCategoryId: Int
+    $email: String
   ) {
     findManyUserInquiryByAdmin(
       take: $take
       skip: $skip
       searchText: $searchText
       userInquiryCategoryId: $userInquiryCategoryId
+      email: $email
     ) {
       totalCount
       userInquiries {

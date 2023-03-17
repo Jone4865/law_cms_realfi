@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 import { Layout as AntdLayout } from 'antd';
 
-const {
-  Sider: AntdSider,
-  Content: AntdContent,
-  Footer: AntdFooter,
-} = AntdLayout;
+const { Sider: AntdSider, Content: AntdContent, Footer: AntdFooter } = AntdLayout;
 
 export const Container = styled.section`
   height: 100vh;
@@ -45,6 +41,7 @@ export const Sider = styled(AntdSider)`
   overflow: auto;
   height: 100vh;
   position: fixed;
+  z-index: 1;
 `;
 
 export const Content = styled(AntdContent)`

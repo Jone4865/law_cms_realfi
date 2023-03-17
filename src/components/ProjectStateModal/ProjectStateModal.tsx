@@ -3,6 +3,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { marketStatusToText } from '../../utils/marketStatusToText';
 import { publicOfferingStatusToText } from '../../utils/publicOfferingStatusToText';
 import { voteStatusToText } from '../../utils/voteStatusToText';
+import { ProjectStateChangeModal } from './ProjectStateChangeModal/ProjectStateChangeModal';
 import * as S from './style';
 
 type Props = {
@@ -23,6 +24,12 @@ export function ProjectStateModal({ variables, setProjectState, nowProjectState 
     '매각투표 완료',
     '매각 완료',
   ];
+
+  const [changeModalVisible, setChangeModalVisible] = useState(false);
+
+  const handleCancel = () => {
+    setChangeModalVisible(false);
+  };
 
   useEffect(() => {
     setProjectState([
@@ -68,10 +75,6 @@ export function ProjectStateModal({ variables, setProjectState, nowProjectState 
           </S.ProjectState>
         ))}
       </S.ProjectStateContainer>
-      <hr />
-      <S.BtnWrap>
-        <Button type="primary">상태전환</Button>
-      </S.BtnWrap>
     </S.ModalContainer>
   );
 }

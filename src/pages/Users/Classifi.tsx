@@ -1,22 +1,28 @@
-import { Divider, Table, Button } from 'antd';
+import { Divider, Table } from 'antd';
 
 import React, { useState } from 'react';
 import { UserDetailModal } from '../../components/UserDetailModal';
-import { UserType, userClassifiColumns } from '../../utils/columns';
-import TransformBox from '../../components/TransformBox';
+import { UserType, userClassifiColumns, ClassifiType } from '../../utils/columns';
 
 export function Classifi() {
-  const [userData, setUserData] = useState<UserType[]>([
+  const [userData] = useState<ClassifiType[]>([
     {
-      createdAt: 'dawdawdaw',
-      email: 'dawdawdwa@dawd.cp',
-      name: 'dawdwa',
-      nickname: 'dawdwad',
-      phone: '01099999999',
-      do: 'dadaw',
-      max: 'dawda',
-      content: 'da',
-      shippingAddresses: [{ address: 'dwdaw', addressDetail: 'dawdawd', id: 0, isDefault: true }],
+      id: 1,
+      name: '일반투자자',
+      content: '투자한도 범위 연 2,000만원 이내',
+      max: '2,000만원',
+    },
+    {
+      id: 2,
+      name: '소득적격 투자자',
+      content: '투자한도 범위 연 4,000만원 이내',
+      max: '4,000만원',
+    },
+    {
+      id: 3,
+      name: '전문 투자자',
+      content: '투자한도 범위 무제한',
+      max: '무제한',
     },
   ]);
   const [visible, setVisible] = useState(false);
@@ -48,27 +54,27 @@ export function Classifi() {
         email={modalData?.email ?? ''}
       />
       <Divider>회원분류</Divider>
-      <TransformBox justifyContent="flex-end" marginBottom={'30px'}>
+      {/* <TransformBox justifyContent="flex-end" marginBottom={'30px'}>
         <Button type="primary" onClick={handleClick}>
           분류 생성
         </Button>
-      </TransformBox>
+      </TransformBox> */}
       <Table
         columns={userClassifiColumns}
         dataSource={userData}
-        pagination={{
-          position: ['bottomCenter'],
-          showSizeChanger: true,
-          onChange: handlePagination,
-          onShowSizeChange: (_current, size) => setTake(size),
-          total: totalCount,
-          current: current,
-        }}
+        // pagination={{
+        //   position: ['bottomCenter'],
+        //   showSizeChanger: true,
+        //   onChange: handlePagination,
+        //   onShowSizeChange: (_current, size) => setTake(size),
+        //   total: totalCount,
+        //   current: current,
+        // }}
+        pagination={false}
         // loading={loading}
         style={{
           marginTop: 30,
         }}
-        rowKey={(rec) => rec.email}
         scroll={{ x: 800 }}
       />
     </>

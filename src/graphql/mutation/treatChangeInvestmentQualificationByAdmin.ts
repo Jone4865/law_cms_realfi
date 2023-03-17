@@ -8,8 +8,8 @@ export const TREAT_CHANGE_INVESTMENT_QUILIFICATION_BY_ADMIN = gql(/* GraphQL */ 
   ) {
     treatChangeInvestmentQualificationByAdmin(
       id: $id
-      approveStatus: $approveStatus
       reason: $reason
+      approveStatus: $approveStatus
     )
   }
 `);

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Divider, notification } from 'antd';
 import { useLazyQuery, useMutation } from '@apollo/client';
+import { useParams } from 'react-router-dom';
+import { Divider, notification } from 'antd';
+import * as S from './style';
 import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
 import { FIND_PROJECT_BY_ADMIN } from '../../graphql/query';
-import { useParams } from 'react-router-dom';
-import * as S from './style';
-import Loader from '../../components/Loader';
+import {
+  DocInCreateProjectByAdminArgs,
+  FindProjectByAdminQuery,
+} from '../../graphql/generated/graphql';
 import { ProjectStateModal } from '../../components/ProjectStateModal';
 import { BasicInfo } from '../../components/ProjectAdd/BasicInfo/BasicInfo';
 import { CollusionInfo } from '../../components/ProjectAdd/CollusionInfo/CollusionInfo';
@@ -13,7 +16,7 @@ import { CollusionHistory } from '../../components/ProjectAdd/CollusionHistory/C
 import { TransactioDetails } from '../../components/ProjectAdd/TransactioDetails/TransactioDetails';
 import { DividendManagement } from '../../components/ProjectAdd/DividendManagement/DividendManagement';
 import { SellVote } from '../../components/ProjectAdd/SellVote/SellVote';
-import { FindProjectByAdminQuery } from '../../graphql/generated/graphql';
+import Loader from '../../components/Loader';
 
 type Props = {
   isFix?: boolean;
@@ -22,15 +25,8 @@ type Props = {
 
 export function ProjectAdd({ isFix, isAdd }: Props) {
   const params = useParams();
-  const btns = ['1. 기본정보', '2. 공모정보'];
-  const fixBtns = [
-    '1. 기본정보',
-    '2. 공모정보',
-    '3. 공모내역',
-    '4. 거래내역',
-    '5. 배당관리',
-    '6. 매각관리',
-  ];
+  const btns = ['기본정보', '공모정보'];
+  const fixBtns = ['기본정보', '공모정보', '공모내역', '거래내역', '배당관리', '매각관리'];
   const btnAble = [true, true, true, true, true, true];
   const [nowProjectState, setNowProjectState] = useState<string[]>([]);
   const [variables, setVariables] = useState<any>({});
@@ -38,6 +34,22 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
   const [tabsName, setTabsName] = useState('');
   const [publicOfferingQuantity, setPublicOfferingQuantity] =
     useState<FindProjectByAdminQuery['findProjectByAdmin']['publicOfferingQuantity']>();
+
+  const [investFileList, setInvestFileList] = useState<DocInCreateProjectByAdminArgs[]>([
+    {
+      file: null,
+      name: '',
+    },
+  ]);
+
+  const [officialInfosFileList, setOfficialInfosFileList] = useState<
+    DocInCreateProjectByAdminArgs[]
+  >([
+    {
+      file: null,
+      name: '',
+    },
+  ]);
 
   const handleRefetch = () => {
     if (params.projectId) {
@@ -155,6 +167,10 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
           variables={variables}
           handleChange={handleChange}
           isFix={isFix}
+          investFileList={investFileList}
+          setInvestFileList={setInvestFileList}
+          officialInfosFileList={officialInfosFileList}
+          setOfficialInfosFileList={setOfficialInfosFileList}
         />
       )}
       {nowAble === 1 && (

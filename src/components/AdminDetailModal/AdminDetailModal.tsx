@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Input, Modal, notification, Popconfirm, Table } from 'antd';
+import TransformBox from '../TransformBox';
 import * as S from './style';
 
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { validateEmail, validataPassword } from '../../utils/valitation';
-import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
 import { SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
+import { AdminInFindManyAdminByAdminOutput } from '../../graphql/generated/graphql';
+import { validateEmail, validataPassword } from '../../utils/valitation';
+import { AuthDescType } from '../../utils/columns';
 
 export type SubmitType = {
   email?: string;
@@ -17,13 +18,23 @@ export type SubmitType = {
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
-  admin?: any;
-  refetch: () => void;
   adminRoles: KindType[];
+  authDescData: AuthDescType[];
+  refetch: () => void;
+  handleCancel: () => void;
+  handleCheckBox: (val: string) => void;
+  admin?: AdminInFindManyAdminByAdminOutput;
 };
 
-export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminRoles }: Props) {
+export function AdminDetailModal({
+  visible,
+  adminRoles,
+  authDescData,
+  refetch,
+  handleCancel,
+  handleCheckBox,
+  admin,
+}: Props) {
   const [isPasswordChange, setPasswordChange] = useState(false);
   const [adminInfo, setAdminInfo] = useState<SubmitType>({
     adminRoles: [
@@ -45,10 +56,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     password: '',
   });
 
-  const inputStyle = {
-    width: '548px',
-  };
-
   const columns = [
     {
       title: '권한명',
@@ -58,62 +65,20 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     },
     {
       title: '선택',
-      key: 'auth',
-      dataIndex: 'id',
-      render: (val: number) => {
-        return (
-          <Checkbox
-            checked={adminInfo.adminRoles.findIndex((v) => v.id === val) > -1}
-            value={val}
-            onChange={handleChangeRole}
-            disabled={val === 1 || val === 2 || val === 7 || val === 17}
-          />
-        );
+      key: 'name',
+      dataIndex: 'name',
+      render: (val: string) => {
+        return <Checkbox onChange={() => handleCheckBox(val)} />;
       },
       align: 'center' as const,
     },
   ];
-
-  const handleClick = () => {
-    if (isPasswordChange) {
-      setAdminInfo({
-        ...adminInfo,
-        password: '',
-      });
-    } else {
-      setAdminInfo({
-        ...adminInfo,
-        password: 'qweasd123@',
-      });
-    }
-    setPasswordChange(!isPasswordChange);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, keyword: string) => {
     setAdminInfo({
       ...adminInfo,
       [keyword]: e.target.value,
     });
-  };
-
-  const handleChangeRole = (e: CheckboxChangeEvent) => {
-    if (e.target.checked) {
-      setAdminInfo({
-        ...adminInfo,
-        adminRoles: [
-          ...adminInfo.adminRoles,
-          {
-            name: adminRoles.find((v) => v.id === e.target.value)?.name ?? '',
-            id: e.target.value,
-          },
-        ],
-      });
-    } else {
-      setAdminInfo({
-        ...adminInfo,
-        adminRoles: adminInfo.adminRoles.filter((v) => v.id !== e.target.value),
-      });
-    }
   };
 
   const handleFinish = () => {
@@ -152,12 +117,6 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       });
       refetch();
     } else {
-      // updateAdmin({
-      //   variables: {
-      //     ...variables,
-      //     password: !isPasswordChange ? variables.password : undefined,
-      //   },
-      // });
     }
   };
 
@@ -165,52 +124,13 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
       notification.success({ message: '관리자를 생성하였습니다.' });
     },
   });
 
-  // delete admin account
-  // const [deleteAdmin] = useMutation<DeleteAdminResponse, DeleteAdminParams>(
-  //   DELETE_ADMIN,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '관리자를 삭제했습니다' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-
-  //       refetch();
-  //     },
-  //     variables: {
-  //       email: admin?.email ?? '',
-  //     },
-  //   },
-  // );
-
-  // update admin account
-  // const [updateAdmin] = useMutation<UpdateAdminResponse, UpdateAdminParams>(
-  //   UPDATE_ADMIN,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '관리자 계정을 수정했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
-
   useEffect(() => {
     if (admin) {
-      setAdminInfo({
-        ...admin,
-        password: 'qweasd123@',
-      });
       setPasswordChange(true);
     } else {
       setAdminInfo({
@@ -235,6 +155,7 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       setPasswordChange(false);
     }
   }, [visible]);
+
   return (
     <Modal
       visible={visible}
@@ -274,14 +195,12 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
         <S.Label>권한</S.Label>
         <Table
           columns={columns}
-          dataSource={adminRoles}
+          dataSource={authDescData}
           pagination={false}
           style={{
             width: 750,
           }}
           bordered
-          rowKey={(rec) => rec.id}
-          // scroll={{ x: 500 }}
         />
       </S.TableWrap>
 
@@ -291,11 +210,7 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
             {admin ? '수정' : '생성'}
           </Button>
           {admin && (
-            <Popconfirm
-              // onConfirm={() => deleteAdmin()}
-              okText="삭제"
-              title="정말로 삭제하시겠습니까?"
-            >
+            <Popconfirm okText="삭제" title="정말로 삭제하시겠습니까?">
               <Button
                 style={{
                   marginLeft: 30,

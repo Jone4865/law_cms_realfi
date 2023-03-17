@@ -10,19 +10,10 @@ import {
   Chart as ChartJS,
 } from 'chart.js';
 import moment from 'moment';
-
 import * as S from './style';
 import { PRIMARY } from '../../styles/colors';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export type ChartDatasetsType = {
   label: string;
