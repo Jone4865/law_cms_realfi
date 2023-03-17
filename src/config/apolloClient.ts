@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, split } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache, split } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { message } from 'antd';
 import { createUploadLink } from 'apollo-upload-client';
@@ -14,10 +14,6 @@ export const SOCKET =
   process.env.NODE_ENV === 'development' ? '/graphql' : process.env.REACT_APP_SOCKET_URL!;
 
 function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userTokenTypes>) {
-  const httpLink = new HttpLink({
-    uri: SERVER,
-  });
-
   const uploadLink = createUploadLink({
     uri: SERVER,
     headers: {
@@ -78,7 +74,7 @@ function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userToken
   });
 
   const client = new ApolloClient({
-    link: ApolloLink.from([authMiddleware, errorLink, splitLink, httpLink]),
+    link: ApolloLink.from([authMiddleware, errorLink, splitLink]),
     cache: new InMemoryCache({
       addTypename: false,
     }),

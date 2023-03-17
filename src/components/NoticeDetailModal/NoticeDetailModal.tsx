@@ -73,6 +73,10 @@ export function NoticeDetailModal({
     // });
   };
 
+  const handleChangeContent = (value: string) => {
+    setContent(value);
+  };
+
   const [createNoticeByAdmin, {}] = useMutation(CREATE_NOTICE_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -192,7 +196,7 @@ export function NoticeDetailModal({
             />
           </TransformBox> */}
         </TransformBox>
-        <Editor state={content} setState={setContent} />
+        <Editor state={content} onChange={handleChangeContent} />
       </TransformBox>
     </Modal>
   );
