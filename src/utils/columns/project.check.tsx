@@ -6,7 +6,6 @@ import { publicOfferingStatusToText } from '../publicOfferingStatusToText';
 import { MarketStatus, PublicOfferingStatus, VoteStatus } from '../../graphql/generated/graphql';
 import { marketStatusToText } from '../marketStatusToText';
 import { voteStatusToText } from '../voteStatusToText';
-import { Dispatch, SetStateAction } from 'react';
 
 export type ProjectCheckType = {
   id: number;
@@ -68,16 +67,6 @@ export const projectCheckColumns = ({
       return newVal.toLocaleString();
     },
   },
-  // {
-  //   title: 'TABS 수',
-  //   key: 'publicOfferingQuantity',
-  //   dataIndex: 'publicOfferingQuantity',
-  //   align: 'center',
-  //   render: (val) => {
-  //     const newVal = +val;
-  //     return newVal.toLocaleString() + ' 개';
-  //   },
-  // },
   {
     title: '공모율',
     key: 'publicOfferingRatio',

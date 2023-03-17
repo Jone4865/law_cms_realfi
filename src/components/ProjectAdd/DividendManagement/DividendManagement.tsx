@@ -3,7 +3,6 @@ import { Button, Input, notification, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { FindManyProjectDividendByAdminQuery } from '../../../graphql/generated/graphql';
 import { PAY_DIVIDEND_BY_ADMIN, UPDATE_DIVIDEND_PERIOD_BY_ADMIN } from '../../../graphql/mutation';
-import { FIND_MANY_DIVIDEND_ADMIN } from '../../../graphql/query';
 import { FIND_MANY_PROJECT_DIVIDEND_BY_ADMIN } from '../../../graphql/query/findManyProjectDividendByAdmin';
 import { dividendmanagementColumns } from '../../../utils/columns';
 import { DividendDetailModal } from '../../DividendDetailModal';

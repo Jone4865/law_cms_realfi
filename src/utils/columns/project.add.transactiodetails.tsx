@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import { FindManySignedOrderByAdminQuery } from '../../graphql/generated/graphql';

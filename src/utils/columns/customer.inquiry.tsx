@@ -1,7 +1,6 @@
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
-import { Dispatch, SetStateAction } from 'react';
 import {
   FindManyUserInquiryCategoryQuery,
   UserInquiryInFindManyUserInquiryByAdminOutput,

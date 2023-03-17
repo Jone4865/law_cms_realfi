@@ -2,19 +2,28 @@ import { Button, Input } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { ColumnsType } from 'antd/lib/table';
 import Upload from 'antd/lib/upload';
+import { DocInCreateProjectByAdminArgs } from '../../graphql/generated/graphql';
 
 type Props = {
-  handleInvestChange: (file: UploadFile<any>, index: number) => void | undefined;
-  investDeleteClick: (idx: number) => () => void;
+  handleDeleteFile: (idx: number, key: string) => void;
   handleTitleChange: (idx: number, key: string, value: string) => void;
+  handleFileChange: (
+    file: UploadFile<DocInCreateProjectByAdminArgs>,
+    index: number,
+    key: string,
+  ) => void;
+  isFix: boolean;
+  docs?: boolean;
   disable?: boolean;
 };
 
 export const investfileColumns = ({
-  handleInvestChange,
-  investDeleteClick,
+  handleDeleteFile,
   handleTitleChange,
+  handleFileChange,
+  isFix,
   disable,
+  docs,
 }: Props): ColumnsType<any> => [
   {
     title: 'no',
@@ -27,12 +36,14 @@ export const investfileColumns = ({
     key: 'title',
     dataIndex: 'name',
     align: 'center',
-    render: (val, _record, index) => {
+    render: (val, record, index) => {
       return (
         <Input
-          disabled={disable}
+          disabled={disable || record?.file?.name || record?.fileName}
           value={val}
-          onChange={(e) => handleTitleChange(index, 'docs', e.target.value)}
+          onChange={(e) =>
+            handleTitleChange(index, docs ? 'docs' : 'officialInfos', e.target.value)
+          }
           placeholder="입력해주세요."
         />
       );
@@ -48,26 +59,31 @@ export const investfileColumns = ({
         val?.name
       ) : record?.fileName ? (
         record?.fileName
-      ) : (
+      ) : record?.name ? (
         <Upload
           showUploadList={false}
-          onChange={({ file }) => handleInvestChange(file, index)}
+          onChange={({ file }) => handleFileChange(file, index, docs ? 'docs' : 'officialInfos')}
           beforeUpload={() => false}
         >
           <Button type="primary">파일 추가</Button>
         </Upload>
+      ) : (
+        '파일 제목을 입력해주세요.'
       );
     },
   },
   {
     key: 'delete',
     align: 'center',
-    dataIndex: 'name',
+    dataIndex: 'fileName',
     render: (val, _record, index) => {
       return (
         val &&
         !disable && (
-          <Button onClick={investDeleteClick(index)} type="primary">
+          <Button
+            onClick={() => handleDeleteFile(index, docs ? 'docs' : 'officialInfos')}
+            type="primary"
+          >
             삭제
           </Button>
         )

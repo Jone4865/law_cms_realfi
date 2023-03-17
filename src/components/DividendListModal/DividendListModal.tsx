@@ -1,15 +1,15 @@
-import { useLazyQuery } from '@apollo/client';
+import React, { useEffect, useState } from 'react';
 import { Input, Modal, notification, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import { FindManyDividendByAdminQuery } from '../../graphql/generated/graphql';
 import { FIND_MANY_DIVIDEND_ADMIN } from '../../graphql/query';
 import { dividendListColumns } from '../../utils/columns';
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
   projectDividendId: number;
   tabsName: string;
+  handleCancel: () => void;
 };
 
 export function DividendListModal({ visible, handleCancel, projectDividendId, tabsName }: Props) {
@@ -68,7 +68,6 @@ export function DividendListModal({ visible, handleCancel, projectDividendId, ta
       <Table
         columns={dividendListColumns}
         dataSource={dividendListData}
-        // loading={loading}
         scroll={{ x: 800 }}
         style={{
           marginTop: '30px',

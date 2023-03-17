@@ -1,8 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import * as S from './style';
+import { useCookies } from 'react-cookie';
 import { Menu } from 'antd';
-
 import {
   CustomerServiceOutlined,
   SecurityScanOutlined,
@@ -13,7 +12,7 @@ import {
   ProjectOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useCookies } from 'react-cookie';
+import * as S from './style';
 
 type MenuInfo = {
   key: string;
@@ -21,25 +20,25 @@ type MenuInfo = {
 };
 
 type MenuData = {
-  subMenu?: string;
   item: string;
+  subMenu?: string;
 };
 
 export function AsideMenu() {
   const [, setCookie] = useCookies(['accessToken', 'refreshToken']);
 
-  const handleLogout = () => {
-    localStorage.setItem('accessToken', '');
-    window.location.reload();
-  };
-
   const [menu, setMenu] = useState<MenuData>({
-    subMenu: '',
     item: '',
+    subMenu: '',
   });
 
   const navigator = useNavigate();
   const { pathname } = useLocation();
+
+  const handleLogout = () => {
+    localStorage.setItem('accessToken', '');
+    window.location.reload();
+  };
 
   const handleMoveHome = () => {
     navigator('/');

@@ -99,7 +99,7 @@ export function Admin() {
       title: 'OTP 설정',
       key: 'OTP',
       dataIndex: 'otpSecret',
-      render: (val, record) => {
+      render: (val) => {
         return (
           <S.OtpWrap>
             {val?.length ? (
@@ -194,12 +194,6 @@ export function Admin() {
     });
   };
 
-  const handleSearch = (value: { searchText?: string }) => {
-    setSkip(0);
-    setCurrent(1);
-    setSearchText(value.searchText ?? '');
-  };
-
   useEffect(() => {
     findManyAdminByAdmin({
       variables: {
@@ -259,7 +253,6 @@ export function Admin() {
           };
         }}
         rowKey={(rec) => rec.email}
-        // loading={loading}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: true,

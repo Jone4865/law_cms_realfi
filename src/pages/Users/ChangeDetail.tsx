@@ -131,24 +131,15 @@ export function ChangeDetail() {
       },
     );
 
-  // const handleClickDownload = async () => {
-  //   axios
-  //     .get(
-  //       `${process.env.REACT_APP_SERVER}/investment-document?name=0e69dbf9-4de7-4dd6-b843-a0dca4258d65.pdf`,
-  //       {
-  //         withCredentials: true,
-  //         headers: {
-  //           'content-type': 'application/json',
-  //           connection: 'keep-alive',
-  //           'Sec-Fetch-Dest': 'empty',
-  //           'Sec-Fetch-Mode': 'cors',
-  //           'Sec-Fetch-Site': 'same-origin',
-  //         },
-  //       },
-  //     )
-  //     .then(() => console.log('s'))
-  //     .catch((err) => console.log(err));
-  // };
+  const handleClickDownload = async () => {
+    axios(
+      `${process.env.REACT_APP_SERVER_BASIC}/investment-document?name=0e69dbf9-4de7-4dd6-b843-a0dca4258d65.pdf`,
+      {
+        method: 'GET',
+        withCredentials: true,
+      },
+    );
+  };
 
   useEffect(() => {
     findManyChangeInvestmentQualificationByAdmin({
@@ -175,7 +166,7 @@ export function ChangeDetail() {
         />
       )}
       <S.Title>{params.userName} 회원 자격변경 상세정보</S.Title>
-      {/* <Button onClick={handleClickDownload}>ㅌㅅㅌ</Button> */}
+      <Button onClick={handleClickDownload}>테스트</Button>
       <S.Wrap>
         <Button
           onClick={() => {

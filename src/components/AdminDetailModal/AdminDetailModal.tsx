@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Input, Modal, notification, Popconfirm, Table } from 'antd';
+import TransformBox from '../TransformBox';
 import * as S from './style';
 
-import { validateEmail, validataPassword } from '../../utils/valitation';
-import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
 import { SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
+import { AdminInFindManyAdminByAdminOutput } from '../../graphql/generated/graphql';
+import { validateEmail, validataPassword } from '../../utils/valitation';
 import { AuthDescType } from '../../utils/columns';
 
 export type SubmitType = {
@@ -17,22 +18,22 @@ export type SubmitType = {
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
-  admin?: any;
-  refetch: () => void;
   adminRoles: KindType[];
   authDescData: AuthDescType[];
+  refetch: () => void;
+  handleCancel: () => void;
   handleCheckBox: (val: string) => void;
+  admin?: AdminInFindManyAdminByAdminOutput;
 };
 
 export function AdminDetailModal({
-  handleCancel,
   visible,
-  admin,
-  refetch,
   adminRoles,
   authDescData,
+  refetch,
+  handleCancel,
   handleCheckBox,
+  admin,
 }: Props) {
   const [isPasswordChange, setPasswordChange] = useState(false);
   const [adminInfo, setAdminInfo] = useState<SubmitType>({
@@ -130,10 +131,6 @@ export function AdminDetailModal({
 
   useEffect(() => {
     if (admin) {
-      setAdminInfo({
-        ...admin,
-        password: 'qweasd123@',
-      });
       setPasswordChange(true);
     } else {
       setAdminInfo({
@@ -204,8 +201,6 @@ export function AdminDetailModal({
             width: 750,
           }}
           bordered
-          // rowKey={(rec) => rec.id}
-          // scroll={{ x: 500 }}
         />
       </S.TableWrap>
 
@@ -215,11 +210,7 @@ export function AdminDetailModal({
             {admin ? '수정' : '생성'}
           </Button>
           {admin && (
-            <Popconfirm
-              // onConfirm={() => deleteAdmin()}
-              okText="삭제"
-              title="정말로 삭제하시겠습니까?"
-            >
+            <Popconfirm okText="삭제" title="정말로 삭제하시겠습니까?">
               <Button
                 style={{
                   marginLeft: 30,

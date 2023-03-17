@@ -1,10 +1,11 @@
+import React, { useState } from 'react';
 import { Button, Modal, notification } from 'antd';
 import * as S from './style';
 
-import { InputBasic } from '../ProjectAdd/InputBasic/InputBasic';
-import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_PROJECT_DIVIDEND_BY_ADMIN } from '../../graphql/mutation';
+import { CreateProjectDividendByAdminMutationVariables } from '../../graphql/generated/graphql';
+import { InputBasic } from '../ProjectAdd/InputBasic/InputBasic';
 
 type Props = {
   visible: boolean;
@@ -15,11 +16,11 @@ type Props = {
 
 export function DividendDetailModal({
   visible,
-  handleCancel,
   publicOfferingQuantity,
   projectId,
+  handleCancel,
 }: Props) {
-  const [variables, setVariables] = useState<any>();
+  const [variables, setVariables] = useState<CreateProjectDividendByAdminMutationVariables>();
 
   const handleChange = (key: string, value: any) => {
     setVariables((prev: any) => {
@@ -33,7 +34,10 @@ export function DividendDetailModal({
     if (variables === undefined) {
       return notification.error({ message: '배당명을 입력해주세요.' });
     }
-    if (variables.operatingProfit === undefined || +variables.operatingProfit === 0) {
+    if (
+      variables.operatingProfit === undefined ||
+      (variables?.operatingProfit && +variables.operatingProfit === 0)
+    ) {
       return notification.error({ message: '운영이익금을 확인해주세요.' });
     }
     if (variables.closingDate === undefined) {
@@ -88,7 +92,7 @@ export function DividendDetailModal({
       />
       <InputBasic
         title="운영이익금(원)"
-        value={+variables?.operatingProfit}
+        value={variables?.operatingProfit && +variables?.operatingProfit}
         essential={false}
         handleChange={handleChange}
         saveName="operatingProfit"
@@ -104,7 +108,10 @@ export function DividendDetailModal({
       <InputBasic
         placeHolder={false}
         title="TABS 배당금 (원)"
-        value={publicOfferingQuantity && +variables?.operatingProfit / +publicOfferingQuantity}
+        value={
+          publicOfferingQuantity &&
+          (variables?.operatingProfit ? +variables?.operatingProfit : 0) / +publicOfferingQuantity
+        }
         essential={false}
         disable
         handleChange={handleChange}

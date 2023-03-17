@@ -1,9 +1,6 @@
 import { ColumnsType } from 'antd/lib/table';
-
-import moment from 'moment';
 import { Button } from 'antd';
 import { FindManyChangeInvestmentQualificationByAdminOutput } from '../../graphql/generated/graphql';
-import { approveStatusToText } from '../approveStatusToText';
 
 export const userChangeFileColumns = (): ColumnsType<
   FindManyChangeInvestmentQualificationByAdminOutput['changeInvestmentQualifications'][0]['investmentDocuments'][0]

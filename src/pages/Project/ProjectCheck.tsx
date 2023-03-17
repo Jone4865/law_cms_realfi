@@ -10,7 +10,6 @@ import {
   FindManyProjectByAdminQuery,
   MarketStatus,
   PublicOfferingStatus,
-  VoteKind,
   VoteStatus,
 } from '../../graphql/generated/graphql';
 import { PROJECT_IS_VISIBLE_TOGGLE_BY_ADMIN } from '../../graphql/mutation';
@@ -164,13 +163,6 @@ export function ProjectCheck() {
             />
           </Form.Item>
         </Form>
-        {/* <Button
-          onClick={() => navigator('/project/add')}
-          type="primary"
-          style={{ marginRight: '0' }}
-        >
-          등록하기
-        </Button> */}
       </S.FormWrap>
       <S.Span>Total: 총 {totalCount}개</S.Span>
       <S.BtnContainer>

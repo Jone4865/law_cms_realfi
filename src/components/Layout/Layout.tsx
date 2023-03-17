@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import useInterval from '../../utils/useInterval';
-import * as S from './style';
-
+import { notification } from 'antd';
+import { FieldTimeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
+import * as S from './style';
+
 import { useLazyQuery } from '@apollo/client';
 import {
   FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN,
 } from '../../graphql/query';
-import { notification } from 'antd';
-import { FieldTimeOutlined } from '@ant-design/icons';
+
 import Main from '../Main';
 import { AsideMenu } from '../AsideMenu';
+import useInterval from '../../utils/useInterval';
 
 export type BadgeType = {
   [index: string]: number;

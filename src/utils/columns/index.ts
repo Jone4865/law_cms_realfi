@@ -22,15 +22,12 @@ export { noticeColumns } from './customer.notice';
 export type { PolicyType } from './policy';
 export { policyColumns } from './policy';
 
-// export type { ProjectType } from './project';
 export { projectCheckColumns } from './project.check';
 
 export { investfileColumns } from './project.add.investfile';
 
 export type { LesseeType } from './project.add.lessee';
 export { lesseeColumns } from './project.add.lessee';
-
-export { officialInfosColumns } from './project.add.officialInfos';
 
 export { collutionHistoryColumns } from './project.add.collutionhistory';
 

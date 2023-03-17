@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
+import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
 import { CREATE_FAQ_BY_ADMIN, UPDATE_FAQ_BY_ADMIN } from '../../graphql/mutation';
 import { FindManyFaqCategoryQuery } from '../../graphql/generated/graphql';
-import TransformBox from '../TransformBox';
 import { FaqType } from '../../utils/columns';
 import { Editor } from '../Editor';
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
   isEdit: boolean;
   data: FaqType | undefined;
-  refetch: () => void;
   faqCategory: FindManyFaqCategoryQuery['findManyFaqCategory'];
+  refetch: () => void;
+  handleCancel: () => void;
 };
 
 export function FaqDetailModal({
   visible,
-  handleCancel,
   isEdit,
   data,
-  refetch,
   faqCategory,
+  refetch,
+  handleCancel,
 }: Props) {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -87,36 +87,6 @@ export function FaqDetailModal({
       notification.error({ message: e.message });
     },
   });
-
-  // update faq
-  // const [updateFaq] = useMutation<UpdateFaqResponse, UpdateFaqParams>(
-  //   UPDATE_FAQ,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: 'FAQ를 수정했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
-
-  // delete faq
-  // const [deleteFaq] = useMutation<DeleteFaqResponse, DeleteFaqParams>(
-  //   DELETE_FAQ,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: 'FAQ를 삭제했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
 
   useEffect(() => {
     if (isEdit) {

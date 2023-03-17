@@ -7,7 +7,7 @@ export type LesseeType = {
 };
 
 type Props = {
-  handleChange: (key: string, value: any) => void;
+  handleChange: (key: string, value: string) => void;
   variables: any;
 };
 

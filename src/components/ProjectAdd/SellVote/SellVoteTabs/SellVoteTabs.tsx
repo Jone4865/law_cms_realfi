@@ -4,12 +4,15 @@ import { UploadFile } from 'antd/es/upload';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
+  DocInCreateProjectByAdminArgs,
   FindCompanyDataQuery,
   FindManySellVoteByAdminOutput,
   VoteKind,
 } from '../../../../graphql/generated/graphql';
 import {
   CREATE_PROJECT_SELL_VOTE_BY_ADMIN,
+  CREATE_PROJECT_SELL_VOTE_FILE_BY_ADMIN,
+  DELETE_PROJECT_SELL_VOTEFILE_BY_ADMIN,
   UPDATE_PROJECT_SELL_VOTE_BY_ADMIN,
   UPDATE_VOTE_KIND_BY_ADMIN,
   VERIFY_VOTE_STATE_IS_SELL_VOTE_WAIT,
@@ -90,6 +93,18 @@ export function SellVoteTabs({
     </div>
   );
 
+  const handleFileChange = (file: UploadFile<DocInCreateProjectByAdminArgs>, index: number) => {
+    setInvestFileList((prev) => {
+      prev[index].file = file;
+      handleChange('docs', prev);
+      return [...prev];
+    });
+    const variables = investFileList[index];
+    if (disable) {
+      createProjectSellVoteFileByAdmin({ variables: { ...variables, projectSellVoteId } });
+    }
+  };
+
   const handlePagination = (e: number) => {
     setCurrent(e);
     setSkip((e - 1) * take);
@@ -104,16 +119,14 @@ export function SellVoteTabs({
     });
   };
 
-  const handleInvestChange = (file: UploadFile<any>, index: number) => {
-    setInvestFileList((prev) => {
-      prev[index].file = file;
-      handleChange('docs', prev);
-      return [...prev];
-    });
-  };
-
-  const investDeleteClick = (idx: number) => () => {
+  const handleDeleteFile = (idx: number) => {
     setInvestFileList(investFileList.filter((_v, i) => i !== idx));
+    {
+      !disable &&
+        deleteProjectSellVoteFileByAdmin({
+          variables: { id: investFileList[idx]?.id },
+        });
+    }
   };
 
   const handleTitleChange = (idx: number, key: string, value: string) => {
@@ -131,8 +144,6 @@ export function SellVoteTabs({
       return newVariables;
     });
   };
-
-  const handleRow = (rec: any) => {};
 
   const createHandleClick = () => {
     createProjectSellVoteByAdmin({
@@ -181,6 +192,24 @@ export function SellVoteTabs({
       },
     },
   );
+
+  const [createProjectSellVoteFileByAdmin] = useMutation(CREATE_PROJECT_SELL_VOTE_FILE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      handleRefetch();
+    },
+  });
+
+  const [deleteProjectSellVoteFileByAdmin] = useMutation(DELETE_PROJECT_SELL_VOTEFILE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      handleRefetch();
+    },
+  });
 
   const [updateProjectSellVoteByAdmin] = useMutation(UPDATE_PROJECT_SELL_VOTE_BY_ADMIN, {
     onError: (error) => {
@@ -363,17 +392,13 @@ export function SellVoteTabs({
       <Table
         pagination={false}
         columns={investfileColumns({
-          handleInvestChange,
-          investDeleteClick,
+          handleDeleteFile,
           handleTitleChange,
+          handleFileChange,
           disable,
+          isFix: true,
         })}
         dataSource={investFileList}
-        onRow={(rec) => {
-          return {
-            onClick: () => handleRow(rec),
-          };
-        }}
         // loading={loading}
         scroll={{ x: 800 }}
         style={{
@@ -381,7 +406,7 @@ export function SellVoteTabs({
           width: '1300px',
         }}
       />
-      {!variables && investFileList?.length < 20 && (
+      {!disable && (
         <div style={{ width: '1300px', display: 'flex' }}>
           <Button
             onClick={() => setInvestFileList([...investFileList, { file: null, name: '' }])}
@@ -392,40 +417,44 @@ export function SellVoteTabs({
           </Button>
         </div>
       )}
-      <S.Wrap>
-        <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
-          매각 투표 진행률
-        </S.Title>
-        <S.Btns style={{ fontWeight: 'bold' }}>
-          {nowAmount?.toLocaleString() + ' / ' + requestSellAmount?.toLocaleString()}
-        </S.Btns>
-      </S.Wrap>
-      <S.Bar>
-        <S.BarState style={{ width: `${variables ? 100 - variables?.undoRatio : 0}%` }}>
-          <span>{variables ? 100 - variables?.undoRatio : 0}%</span>
-        </S.BarState>
-      </S.Bar>
-      <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
-        매각 투표 현황
-      </S.Title>
-      <Table
-        columns={sellvoteColumns({})}
-        dataSource={sellvoteData}
-        // loading={loading}
-        scroll={{ x: 800 }}
-        style={{
-          marginTop: '30px',
-          width: '1300px',
-        }}
-        pagination={{
-          position: ['bottomCenter'],
-          showSizeChanger: true,
-          onChange: handlePagination,
-          onShowSizeChange: (_current, size) => setTake(size),
-          total: voteTotalCount,
-          current: voteCurrent,
-        }}
-      />
+      {disable && (
+        <>
+          <S.Wrap>
+            <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
+              매각 투표 진행률
+            </S.Title>
+            <S.Btns style={{ fontWeight: 'bold' }}>
+              {nowAmount?.toLocaleString() + ' / ' + requestSellAmount?.toLocaleString()}
+            </S.Btns>
+          </S.Wrap>
+          <S.Bar>
+            <S.BarState style={{ width: `${variables ? 100 - variables?.undoRatio : 0}%` }}>
+              <span>{variables ? 100 - variables?.undoRatio : 0}%</span>
+            </S.BarState>
+          </S.Bar>
+          <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
+            매각 투표 현황
+          </S.Title>
+          <Table
+            columns={sellvoteColumns({})}
+            dataSource={sellvoteData}
+            // loading={loading}
+            scroll={{ x: 800 }}
+            style={{
+              marginTop: '30px',
+              width: '1300px',
+            }}
+            pagination={{
+              position: ['bottomCenter'],
+              showSizeChanger: true,
+              onChange: handlePagination,
+              onShowSizeChange: (_current, size) => setTake(size),
+              total: voteTotalCount,
+              current: voteCurrent,
+            }}
+          />
+        </>
+      )}
     </S.Container>
   );
 }

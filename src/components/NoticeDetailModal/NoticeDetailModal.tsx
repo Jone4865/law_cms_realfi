@@ -1,7 +1,6 @@
-import { useMutation } from '@apollo/client';
-import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
-
 import React, { useEffect, useState } from 'react';
+import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
+import { useMutation } from '@apollo/client';
 import { NoticeInFindManyNoticeByAdminOutput, NoticeKind } from '../../graphql/generated/graphql';
 import { CREATE_NOTICE_BY_ADMIN, UPDATE_NOTICE_BY_ADMIN } from '../../graphql/mutation';
 import { noticeKindToText } from '../../utils/noticeKindToText';
@@ -10,20 +9,20 @@ import TransformBox from '../TransformBox';
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
   isEdit: boolean;
   data: NoticeInFindManyNoticeByAdminOutput | undefined;
-  refetch: () => void;
   partTitle?: string;
+  refetch: () => void;
+  handleCancel: () => void;
 };
 
 export function NoticeDetailModal({
   visible,
-  handleCancel,
   isEdit,
   data,
-  refetch,
   partTitle,
+  refetch,
+  handleCancel,
 }: Props) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState(' ');

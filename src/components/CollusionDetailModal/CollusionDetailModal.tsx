@@ -14,7 +14,7 @@ type Props = {
   publicOfferingState: string | undefined;
 };
 
-export function RefundDetailModal({
+export function CollusionDetailModal({
   visible,
   handleCancel,
   publicOfferingId,

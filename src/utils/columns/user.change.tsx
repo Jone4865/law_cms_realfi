@@ -1,7 +1,6 @@
 import { ColumnsType } from 'antd/lib/table';
 
 import moment from 'moment';
-import { Button } from 'antd';
 import { ChangeInvestmentQualificationInFindManyChangeInvestmentQualificationByAdminOutput } from '../../graphql/generated/graphql';
 import { approveStatusToText } from '../approveStatusToText';
 

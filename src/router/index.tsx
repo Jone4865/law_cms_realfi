@@ -9,13 +9,13 @@ import { ProjectAdd, ProjectCheck } from '../pages/Project';
 import { ChangeDetail, Columns, UserDetail } from '../pages/Users';
 import { Change } from '../pages/Users';
 import { Classifi } from '../pages/Users';
-import { useCookies, Cookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 import { CookiesProvider } from 'react-cookie';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Setting } from '../pages/Setting';
 
 function Root() {
-  const [cookies, setCookie] = useCookies(['accessToken']);
+  const [cookies] = useCookies(['accessToken', 'Authentication', 'time']);
 
   useEffect(() => {}, [cookies.accessToken]);
 
