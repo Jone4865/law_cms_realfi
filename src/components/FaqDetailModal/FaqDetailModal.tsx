@@ -32,6 +32,10 @@ export function FaqDetailModal({
     setQuestion(e.target.value);
   };
 
+  const handleChangeAnswer = (value: string) => {
+    setAnswer(value);
+  };
+
   const handleSubmit = () => {
     if (!question.length) {
       return notification.error({ message: 'FAQ 질문을 입력해주세요' });
@@ -146,7 +150,7 @@ export function FaqDetailModal({
       <Input value={question} onChange={handleChange} />
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>답변</h3>
-        <Editor state={answer} setState={setAnswer} />
+        <Editor state={answer} onChange={handleChangeAnswer} />
       </TransformBox>
     </Modal>
   );

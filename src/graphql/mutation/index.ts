@@ -1,5 +1,3 @@
-import { from } from '@apollo/client';
-
 export { CREATE_FAQ_BY_ADMIN } from './createFaqByAdmin';
 export { CREATE_NOTICE_BY_ADMIN } from './createNoticeByAdmin';
 export { CREATE_PROJECT_BY_ADMIN } from './createProjectByAdmin';
@@ -31,3 +29,4 @@ export { DELETE_PROJECT_SELL_VOTEFILE_BY_ADMIN } from './deleteProjectSellVoteFi
 export { REFUND_FAILED_PUBLIC_OFFERING_BY_ADMIN } from './refundFailedPublicOfferingByAdmin';
 export { UPDATE_PROJECT_BASIC_INFO_BY_ADMIN } from './updateProjectBasicInfoByAdmin';
 export { UPDATE_PROJECT_PUBLIC_OFFERING_INFO_BY_ADMIN } from './updateProjectPublicOfferingInfoByAdmin';
+export { UPLOAD_POLICY_FILE_BY_ADMIN } from './uploadPolicyFileByAdmin';

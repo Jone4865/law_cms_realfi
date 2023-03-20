@@ -2,7 +2,11 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { Button, Input, Modal, notification, Switch, Checkbox } from 'antd';
 
 import React, { useEffect, useState } from 'react';
-import { CREATE_POLICY_BY_ADMIN, UPDATE_POLICY_BY_ADMIN } from '../../graphql/mutation';
+import {
+  CREATE_POLICY_BY_ADMIN,
+  UPDATE_POLICY_BY_ADMIN,
+  UPLOAD_POLICY_FILE_BY_ADMIN,
+} from '../../graphql/mutation';
 import { FIND_POLICY } from '../../graphql/query';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
@@ -69,6 +73,10 @@ export function PolicyDetailModal({
     }
   };
 
+  const handleChangeContent = (value: string) => {
+    setContent(value);
+  };
+
   const handleChange = (key: string, value: any) => {
     setVariables((prev: any) => {
       let newData: any = { ...prev };
@@ -130,6 +138,18 @@ export function PolicyDetailModal({
     handleChange('content', content);
   }, [content]);
 
+  const handleUploadImage = (file: File, cb: (url: string) => void) => {
+    uploadPolicyFile({
+      variables: {
+        file: file,
+      },
+      onCompleted: (res) => {
+        console.log(res.uploadPolicyFileByAdmin);
+        cb(`${process.env.REACT_APP_SERVER_BASIC}/policy/file?name=${res.uploadPolicyFileByAdmin}`);
+      },
+    });
+  };
+
   return (
     <Modal
       open={visible}
@@ -178,7 +198,7 @@ export function PolicyDetailModal({
       </TransformBox>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>약관 내용</h3>
-        <Editor state={content} setState={setContent} />
+        <Editor state={content} onChange={handleChangeContent} onUpload={handleUploadImage} />
       </TransformBox>
     </Modal>
   );
