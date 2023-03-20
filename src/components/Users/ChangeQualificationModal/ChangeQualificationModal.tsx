@@ -3,17 +3,17 @@ import { useState } from 'react';
 
 type Props = {
   visible: boolean;
+  reason: string;
   handleCancel: () => void;
   handleClick: (kind: string) => void;
   setReason: React.Dispatch<React.SetStateAction<string>>;
-  reason: string;
 };
 
 export function ChangeQualificationModal({
-  handleCancel,
   visible,
-  handleClick,
   reason,
+  handleCancel,
+  handleClick,
   setReason,
 }: Props) {
   const [check, setCheck] = useState<string>('');

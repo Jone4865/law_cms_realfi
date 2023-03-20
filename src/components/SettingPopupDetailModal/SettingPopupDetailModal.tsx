@@ -21,6 +21,8 @@ type Props = {
 export function SettingPopupDetailModal({ data }: Props) {
   const [startDate, setStartDate] = useState<moment.Moment>();
   const [endDate, setEndDate] = useState<moment.Moment>();
+  const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>();
   const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result as string));
@@ -38,9 +40,6 @@ export function SettingPopupDetailModal({ data }: Props) {
     }
     return isJpgOrPng && isLt2M;
   };
-
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
 
   const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
     if (info.file.status === 'uploading') {

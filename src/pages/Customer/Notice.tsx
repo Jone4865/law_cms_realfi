@@ -114,7 +114,6 @@ export function Notice() {
           marginTop: '30px',
         }}
         rowKey={(rec) => rec.id}
-        // loading={loading}
         scroll={{ x: 800 }}
       />
     </>

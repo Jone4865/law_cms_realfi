@@ -14,8 +14,8 @@ import { FIND_MANY_PROJECT_FILE } from '../../../graphql/query';
 import {
   CREATE_PROJECT_FILE_BY_ADMIN,
   DELETE_PROJECT_FILE_BY_ADMIN,
+  UPDATE_PROJECT_BASIC_INFO_BY_ADMIN,
 } from '../../../graphql/mutation';
-import axios from 'axios';
 
 type Props = {
   variables: any;
@@ -37,27 +37,15 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 
 export function BasicInfo({
-  handleChange,
   variables,
   isFix,
   projectId,
   investFileList,
-  setInvestFileList,
   officialInfosFileList,
+  handleChange,
+  setInvestFileList,
   setOfficialInfosFileList,
 }: Props) {
-  const handleClickDownload = async () => {
-    axios
-      .get(
-        `${process.env.REACT_APP_BASIC_SERVER}/investment-document?name=46b05739-233a-49f6-86d0-afd639a45644.pdf`,
-        {
-          withCredentials: true,
-        },
-      )
-      .then(() => console.log('s'))
-      .catch((err) => console.log(err));
-  };
-
   var regExp = /^[0-9]/g;
   const [visible, setVisible] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -209,6 +197,10 @@ export function BasicInfo({
     }
   };
 
+  const editBasicInfo = () => {
+    updateProjectBasicInfoByAdmin({ variables: variables });
+  };
+
   const [findManyProjectFile] = useLazyQuery(FIND_MANY_PROJECT_FILE, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -239,6 +231,15 @@ export function BasicInfo({
     },
   });
 
+  const [updateProjectBasicInfoByAdmin] = useMutation(UPDATE_PROJECT_BASIC_INFO_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '프로젝트 기본정보를 수정했습니다.' });
+    },
+  });
+
   useEffect(() => {
     findManyProjectFile({
       variables: { projectId: projectId ? projectId : 0 },
@@ -257,13 +258,18 @@ export function BasicInfo({
 
   return (
     <>
-      <Button onClick={handleClickDownload}>테스트</Button>
       {visible && <GetZipApi complteSerchZipHandle={complteSerchZipHandle} />}
-      <S.AddTitle style={{ marginTop: '25px' }}>
-        기본 정보
-        {/* <Button type="primary">저장</Button> */}
-      </S.AddTitle>
+      <S.AddTitle style={{ marginTop: '25px' }}>기본 정보</S.AddTitle>
       <S.AddFormContainer>
+        {isFix && (
+          <Button
+            onClick={() => editBasicInfo()}
+            style={{ width: '150px', margin: 'auto' }}
+            type="primary"
+          >
+            수정
+          </Button>
+        )}
         <InputBasic
           handleChange={handleChange}
           title="프로젝트명"
@@ -425,7 +431,6 @@ export function BasicInfo({
             isFix: isFix ? isFix : false,
           })}
           dataSource={isFix ? newInvestFileList : investFileList}
-          // loading={loading}
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',
@@ -460,7 +465,6 @@ export function BasicInfo({
           pagination={false}
           columns={lesseeColumns({ handleChange, variables })}
           dataSource={lesseeNum}
-          // loading={loading}
           rowKey={(rec) => rec.id}
           scroll={{ x: 800 }}
           style={{
@@ -478,7 +482,6 @@ export function BasicInfo({
             isFix: isFix ? isFix : false,
           })}
           dataSource={isFix ? newOfficialInfosFileList : officialInfosFileList}
-          // loading={loading}
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',

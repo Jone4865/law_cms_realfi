@@ -107,7 +107,6 @@ export function Policy() {
           total: totalCount,
           current: current,
         }}
-        // loading={loading}
         rowKey={(rec) => rec.id}
         scroll={{ x: 800 }}
         style={{

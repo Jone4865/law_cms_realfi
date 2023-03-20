@@ -101,26 +101,10 @@ export function NoticeDetailModal({
     },
   });
 
-  // delete notice
-  // const [deleteNotice] = useMutation<DeleteNoticeResponse, DeleteNoticeParams>(
-  //   DELETE_NOTICE,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '공지사항을 삭제했습니다' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //   },
-  // );
-
   useEffect(() => {
     if (isEdit) {
       setTitle(data?.title ?? '');
       setContent(data?.content ?? ' ');
-      // setisFix(data?.isFix ?? false);
     } else {
       setTitle('');
       setContent(' ');

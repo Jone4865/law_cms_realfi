@@ -3,7 +3,10 @@ import { useLazyQuery, useMutation } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Divider, notification } from 'antd';
 import * as S from './style';
-import { CREATE_PROJECT_BY_ADMIN } from '../../graphql/mutation';
+import {
+  CREATE_PROJECT_BY_ADMIN,
+  UPDATE_PROJECT_PUBLIC_OFFERING_INFO_BY_ADMIN,
+} from '../../graphql/mutation';
 import { FIND_PROJECT_BY_ADMIN } from '../../graphql/query';
 import {
   DocInCreateProjectByAdminArgs,
@@ -63,14 +66,18 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
   };
 
   const submitHandle = () => {
-    createProjectByAdmin({
-      variables: {
-        ...variables,
-        images: variables.images?.map((file: any) => ({ file: file.originFileObj })),
-        latitude: variables.latitude.toString(),
-        longitude: variables.longitude.toString(),
-      },
-    });
+    if (isFix) {
+      updateProjectPublicOfferingInfoByAdmin({ variables: variables });
+    } else {
+      createProjectByAdmin({
+        variables: {
+          ...variables,
+          images: variables.images?.map((file: any) => ({ file: file.originFileObj })),
+          latitude: variables.latitude.toString(),
+          longitude: variables.longitude.toString(),
+        },
+      });
+    }
   };
 
   const handleChange = (key: string, value: any) => {
@@ -119,6 +126,18 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
       setNowAble(0);
     },
   });
+
+  const [updateProjectPublicOfferingInfoByAdmin] = useMutation(
+    UPDATE_PROJECT_PUBLIC_OFFERING_INFO_BY_ADMIN,
+    {
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+      onCompleted: (_data) => {
+        notification.success({ message: '프로젝트 공모정보를 수정했습니다.' });
+      },
+    },
+  );
 
   useEffect(() => {
     if (isFix && params.projectId) {

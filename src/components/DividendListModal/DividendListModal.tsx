@@ -12,7 +12,7 @@ type Props = {
   handleCancel: () => void;
 };
 
-export function DividendListModal({ visible, handleCancel, projectDividendId, tabsName }: Props) {
+export function DividendListModal({ visible, projectDividendId, tabsName, handleCancel }: Props) {
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const [take, setTake] = useState(10);

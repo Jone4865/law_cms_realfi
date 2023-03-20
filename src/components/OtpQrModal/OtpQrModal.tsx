@@ -5,12 +5,12 @@ import * as S from './style';
 
 type Props = {
   visible: boolean;
+  otpSecret: string;
   handleCancel: () => void;
   handleNext: () => void;
-  otpSecret: string;
 };
 
-export function OtpQrModal({ visible, handleNext, handleCancel, otpSecret }: Props) {
+export function OtpQrModal({ visible, otpSecret, handleNext, handleCancel }: Props) {
   const [imageUrl, setImageUrl] = useState('');
 
   const handleCopy = () => {

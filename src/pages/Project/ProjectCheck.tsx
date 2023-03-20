@@ -242,12 +242,6 @@ export function ProjectCheck() {
           ))}
         </S.BtnWrap>
       </S.BtnContainer>
-      {/* <Calendar
-        setEndDate={setEndDate}
-        setStartDate={setStartDate}
-        startDate={startDate}
-        endDate={endDate}
-      /> */}
       <Table
         rowKey={(rec) => rec.id}
         columns={projectCheckColumns({ ToggleClickhandle })}
@@ -258,7 +252,6 @@ export function ProjectCheck() {
             onClick: () => navigator(`/project/${rec.id}`),
           };
         }}
-        // loading={loading}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: true,

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
 import * as S from './style';
 
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useSubscription } from '@apollo/client';
 import {
   FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN,
@@ -14,6 +14,10 @@ import {
 import Main from '../Main';
 import { AsideMenu } from '../AsideMenu';
 import useInterval from '../../utils/useInterval';
+import {
+  FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN,
+  FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB,
+} from '../../graphql/subscription';
 
 export type BadgeType = {
   [index: string]: number;
@@ -31,22 +35,6 @@ function Layout() {
   useInterval(() => setTime((prev) => prev - 1000), 1000);
   let Min = Math.floor((time / (1000 * 60)) % 60);
   let Sec = (time / 1000) % 60;
-
-  useEffect(() => {
-    setCookie('time', time);
-    if (time <= 0) {
-      setCookie('accessToken', '');
-      setCookie('refreshToken', '');
-      removeCookie('time');
-      window.location.href = '/login';
-    }
-  }, [time]);
-
-  useEffect(() => {
-    findChangeInvestmentQualificationCountByAdmin({});
-    findUserInquiryCountByAdmin({});
-    setTime(cookies.time ? cookies.time : 3600000);
-  }, []);
 
   const [findChangeInvestmentQualificationCountByAdmin] = useLazyQuery(
     FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
@@ -68,6 +56,41 @@ function Layout() {
       setInquiryCount(data.findUserInquiryCountByAdmin);
     },
   });
+
+  useSubscription(FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB, {
+    onSubscriptionData: (options) => {
+      console.log('11111');
+      if (options.subscriptionData.data?.findUserInquiryCountByAdminSub) {
+        setInquiryCount(options.subscriptionData.data.findUserInquiryCountByAdminSub);
+      }
+    },
+  });
+
+  useSubscription(FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN, {
+    onSubscriptionData: (options) => {
+      if (options.subscriptionData.data?.findChangeInvestmentQualificationCountByAdminSub) {
+        setChangeCount(
+          options.subscriptionData.data.findChangeInvestmentQualificationCountByAdminSub,
+        );
+      }
+    },
+  });
+
+  useEffect(() => {
+    setCookie('time', time);
+    if (time <= 0) {
+      setCookie('accessToken', '');
+      setCookie('refreshToken', '');
+      removeCookie('time');
+      window.location.href = '/login';
+    }
+  }, [time]);
+
+  useEffect(() => {
+    findChangeInvestmentQualificationCountByAdmin({});
+    findUserInquiryCountByAdmin({});
+    setTime(cookies.time ? cookies.time : 3600000);
+  }, []);
 
   return (
     <S.Layout>

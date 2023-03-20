@@ -18,16 +18,6 @@ export function TransactioDetails({ projectId }: Props) {
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
 
-  useEffect(() => {
-    findManySignedOrderByAdmin({
-      variables: {
-        skip,
-        take,
-        projectId: projectId ? projectId : 0,
-      },
-    });
-  }, [skip, projectId]);
-
   const handlePagination = (e: number) => {
     setCurrent(e);
     setSkip((e - 1) * take);
@@ -43,13 +33,22 @@ export function TransactioDetails({ projectId }: Props) {
     },
   });
 
+  useEffect(() => {
+    findManySignedOrderByAdmin({
+      variables: {
+        skip,
+        take,
+        projectId: projectId ? projectId : 0,
+      },
+    });
+  }, [skip, projectId]);
+
   return (
     <S.Container>
       <S.Title>거래 내역</S.Title>
       <Table
         columns={transactioDetailsColumns({})}
         dataSource={transactioDetailsData}
-        // loading={loading}
         scroll={{ x: 800 }}
         style={{
           marginTop: '30px',

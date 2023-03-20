@@ -7,13 +7,13 @@ import { userDividendClumns } from '../../../utils/columns';
 import * as S from './../style';
 
 type Props = {
-  handleCancel: () => void;
   visible: boolean;
   projectId: number;
   email: string;
+  handleCancel: () => void;
 };
 
-export function UserDividendModal({ handleCancel, visible, projectId, email }: Props) {
+export function UserDividendModal({ visible, projectId, email, handleCancel }: Props) {
   const [userDividendData, setUserDividendData] = useState<FindManyDividendInUserByAdminOutput>();
   const [userDividendModalData, setUserDividendModalData] =
     useState<FindManyDividendInUserByAdminOutput['dividends']>();
@@ -85,7 +85,6 @@ export function UserDividendModal({ handleCancel, visible, projectId, email }: P
           total: totalCount,
           current: current,
         }}
-        // loading={loading}
         style={{
           marginTop: 30,
         }}

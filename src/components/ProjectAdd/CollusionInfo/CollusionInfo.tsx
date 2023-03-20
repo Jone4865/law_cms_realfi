@@ -9,13 +9,13 @@ import { useEffect, useState } from 'react';
 import { FindCompanyDataQuery } from '../../../graphql/generated/graphql';
 
 type Props = {
-  handleChange: (key: string, value: any) => void;
   variables: any;
+  handleChange: (key: string, value: any) => void;
   submitHandle: () => void;
   isFix?: boolean;
 };
 
-export function CollusionInfo({ handleChange, variables, submitHandle, isFix }: Props) {
+export function CollusionInfo({ isFix, variables, submitHandle, handleChange }: Props) {
   const [times, setTimes] = useState<FindCompanyDataQuery['findCompanyData']>();
   const [findCompanyData] = useLazyQuery(FIND_MANY_COMPANY_DATA, {
     onError: (error) => {

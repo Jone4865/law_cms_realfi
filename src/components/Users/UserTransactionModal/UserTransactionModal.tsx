@@ -1,11 +1,11 @@
 import { Modal } from 'antd';
 
 type Props = {
-  handleCancel: () => void;
   visible: boolean;
+  handleCancel: () => void;
 };
 
-export function UserTransactionModal({ handleCancel, visible }: Props) {
+export function UserTransactionModal({ visible, handleCancel }: Props) {
   return (
     <Modal
       open={visible}

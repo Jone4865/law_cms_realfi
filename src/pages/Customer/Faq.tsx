@@ -136,7 +136,6 @@ export function Faq() {
             onClick: () => handleRow(record),
           };
         }}
-        // loading={loading}
         rowKey={(rec) => rec.id}
         scroll={{ x: 800 }}
       />

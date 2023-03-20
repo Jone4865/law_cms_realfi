@@ -71,7 +71,6 @@ export function Classifi() {
         //   current: current,
         // }}
         pagination={false}
-        // loading={loading}
         style={{
           marginTop: 30,
         }}

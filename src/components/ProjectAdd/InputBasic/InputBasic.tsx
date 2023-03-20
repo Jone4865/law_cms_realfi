@@ -18,7 +18,6 @@ type Props = {
 export function InputBasic({
   title,
   saveName,
-  handleChange,
   subTitle,
   essential = true,
   datePicker,
@@ -26,6 +25,7 @@ export function InputBasic({
   value,
   placeHolder = true,
   color,
+  handleChange,
 }: Props) {
   return (
     <S.AddFormWrap>

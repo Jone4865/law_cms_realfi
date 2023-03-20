@@ -16,28 +16,7 @@ export function UserDetailModal({ email, handleCancel, visible }: Props) {
   const [user, setUser] = useState<UserType>();
   const [selectedKey, setSeletedKey] = useState('1');
 
-  // get user detail information
-  // const [seeUserDetail] = useLazyQuery<
-  //   SeeUserDetailByAdminResponse,
-  //   SeeUserDetailByAdminParams
-  // >(SEE_USER_DETAIL_BY_ADMIN, {
-  //   onCompleted: (data) => {
-  //     setUser(data.seeUserDetailByAdmin);
-  //   },
-  //   onError: (e) => {
-  //     notification.error({ message: e.message });
-  //   },
-  //   fetchPolicy: 'no-cache',
-  // });
-
   useEffect(() => {
-    if (visible) {
-      // seeUserDetail({
-      //   variables: {
-      //     email,
-      //   },
-      // });
-    }
     setSeletedKey('1');
   }, [visible]);
   return (

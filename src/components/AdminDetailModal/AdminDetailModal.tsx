@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Input, Modal, notification, Popconfirm, Table } from 'antd';
-import TransformBox from '../TransformBox';
 import * as S from './style';
 
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { validateEmail, validataPassword } from '../../utils/valitation';
+import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
 import { SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
-import { AdminInFindManyAdminByAdminOutput } from '../../graphql/generated/graphql';
-import { validateEmail, validataPassword } from '../../utils/valitation';
-import { AuthDescType } from '../../utils/columns';
 
 export type SubmitType = {
   email?: string;
@@ -19,22 +18,12 @@ export type SubmitType = {
 type Props = {
   visible: boolean;
   adminRoles: KindType[];
-  authDescData: AuthDescType[];
-  refetch: () => void;
   handleCancel: () => void;
-  handleCheckBox: (val: string) => void;
-  admin?: AdminInFindManyAdminByAdminOutput;
+  refetch: () => void;
+  admin?: any;
 };
 
-export function AdminDetailModal({
-  visible,
-  adminRoles,
-  authDescData,
-  refetch,
-  handleCancel,
-  handleCheckBox,
-  admin,
-}: Props) {
+export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminRoles }: Props) {
   const [isPasswordChange, setPasswordChange] = useState(false);
   const [adminInfo, setAdminInfo] = useState<SubmitType>({
     adminRoles: [
@@ -65,10 +54,17 @@ export function AdminDetailModal({
     },
     {
       title: '선택',
-      key: 'name',
-      dataIndex: 'name',
-      render: (val: string) => {
-        return <Checkbox onChange={() => handleCheckBox(val)} />;
+      key: 'auth',
+      dataIndex: 'id',
+      render: (val: number) => {
+        return (
+          <Checkbox
+            checked={adminInfo.adminRoles.findIndex((v) => v.id === val) > -1}
+            value={val}
+            onChange={handleChangeRole}
+            disabled={val === 1 || val === 2 || val === 7 || val === 17}
+          />
+        );
       },
       align: 'center' as const,
     },
@@ -79,6 +75,26 @@ export function AdminDetailModal({
       ...adminInfo,
       [keyword]: e.target.value,
     });
+  };
+
+  const handleChangeRole = (e: CheckboxChangeEvent) => {
+    if (e.target.checked) {
+      setAdminInfo({
+        ...adminInfo,
+        adminRoles: [
+          ...adminInfo.adminRoles,
+          {
+            name: adminRoles.find((v) => v.id === e.target.value)?.name ?? '',
+            id: e.target.value,
+          },
+        ],
+      });
+    } else {
+      setAdminInfo({
+        ...adminInfo,
+        adminRoles: adminInfo.adminRoles.filter((v) => v.id !== e.target.value),
+      });
+    }
   };
 
   const handleFinish = () => {
@@ -131,6 +147,10 @@ export function AdminDetailModal({
 
   useEffect(() => {
     if (admin) {
+      setAdminInfo({
+        ...admin,
+        password: 'qweasd123@',
+      });
       setPasswordChange(true);
     } else {
       setAdminInfo({
@@ -155,7 +175,6 @@ export function AdminDetailModal({
       setPasswordChange(false);
     }
   }, [visible]);
-
   return (
     <Modal
       visible={visible}
@@ -177,16 +196,18 @@ export function AdminDetailModal({
           disabled={admin ? true : false}
         />
       </S.FormWrap>
-      <S.FormWrap>
-        <S.Label>비밀번호</S.Label>
-        <TransformBox width="100%">
-          <Input.Password
-            disabled={isPasswordChange}
-            value={adminInfo.password}
-            onChange={(e) => handleChange(e, 'password')}
-          />
-        </TransformBox>
-      </S.FormWrap>
+      {!admin && (
+        <S.FormWrap>
+          <S.Label>비밀번호</S.Label>
+          <TransformBox width="100%">
+            <Input.Password
+              disabled={isPasswordChange}
+              value={adminInfo.password}
+              onChange={(e) => handleChange(e, 'password')}
+            />
+          </TransformBox>
+        </S.FormWrap>
+      )}
       <S.FormWrap>
         <S.Label>이름</S.Label>
         <Input value={adminInfo.name} onChange={(e) => handleChange(e, 'name')} />
@@ -195,20 +216,23 @@ export function AdminDetailModal({
         <S.Label>권한</S.Label>
         <Table
           columns={columns}
-          dataSource={authDescData}
+          dataSource={adminRoles}
           pagination={false}
           style={{
             width: 750,
           }}
           bordered
+          rowKey={(rec) => rec.id}
         />
       </S.TableWrap>
 
       <TransformBox justifyContent="center">
         <>
-          <Button type="primary" onClick={handleFinish}>
-            {admin ? '수정' : '생성'}
-          </Button>
+          {!admin && (
+            <Button type="primary" onClick={() => (!admin ? handleFinish : '')}>
+              생성
+            </Button>
+          )}
           {admin && (
             <Popconfirm okText="삭제" title="정말로 삭제하시겠습니까?">
               <Button
