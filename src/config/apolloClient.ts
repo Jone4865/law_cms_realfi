@@ -15,22 +15,24 @@ export const SOCKET =
 
 function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userTokenTypes>) {
   const uploadLink = createUploadLink({
-    uri: SERVER,
-    headers: {
-      'keep-alive': 'true',
-    },
+    uri: '/graphql',
+    credentials: 'include',
+    // headers: {
+    //   'keep-alive': 'true',
+    // },
   });
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: SOCKET,
-      connectionParams: () => {
-        const accessToken = state.accessToken ?? localStorage.getItem('accessToken') ?? '';
+      url: '/graphql',
+      // url: SOCKET,
+      // connectionParams: () => {
+      //   const accessToken = state.accessToken ?? localStorage.getItem('accessToken') ?? '';
 
-        return {
-          Authorization: accessToken ? `Bearer ${accessToken}` : '',
-        };
-      },
+      //   return {
+      //     Authorization: accessToken ? `Bearer ${accessToken}` : '',
+      //   };
+      // },
     }),
   );
 

@@ -2,7 +2,13 @@ import { ColumnsType } from 'antd/lib/table';
 import { Button } from 'antd';
 import { FindManyChangeInvestmentQualificationByAdminOutput } from '../../graphql/generated/graphql';
 
-export const userChangeFileColumns = (): ColumnsType<
+type Props = {
+  downloadHandle: (fileName: string) => void;
+};
+
+export const userChangeFileColumns = ({
+  downloadHandle,
+}: Props): ColumnsType<
   FindManyChangeInvestmentQualificationByAdminOutput['changeInvestmentQualifications'][0]['investmentDocuments'][0]
 > => [
   {
@@ -37,8 +43,14 @@ export const userChangeFileColumns = (): ColumnsType<
     key: 'fileName',
     dataIndex: 'fileName',
     align: 'center',
-    render(_value) {
-      return <Button type="primary">뷰어로 보기</Button>;
+    render(value) {
+      return (
+        <Button type="primary">
+          <a href={`http://localhost:3000/investment-document?name=${value}`} target="_blank">
+            뷰어로 보기
+          </a>
+        </Button>
+      );
     },
   },
   {
@@ -47,7 +59,11 @@ export const userChangeFileColumns = (): ColumnsType<
     dataIndex: 'fileName',
     align: 'center',
     render(value) {
-      return <Button type="primary">다운</Button>;
+      return (
+        <Button onClick={() => downloadHandle(value)} type="primary">
+          다운
+        </Button>
+      );
     },
   },
 ];

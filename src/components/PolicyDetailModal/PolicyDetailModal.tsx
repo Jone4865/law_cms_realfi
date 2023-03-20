@@ -1,9 +1,10 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, Input, Modal, notification, Switch, Checkbox } from 'antd';
+import { Button, Input, Modal, notification, Switch, Checkbox, Popconfirm } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import {
   CREATE_POLICY_BY_ADMIN,
+  DELETE_POLICY_BY_ADMIN,
   UPDATE_POLICY_BY_ADMIN,
   UPLOAD_POLICY_FILE_BY_ADMIN,
 } from '../../graphql/mutation';
@@ -88,6 +89,11 @@ export function PolicyDetailModal({
     setCheckBoxDefaultVlaue(e);
   };
 
+  const handleDelete = () => {
+    deletePolicyByAdmin({ variables: { id: policyId } });
+    handleRefetch();
+  };
+
   const [findPolicy] = useLazyQuery(FIND_POLICY, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -113,6 +119,16 @@ export function PolicyDetailModal({
     },
     onCompleted: (_data) => {
       notification.success({ message: '답변을 수정했습니다.' });
+      handleRefetch();
+    },
+  });
+
+  const [deletePolicyByAdmin] = useMutation(DELETE_POLICY_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '삭제를 완료했습니다.' });
       handleRefetch();
     },
   });
@@ -160,9 +176,15 @@ export function PolicyDetailModal({
       footer={
         <TransformBox justifyContent="flex-end">
           <>
-            <Button onClick={() => (!isEdit ? handleCancel() : '')}>
-              {!isEdit ? '취소' : '삭제'}
-            </Button>
+            {!isEdit ? (
+              <Button onClick={() => handleCancel()}>취소</Button>
+            ) : (
+              <Popconfirm title="삭제하시겠습니까?" okText="삭제" onConfirm={handleDelete}>
+                <Button type="primary" danger>
+                  삭제
+                </Button>
+              </Popconfirm>
+            )}
           </>
           <>
             <Button type="primary" onClick={handleClick}>

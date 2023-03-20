@@ -59,8 +59,6 @@ export function CollusionHistory({ projectId, variables }: Props) {
     }
   };
 
-  const onClickAddDateHandle = () => {};
-
   const [findManyPublicOfferingByAdmin] = useLazyQuery(FIND_MANY_PUBLIC_OFFERING_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -112,7 +110,6 @@ export function CollusionHistory({ projectId, variables }: Props) {
         projectId={projectId ? projectId : 0}
         handleCancel={handleModalCancel}
         visible={addDateModalVisible}
-        onClickHandle={onClickAddDateHandle}
         publicOfferingEndedAt={variables?.publicOfferingEndedAt}
       />
       <CollusionDetailModal

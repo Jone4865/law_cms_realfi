@@ -11,9 +11,10 @@ import { OtpQrModal } from '../../components/OtpQrModal';
 import TransformBox from '../../components/TransformBox';
 import { AuthDescType, authDescColumns } from '../../utils/columns';
 import { AdminType } from '../../utils/columns/admin';
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { FIND_MANY_ADMIN_BY_ADMIN } from '../../graphql/query';
 import { AdminInFindManyAdminByAdminOutput } from '../../graphql/generated/graphql';
+import { DELETE_OTP_SECRET_BY_ADMIN } from '../../graphql/mutation';
 
 export function Admin() {
   const [visible, setVisible] = useState(false);
@@ -23,12 +24,11 @@ export function Admin() {
   const [secret, setSecret] = useState('');
   const [otpModalVisible, setOtpModalVisible] = useState(false);
   const [qrModalVisible, setQrModalVisible] = useState(false);
-  const [email, setEmail] = useState('');
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
-  const [searchText, setSearchText] = useState('');
+
   const [authDescData, setAuthDescData] = useState<AuthDescType[]>([
     {
       name: 'MASTER',
@@ -99,7 +99,7 @@ export function Admin() {
       title: 'OTP 설정',
       key: 'OTP',
       dataIndex: 'otpSecret',
-      render: (val) => {
+      render: (val, record) => {
         return (
           <S.OtpWrap>
             {val?.length ? (
@@ -108,6 +108,10 @@ export function Admin() {
                 style={{
                   margin: 0,
                   cursor: 'pointer',
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClickDeleteOtp(record.email);
                 }}
               >
                 삭제
@@ -194,6 +198,10 @@ export function Admin() {
     });
   };
 
+  const onClickDeleteOtp = (email: string) => {
+    deleteOtpSecretByAdmin({ variables: { email } });
+  };
+
   useEffect(() => {
     findManyAdminByAdmin({
       variables: {
@@ -202,7 +210,7 @@ export function Admin() {
       },
       fetchPolicy: 'no-cache',
     });
-  }, [visible]);
+  }, [visible, visible]);
 
   const [findManyAdminByAdmin] = useLazyQuery(FIND_MANY_ADMIN_BY_ADMIN, {
     onError: (error) => {
@@ -210,6 +218,16 @@ export function Admin() {
     },
     onCompleted: (data) => {
       setAdminData(data.findManyAdminByAdmin.admins);
+    },
+  });
+
+  const [deleteOtpSecretByAdmin] = useMutation(DELETE_OTP_SECRET_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: 'OTP를 삭제했습니다.' });
+      handleRefetch();
     },
   });
 

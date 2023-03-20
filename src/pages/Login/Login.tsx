@@ -80,11 +80,11 @@ export function Login() {
       notification.error({ message: error?.message });
     },
     onCompleted: (data) => {
-      setCookie('accessToken', data.signInFromAdmin.accessToken);
-      setCookie('refreshToken', data.signInFromAdmin.refreshToken);
-      setToken({
-        accessToken: data.signInFromAdmin.accessToken,
-      });
+      // setCookie('accessToken', data.signInFromAdmin.accessToken);
+      // setCookie('refreshToken', data.signInFromAdmin.refreshToken);
+      // setToken({
+      //   accessToken: data.signInFromAdmin.accessToken,
+      // });
       return (window.location.href = '/');
     },
     fetchPolicy: 'no-cache',

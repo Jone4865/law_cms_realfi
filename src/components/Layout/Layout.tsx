@@ -15,7 +15,7 @@ import Main from '../Main';
 import { AsideMenu } from '../AsideMenu';
 import useInterval from '../../utils/useInterval';
 import {
-  FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN,
+  FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN_SUB,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB,
 } from '../../graphql/subscription';
 
@@ -59,15 +59,16 @@ function Layout() {
 
   useSubscription(FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB, {
     onSubscriptionData: (options) => {
-      console.log('11111');
+      console.log(options);
       if (options.subscriptionData.data?.findUserInquiryCountByAdminSub) {
         setInquiryCount(options.subscriptionData.data.findUserInquiryCountByAdminSub);
       }
     },
   });
 
-  useSubscription(FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN, {
+  useSubscription(FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN_SUB, {
     onSubscriptionData: (options) => {
+      console.log(options);
       if (options.subscriptionData.data?.findChangeInvestmentQualificationCountByAdminSub) {
         setChangeCount(
           options.subscriptionData.data.findChangeInvestmentQualificationCountByAdminSub,

@@ -23,33 +23,33 @@ function Root() {
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
-          {cookies?.accessToken && (
-            <Route path="/" element={<Layout />}>
-              <Route path="*" element={<Navigate to="/" />} />
-              <Route index element={<Dashboard />} />
-              <Route path="admin" element={<Admin />} />
-              <Route path="/users">
-                <Route path="columns" element={<Columns />} />
-                <Route path="change" element={<Change />} />
-                <Route path="change/:userName" element={<ChangeDetail />} />
-                <Route path="classifi" element={<Classifi />} />
-                <Route path=":userEamil" element={<UserDetail />} />
-              </Route>
-
-              <Route path="/customer">
-                <Route path="inquiry" element={<Inquiry />} />
-                <Route path="faq" element={<Faq />} />
-                <Route path="notice" element={<Notice />} />
-              </Route>
-              <Route path="policy" element={<Policy />} />
-              <Route path="/project">
-                <Route path="check" element={<ProjectCheck />} />
-                <Route path="add" element={<ProjectAdd isAdd={true} />} />
-                <Route path=":projectId" element={<ProjectAdd isFix={true} />} />
-              </Route>
-              <Route path="setting" element={<Setting />} />
+          {/* {cookies?.accessToken && ( */}
+          <Route path="/" element={<Layout />}>
+            <Route path="*" element={<Navigate to="/" />} />
+            <Route index element={<Dashboard />} />
+            <Route path="admin" element={<Admin />} />
+            <Route path="/users">
+              <Route path="columns" element={<Columns />} />
+              <Route path="change" element={<Change />} />
+              <Route path="change/:userName" element={<ChangeDetail />} />
+              <Route path="classifi" element={<Classifi />} />
+              <Route path=":userEamil" element={<UserDetail />} />
             </Route>
-          )}
+
+            <Route path="/customer">
+              <Route path="inquiry" element={<Inquiry />} />
+              <Route path="faq" element={<Faq />} />
+              <Route path="notice" element={<Notice />} />
+            </Route>
+            <Route path="policy" element={<Policy />} />
+            <Route path="/project">
+              <Route path="check" element={<ProjectCheck />} />
+              <Route path="add" element={<ProjectAdd isAdd={true} />} />
+              <Route path=":projectId" element={<ProjectAdd isFix={true} />} />
+            </Route>
+            <Route path="setting" element={<Setting />} />
+          </Route>
+          {/* )} */}
           {!cookies?.accessToken && (
             <>
               <Route path="/login" element={<Login />} />

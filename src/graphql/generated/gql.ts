@@ -22,8 +22,14 @@ const documents = {
     "\n  mutation createProjectFileByAdmin(\n    $projectId: Int!\n    $fileKind: FileKind!\n    $file: Upload!\n    $name: String\n  ) {\n    createProjectFileByAdmin(projectId: $projectId, name: $name, fileKind: $fileKind, file: $file)\n  }\n": types.CreateProjectFileByAdminDocument,
     "\n  mutation createProjectSellVoteByAdmin(\n    $requestSellAmount: String!\n    $sellVoteStartedAt: Date!\n    $sellVoteEndedAt: Date!\n    $soldDate: Date!\n    $projectId: Int!\n    $docs: [DocInCreateProjectSellVoteArgs!]!\n  ) {\n    createProjectSellVoteByAdmin(\n      requestSellAmount: $requestSellAmount\n      sellVoteStartedAt: $sellVoteStartedAt\n      sellVoteEndedAt: $sellVoteEndedAt\n      soldDate: $soldDate\n      projectId: $projectId\n      docs: $docs\n    )\n  }\n": types.CreateProjectSellVoteByAdminDocument,
     "\n  mutation createProjectSellVoteFileByAdmin(\n    $projectSellVoteId: Int!\n    $file: Upload!\n    $name: String!\n  ) {\n    createProjectSellVoteFileByAdmin(\n      projectSellVoteId: $projectSellVoteId\n      name: $name\n      file: $file\n    )\n  }\n": types.CreateProjectSellVoteFileByAdminDocument,
+    "\n  mutation deleteAdmin($email: String!) {\n    deleteAdmin(email: $email)\n  }\n": types.DeleteAdminDocument,
+    "\n  mutation deleteFaqByAdmin($id: Int!) {\n    deleteFaqByAdmin(id: $id)\n  }\n": types.DeleteFaqByAdminDocument,
+    "\n  mutation deleteNoticeByAdmin($id: Int!) {\n    deleteNoticeByAdmin(id: $id)\n  }\n": types.DeleteNoticeByAdminDocument,
+    "\n  mutation deleteOtpSecretByAdmin($email: String!) {\n    deleteOtpSecretByAdmin(email: $email)\n  }\n": types.DeleteOtpSecretByAdminDocument,
+    "\n  mutation deletePolicyByAdmin($id: Int!) {\n    deletePolicyByAdmin(id: $id)\n  }\n": types.DeletePolicyByAdminDocument,
     "\n  mutation deleteProjectFileByAdmin($id: Int!) {\n    deleteProjectFileByAdmin(id: $id)\n  }\n": types.DeleteProjectFileByAdminDocument,
     "\n  mutation deleteProjectSellVoteFileByAdmin($id: Int!) {\n    deleteProjectSellVoteFileByAdmin(id: $id)\n  }\n": types.DeleteProjectSellVoteFileByAdminDocument,
+    "\n  mutation extendPublicOfferingByAdmin($id: Int!, $newEndedAt: Date!) {\n    extendPublicOfferingByAdmin(id: $id, newEndedAt: $newEndedAt)\n  }\n": types.ExtendPublicOfferingByAdminDocument,
     "\n  mutation payDividendByAdmin($id: Int!) {\n    payDividendByAdmin(id: $id)\n  }\n": types.PayDividendByAdminDocument,
     "\n  mutation refreshFromAdmin {\n    refreshFromAdmin {\n      accessToken\n      refreshToken\n    }\n  }\n": types.RefreshFromAdminDocument,
     "\n  mutation refundFailedPublicOfferingByAdmin($projectId: Int!) {\n    refundFailedPublicOfferingByAdmin(projectId: $projectId)\n  }\n": types.RefundFailedPublicOfferingByAdminDocument,
@@ -135,11 +141,35 @@ export function gql(source: "\n  mutation createProjectSellVoteFileByAdmin(\n   
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  mutation deleteAdmin($email: String!) {\n    deleteAdmin(email: $email)\n  }\n"): (typeof documents)["\n  mutation deleteAdmin($email: String!) {\n    deleteAdmin(email: $email)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deleteFaqByAdmin($id: Int!) {\n    deleteFaqByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteFaqByAdmin($id: Int!) {\n    deleteFaqByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deleteNoticeByAdmin($id: Int!) {\n    deleteNoticeByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteNoticeByAdmin($id: Int!) {\n    deleteNoticeByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deleteOtpSecretByAdmin($email: String!) {\n    deleteOtpSecretByAdmin(email: $email)\n  }\n"): (typeof documents)["\n  mutation deleteOtpSecretByAdmin($email: String!) {\n    deleteOtpSecretByAdmin(email: $email)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deletePolicyByAdmin($id: Int!) {\n    deletePolicyByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deletePolicyByAdmin($id: Int!) {\n    deletePolicyByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  mutation deleteProjectFileByAdmin($id: Int!) {\n    deleteProjectFileByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteProjectFileByAdmin($id: Int!) {\n    deleteProjectFileByAdmin(id: $id)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation deleteProjectSellVoteFileByAdmin($id: Int!) {\n    deleteProjectSellVoteFileByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteProjectSellVoteFileByAdmin($id: Int!) {\n    deleteProjectSellVoteFileByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation extendPublicOfferingByAdmin($id: Int!, $newEndedAt: Date!) {\n    extendPublicOfferingByAdmin(id: $id, newEndedAt: $newEndedAt)\n  }\n"): (typeof documents)["\n  mutation extendPublicOfferingByAdmin($id: Int!, $newEndedAt: Date!) {\n    extendPublicOfferingByAdmin(id: $id, newEndedAt: $newEndedAt)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

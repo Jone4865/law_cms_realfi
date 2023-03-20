@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { Button, notification, Popover, Table } from 'antd';
@@ -93,6 +93,33 @@ export function ChangeDetail() {
     setPopoverVisible(false);
   };
 
+  const downloadHandle = async (fileName: string) => {
+    try {
+      const response = await fetch(`/investment-document?name=${fileName}`, {
+        credentials: 'include',
+      });
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+
+      const reader = response.body?.getReader();
+
+      while (true) {
+        const result = await reader?.read();
+        if (result?.done) break;
+      }
+    } catch (error) {
+      notification.error({ message: '파일 다운로드중 에러가 발생했습니다.' });
+    }
+  };
+
   const [findManyChangeInvestmentQualificationByAdmin] =
     useLazyQuery<FindManyChangeInvestmentQualificationByAdminQuery>(
       FIND_MANY_CHANGE_INVESTMENT_QUALIFICATION_BY_ADMIN,
@@ -140,7 +167,7 @@ export function ChangeDetail() {
       fetchPolicy: 'no-cache',
     });
   }, [startDate, endDate, modalVisible, popoverVisible]);
-  console.log(modalVisible, popoverVisible);
+
   return (
     <>
       {modalVisible && (
@@ -152,6 +179,7 @@ export function ChangeDetail() {
           reason={reason}
         />
       )}
+      {/* <Button onClick={()=>downloadHandle()}>테스트</Button> */}
       <S.Title>{params.userName} 회원 자격변경 상세정보</S.Title>
       <S.Wrap>
         <Button
@@ -187,7 +215,7 @@ export function ChangeDetail() {
       />
       <S.Title>제출서류 (금융 전문가 유형)</S.Title>
       <Table
-        columns={userChangeFileColumns()}
+        columns={userChangeFileColumns({ downloadHandle })}
         dataSource={investmentDocuments}
         pagination={false}
         style={{
