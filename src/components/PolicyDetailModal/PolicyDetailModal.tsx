@@ -138,17 +138,17 @@ export function PolicyDetailModal({
     handleChange('content', content);
   }, [content]);
 
-  const handleUploadImage = (file: File, cb: (url: string) => void) => {
-    uploadPolicyFile({
-      variables: {
-        file: file,
-      },
-      onCompleted: (res) => {
-        console.log(res.uploadPolicyFileByAdmin);
-        cb(`${process.env.REACT_APP_SERVER_BASIC}/policy/file?name=${res.uploadPolicyFileByAdmin}`);
-      },
-    });
-  };
+  // const handleUploadImage = (file: File, cb: (url: string) => void) => {
+  //   uploadPolicyFile({
+  //     variables: {
+  //       file: file,
+  //     },
+  //     onCompleted: (res) => {
+  //       console.log(res.uploadPolicyFileByAdmin);
+  //       cb(`${process.env.REACT_APP_SERVER_BASIC}/policy/file?name=${res.uploadPolicyFileByAdmin}`);
+  //     },
+  //   });
+  // };
 
   return (
     <Modal
@@ -198,7 +198,11 @@ export function PolicyDetailModal({
       </TransformBox>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>약관 내용</h3>
-        <Editor state={content} onChange={handleChangeContent} onUpload={handleUploadImage} />
+        <Editor
+          state={content}
+          onChange={handleChangeContent}
+          // onUpload={handleUploadImage}
+        />
       </TransformBox>
     </Modal>
   );
