@@ -38,14 +38,6 @@ export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Pro
     setReply(e.target.value);
   };
 
-  useEffect(() => {
-    if (data?.reply) {
-      setReply(data.reply);
-    } else {
-      setReply('');
-    }
-  }, [visible]);
-
   const [replyUserInquiryByAdmin, {}] = useMutation(REPLY_USER_INQUIRY_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -55,6 +47,14 @@ export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Pro
       notification.success({ message: '답변을 등록하였습니다.' });
     },
   });
+
+  useEffect(() => {
+    if (data?.reply) {
+      setReply(data.reply);
+    } else {
+      setReply('');
+    }
+  }, [visible]);
 
   return (
     <Modal
@@ -113,9 +113,17 @@ export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Pro
 
       <TransformBox justifyContent="center" marginTop="30px">
         <Button
+          style={{
+            width: 150,
+          }}
+        >
+          삭제
+        </Button>
+        <Button
           type="primary"
           style={{
             width: 150,
+            marginLeft: '10px',
           }}
           onClick={handleReply}
         >

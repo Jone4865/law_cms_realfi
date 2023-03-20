@@ -111,7 +111,6 @@ export function Change() {
           total: totalCount,
           current: current,
         }}
-        // loading={loading}
         style={{
           marginTop: 30,
         }}

@@ -238,20 +238,6 @@ export function SellVoteTabs({
     },
   });
 
-  // useEffect(() => {
-  //   updateVoteKindByAdmin({
-  //     variables: {
-  //       projectId: projectId ? projectId : 0,
-  //       voteKind: VoteKind.Against,
-  //     },
-  //   });
-  // }, []);
-
-  // 매각투표 예정 => 중으로 수정
-  // useEffect(() => {
-  //   verifyVoteStatusIsSellVoteWait();
-  // }, [variables]);
-
   useEffect(() => {
     if (variables?.id) {
       setProjectSellVoteId(variables?.id);
@@ -399,7 +385,6 @@ export function SellVoteTabs({
           isFix: true,
         })}
         dataSource={investFileList}
-        // loading={loading}
         scroll={{ x: 800 }}
         style={{
           marginTop: '30px',
@@ -438,7 +423,6 @@ export function SellVoteTabs({
           <Table
             columns={sellvoteColumns({})}
             dataSource={sellvoteData}
-            // loading={loading}
             scroll={{ x: 800 }}
             style={{
               marginTop: '30px',

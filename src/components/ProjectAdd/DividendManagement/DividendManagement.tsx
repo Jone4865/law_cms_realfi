@@ -146,7 +146,6 @@ export function DividendManagement({ projectId = 0, publicOfferingQuantity, tabs
         <Table
           columns={dividendmanagementColumns({ handlePayClick, handlefindDividendListClick })}
           dataSource={dividendData}
-          // loading={loading}
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',

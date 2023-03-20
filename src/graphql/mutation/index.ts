@@ -29,3 +29,5 @@ export { DELETE_PROJECT_FILE_BY_ADMIN } from './deleteProjectFileByAdmin';
 export { CREATE_PROJECT_SELL_VOTE_FILE_BY_ADMIN } from './createProjectSellVoteFileByAdmin';
 export { DELETE_PROJECT_SELL_VOTEFILE_BY_ADMIN } from './deleteProjectSellVoteFileByAdmin';
 export { REFUND_FAILED_PUBLIC_OFFERING_BY_ADMIN } from './refundFailedPublicOfferingByAdmin';
+export { UPDATE_PROJECT_BASIC_INFO_BY_ADMIN } from './updateProjectBasicInfoByAdmin';
+export { UPDATE_PROJECT_PUBLIC_OFFERING_INFO_BY_ADMIN } from './updateProjectPublicOfferingInfoByAdmin';

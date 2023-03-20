@@ -89,7 +89,6 @@ export function Columns() {
           total: totalCount,
           current: current,
         }}
-        // loading={loading}
         style={{
           marginTop: 30,
         }}

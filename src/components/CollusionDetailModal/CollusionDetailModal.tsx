@@ -9,16 +9,16 @@ import { FindPublicOfferingByAdminQuery } from '../../graphql/generated/graphql'
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
   publicOfferingId: number;
   publicOfferingState: string | undefined;
+  handleCancel: () => void;
 };
 
 export function CollusionDetailModal({
   visible,
-  handleCancel,
   publicOfferingId,
   publicOfferingState,
+  handleCancel,
 }: Props) {
   const [data, setData] = useState<FindPublicOfferingByAdminQuery['findPublicOfferingByAdmin']>();
   const [findPublicOfferingByAdmin] = useLazyQuery(FIND_PUBLIC_OFFERING_BY_ADMIN, {

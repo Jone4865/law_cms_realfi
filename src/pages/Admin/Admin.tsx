@@ -221,8 +221,6 @@ export function Admin() {
         admin={modalData}
         refetch={handleRefetch}
         adminRoles={adminAuths}
-        authDescData={authDescData}
-        handleCheckBox={handleCheckBox}
       />
       <OtpQrModal
         visible={qrModalVisible}

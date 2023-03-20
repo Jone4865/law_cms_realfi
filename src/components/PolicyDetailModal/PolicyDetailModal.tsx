@@ -9,20 +9,20 @@ import TransformBox from '../TransformBox';
 
 type Props = {
   visible: boolean;
-  handleCancel: () => void;
   isEdit: boolean;
-  handleRefetch: () => void;
   policyData: any;
   policyId: number;
+  handleRefetch: () => void;
+  handleCancel: () => void;
 };
 
 export function PolicyDetailModal({
   visible,
-  handleCancel,
   isEdit,
-  handleRefetch,
   policyData,
   policyId,
+  handleRefetch,
+  handleCancel,
 }: Props) {
   const [content, setContent] = useState('');
   const [variables, setVariables] = useState<any>([]);
@@ -80,27 +80,6 @@ export function PolicyDetailModal({
     setCheckBoxDefaultVlaue(e);
   };
 
-  useEffect(() => {
-    if (isEdit) {
-      setVariables(policyData[0]);
-      setCheckBoxDefaultVlaue(policyData[0]?.policyCategories.map((v: { name: string }) => v.name));
-      findPolicy({
-        variables: {
-          id: policyId,
-        },
-        fetchPolicy: 'no-cache',
-      });
-    } else {
-      setVariables(undefined);
-      setCheckBoxDefaultVlaue([]);
-      setContent('');
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    handleChange('content', content);
-  }, [content]);
-
   const [findPolicy] = useLazyQuery(FIND_POLICY, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -130,23 +109,26 @@ export function PolicyDetailModal({
     },
   });
 
-  // delete policy
-  // const [deletePolicy] = useMutation<DeletePolicyResponse, DeletePolicyParams>(
-  //   DELETE_POLICY,
-  //   {
-  //     onCompleted: () => {
-  //       notification.success({ message: '약관을 삭제했습니다.' });
-  //       handleCancel();
-  //       refetch();
-  //     },
-  //     onError: (e) => {
-  //       notification.error({ message: e.message });
-  //     },
-  //     variables: {
-  //       id: data?.id ?? -1,
-  //     },
-  //   },
-  // );
+  useEffect(() => {
+    if (isEdit) {
+      setVariables(policyData[0]);
+      setCheckBoxDefaultVlaue(policyData[0]?.policyCategories.map((v: { name: string }) => v.name));
+      findPolicy({
+        variables: {
+          id: policyId,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    } else {
+      setVariables(undefined);
+      setCheckBoxDefaultVlaue([]);
+      setContent('');
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    handleChange('content', content);
+  }, [content]);
 
   return (
     <Modal
@@ -157,7 +139,11 @@ export function PolicyDetailModal({
       centered
       footer={
         <TransformBox justifyContent="flex-end">
-          <Button onClick={handleCancel}>취소</Button>
+          <>
+            <Button onClick={() => (!isEdit ? handleCancel() : '')}>
+              {!isEdit ? '취소' : '삭제'}
+            </Button>
+          </>
           <>
             <Button type="primary" onClick={handleClick}>
               {isEdit ? '저장' : '등록'}

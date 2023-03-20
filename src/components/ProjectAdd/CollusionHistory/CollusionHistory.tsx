@@ -207,7 +207,6 @@ export function CollusionHistory({ projectId, variables }: Props) {
               },
             };
           }}
-          // loading={loading}
           scroll={{ x: 800 }}
           style={{
             marginTop: '30px',

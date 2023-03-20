@@ -34,7 +34,6 @@ export function ChangeDetail() {
     >();
   const [reason, setReason] = useState('');
   const [id, setId] = useState(0);
-  const [approveStatus, setApproveStatus] = useState(ApproveStatus.Wait);
 
   const PopupContent = (
     <div
@@ -85,11 +84,13 @@ export function ChangeDetail() {
         },
       });
       setModalVisible(false);
+      setPopoverVisible(false);
     }
   };
 
   const handleCancel = () => {
     setModalVisible(false);
+    setPopoverVisible(false);
   };
 
   const [findManyChangeInvestmentQualificationByAdmin] =
@@ -103,10 +104,6 @@ export function ChangeDetail() {
           setInvestmentDocuments(
             data.findManyChangeInvestmentQualificationByAdmin.changeInvestmentQualifications[0]
               .investmentDocuments,
-          );
-          setApproveStatus(
-            data.findManyChangeInvestmentQualificationByAdmin.changeInvestmentQualifications[0]
-              .approveStatus,
           );
           setId(
             data.findManyChangeInvestmentQualificationByAdmin.changeInvestmentQualifications[0].id,
@@ -131,16 +128,6 @@ export function ChangeDetail() {
       },
     );
 
-  const handleClickDownload = async () => {
-    axios(
-      `${process.env.REACT_APP_SERVER_BASIC}/investment-document?name=0e69dbf9-4de7-4dd6-b843-a0dca4258d65.pdf`,
-      {
-        method: 'GET',
-        withCredentials: true,
-      },
-    );
-  };
-
   useEffect(() => {
     findManyChangeInvestmentQualificationByAdmin({
       variables: {
@@ -153,7 +140,7 @@ export function ChangeDetail() {
       fetchPolicy: 'no-cache',
     });
   }, [startDate, endDate, modalVisible, popoverVisible]);
-
+  console.log(modalVisible, popoverVisible);
   return (
     <>
       {modalVisible && (
@@ -166,7 +153,6 @@ export function ChangeDetail() {
         />
       )}
       <S.Title>{params.userName} 회원 자격변경 상세정보</S.Title>
-      <Button onClick={handleClickDownload}>테스트</Button>
       <S.Wrap>
         <Button
           onClick={() => {
@@ -193,7 +179,6 @@ export function ChangeDetail() {
         columns={userChangeColumns({ detail: true })}
         dataSource={detailData}
         pagination={false}
-        // loading={loading}
         style={{
           marginTop: 30,
           marginBottom: 50,
@@ -205,7 +190,6 @@ export function ChangeDetail() {
         columns={userChangeFileColumns()}
         dataSource={investmentDocuments}
         pagination={false}
-        // loading={loading}
         style={{
           marginTop: 30,
           marginBottom: 50,

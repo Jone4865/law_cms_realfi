@@ -57,7 +57,6 @@ export function UserInquiryHistory({ email, selectedKey }: Props) {
           onChange: handlePagination,
           position: ['bottomCenter'],
         }}
-        // loading={loading}
         rowKey={(rec) => rec.id}
         scroll={{ x: 800 }}
       />

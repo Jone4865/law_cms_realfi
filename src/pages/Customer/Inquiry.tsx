@@ -139,7 +139,7 @@ export function Inquiry() {
       <Table
         columns={inquiryColumns({ inquiryCategorys })}
         dataSource={inquiryData}
-        onChange={(v, filter) => {
+        onChange={(_v, filter) => {
           setUserInquiryCategoryId(
             filter && filter.userInquiryCategory ? +filter.userInquiryCategory[0] : undefined,
           );
@@ -160,7 +160,6 @@ export function Inquiry() {
             onClick: () => handleRow(record),
           };
         }}
-        // loading={loading}
         scroll={{ x: 800 }}
       />
     </>

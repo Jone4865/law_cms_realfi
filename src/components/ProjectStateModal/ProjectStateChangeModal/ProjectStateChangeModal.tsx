@@ -5,7 +5,7 @@ type Props = {
   handleCancel: () => void;
 };
 
-export function ProjectStateChangeModal({ handleCancel, visible }: Props) {
+export function ProjectStateChangeModal({ visible, handleCancel }: Props) {
   const onClickHandle = () => {};
   return (
     <Modal

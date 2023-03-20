@@ -58,13 +58,7 @@ export function FaqDetailModal({
     }
   };
 
-  const handleDelete = () => {
-    // deleteFaq({
-    //   variables: {
-    //     id: data?.id ?? 0,
-    //   },
-    // });
-  };
+  const handleDelete = () => {};
 
   const [updateFaqByAdmin] = useMutation(UPDATE_FAQ_BY_ADMIN, {
     onCompleted: (data) => {

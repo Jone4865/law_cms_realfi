@@ -18,10 +18,10 @@ export function InputDate({
   title,
   saveNames,
   disable,
-  handleChange,
   values,
   essential = true,
   timePicker = false,
+  handleChange,
 }: Props) {
   return (
     <S.DateInputBody>

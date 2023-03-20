@@ -1,5 +1,4 @@
-import { Button } from 'antd';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { marketStatusToText } from '../../utils/marketStatusToText';
 import { publicOfferingStatusToText } from '../../utils/publicOfferingStatusToText';
 import { voteStatusToText } from '../../utils/voteStatusToText';
@@ -12,7 +11,7 @@ type Props = {
   setProjectState: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-export function ProjectStateModal({ variables, setProjectState, nowProjectState }: Props) {
+export function ProjectStateModal({ variables, nowProjectState, setProjectState }: Props) {
   const projectStates = [
     '공모 예정',
     '공모 중',

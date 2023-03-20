@@ -9,12 +9,12 @@ import { InputBasic } from '../ProjectAdd/InputBasic/InputBasic';
 type Props = {
   visible: boolean;
   projectId: number;
+  isAll: boolean;
   handleCancel: () => void;
   onClickHandle: (all: boolean) => void;
-  isAll: boolean;
 };
 
-export function RefundDoModal({ visible, handleCancel, projectId, onClickHandle, isAll }: Props) {
+export function RefundDoModal({ visible, isAll, projectId, onClickHandle, handleCancel }: Props) {
   const [data, setData] =
     useState<FindPublicOfferingRefundInfoByAdminQuery['findPublicOfferingRefundInfoByAdmin']>();
 
