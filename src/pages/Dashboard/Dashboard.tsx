@@ -8,23 +8,15 @@ import {
   FindManyUserInquiryByAdminQuery,
   UserInquiryInFindManyUserInquiryByAdminOutput,
 } from '../../graphql/generated/graphql';
-import { FIND_MANY_USER_INQUIRY_BY_ADMIN } from '../../graphql/query';
+import { FIND_MANY_STATS_BY_ADMIN, FIND_MANY_USER_INQUIRY_BY_ADMIN } from '../../graphql/query';
 import { dashboardInquiryColumns } from '../../utils/columns';
 import * as S from './style';
 
 type DashboardStats = {
   [index: string]: any[];
   userCount: {
-    date: string;
-    count: number;
-  }[];
-  registrationInfoCount: {
-    date: string;
-    count: number;
-  }[];
-  partnershipInquiryCount: {
-    date: string;
-    count: number;
+    day: any;
+    result: number;
   }[];
 };
 
@@ -35,13 +27,9 @@ export function Dashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardStats>();
   const navigator = useNavigate();
 
-  const chartTitle = [
-    { title: '회원수', keyword: 'userCount' },
-    // { title: '어게인 등록 번호 개수', keyword: 'registrationInfoCount' },
-    // { title: '제휴 문의수', keyword: 'partnershipInquiryCount' },
-  ];
+  const chartTitle = [{ title: '회원수', keyword: 'userCount' }];
 
-  const [findManyUserInquiryByAdmin, { loading }] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
+  const [findManyUserInquiryByAdmin] = useLazyQuery<FindManyUserInquiryByAdminQuery>(
     FIND_MANY_USER_INQUIRY_BY_ADMIN,
     {
       onError: (error) => {
@@ -53,6 +41,15 @@ export function Dashboard() {
     },
   );
 
+  const [findManyStatsByAdmin] = useLazyQuery(FIND_MANY_STATS_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (data) => {
+      setDashboardData(data.findManyStatsByAdmin);
+    },
+  });
+
   useEffect(() => {
     findManyUserInquiryByAdmin({
       variables: {
@@ -62,6 +59,7 @@ export function Dashboard() {
         userInquiryCategoryId: undefined,
       },
     });
+    findManyStatsByAdmin();
   }, []);
 
   return (

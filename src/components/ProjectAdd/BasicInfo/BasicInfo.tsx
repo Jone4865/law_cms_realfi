@@ -256,7 +256,6 @@ export function BasicInfo({
     </div>
   );
 
-  console.log(projectImageFileList);
   return (
     <>
       {visible && <GetZipApi complteSerchZipHandle={complteSerchZipHandle} />}

@@ -58,21 +58,20 @@ function Layout() {
   });
 
   useSubscription(FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB, {
-    onSubscriptionData: (options) => {
-      console.log(options);
-      if (options.subscriptionData.data?.findUserInquiryCountByAdminSub) {
-        setInquiryCount(options.subscriptionData.data.findUserInquiryCountByAdminSub);
-      }
+    onData: ({ data }) => {
+      console.log({ data });
+      // console.log(options.data.data?.findUserInquiryCountByAdminSub);
+      // if (options.data.data?.findUserInquiryCountByAdminSub) {
+      //   setInquiryCount(options.data.data?.findUserInquiryCountByAdminSub);
+      // }
     },
   });
 
   useSubscription(FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN_SUB, {
-    onSubscriptionData: (options) => {
-      console.log(options);
-      if (options.subscriptionData.data?.findChangeInvestmentQualificationCountByAdminSub) {
-        setChangeCount(
-          options.subscriptionData.data.findChangeInvestmentQualificationCountByAdminSub,
-        );
+    onData: (options) => {
+      console.log(options.data.data?.findChangeInvestmentQualificationCountByAdminSub);
+      if (options.data.data?.findChangeInvestmentQualificationCountByAdminSub) {
+        setChangeCount(options.data.data?.findChangeInvestmentQualificationCountByAdminSub);
       }
     },
   });

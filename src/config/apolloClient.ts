@@ -25,6 +25,7 @@ function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userToken
   const wsLink = new GraphQLWsLink(
     createClient({
       url: '/graphql',
+
       // url: SOCKET,
       // connectionParams: () => {
       //   const accessToken = state.accessToken ?? localStorage.getItem('accessToken') ?? '';
