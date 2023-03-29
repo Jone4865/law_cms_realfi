@@ -7,10 +7,7 @@ import {
   REFUND_FAILED_PUBLIC_OFFERING_BY_ADMIN,
   REFUND_PUBLIC_OFFERING_BY_ADMIN,
 } from '../../../graphql/mutation';
-import {
-  FIND_MANY_PUBLICOFFERING_EXTENSION_BY_ADMIN,
-  FIND_MANY_PUBLIC_OFFERING_BY_ADMIN,
-} from '../../../graphql/query';
+import { FIND_MANY_PUBLIC_OFFERING_BY_ADMIN } from '../../../graphql/query';
 import { collutionHistoryColumns } from '../../../utils/columns';
 import { CollusionDetailModal } from '../../CollusionDetailModal';
 import { RefundDoModal } from '../../RefundDoModal';
@@ -118,7 +115,6 @@ export function CollusionHistory({ projectId, variables }: Props) {
         projectId={projectId ? projectId : 0}
         handleCancel={handleModalCancel}
         visible={addDateModalVisible}
-        publicOfferingEndedAt={variables?.publicOfferingEndedAt}
       />
       <CollusionDetailModal
         handleCancel={handleModalCancel}

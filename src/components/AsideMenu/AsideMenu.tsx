@@ -37,7 +37,7 @@ export function AsideMenu() {
 
   const handleLogout = () => {
     localStorage.setItem('accessToken', '');
-    window.location.reload();
+    navigator('/login');
   };
 
   const handleMoveHome = () => {

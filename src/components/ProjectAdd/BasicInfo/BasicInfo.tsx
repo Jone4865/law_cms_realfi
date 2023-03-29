@@ -6,7 +6,11 @@ import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { InputBasic } from '../InputBasic/InputBasic';
 import { investfileColumns, lesseeColumns } from '../../../utils/columns';
-import { DocInCreateProjectByAdminArgs, FileKind } from '../../../graphql/generated/graphql';
+import {
+  DocInCreateProjectByAdminArgs,
+  FileKind,
+  FindManyProjectFileQuery,
+} from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
 import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
 import { useLazyQuery, useMutation } from '@apollo/client';
@@ -51,8 +55,11 @@ export function BasicInfo({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
-  const [projectImageFileList, setProjectImageFileList] = useState<any>([]);
-  const [newInvestFileList, setNewInvestFileList] = useState<any>([
+  const [projectImageFileList, setProjectImageFileList] = useState<UploadFile[]>([]);
+  const [success, setSuccess] = useState(false);
+  const [newInvestFileList, setNewInvestFileList] = useState<
+    FindManyProjectFileQuery['findManyProjectFile']
+  >([
     {
       fileKind: FileKind.Docs,
       fileName: '',
@@ -60,7 +67,9 @@ export function BasicInfo({
       name: '',
     },
   ]);
-  const [newOfficialInfosFileList, setNewOfficialInfosFileList] = useState<any>([
+  const [newOfficialInfosFileList, setNewOfficialInfosFileList] = useState<
+    FindManyProjectFileQuery['findManyProjectFile']
+  >([
     {
       fileKind: FileKind.OfficialInfo,
       fileName: '',
@@ -85,9 +94,34 @@ export function BasicInfo({
     setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
   };
 
-  const handleProjectimageChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+  const projectimageChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
     setProjectImageFileList(newFileList);
     handleChange('images', newFileList);
+  };
+
+  const handleProjectimageChange = (e: any) => {
+    const newImage: UploadFile = e?.file?.originFileObj;
+
+    if (projectImageFileList?.length < e.fileList?.length) {
+      createProjectFileByAdmin({
+        variables: {
+          file: newImage,
+          fileKind: FileKind.Image,
+          projectId: projectId ? projectId : 0,
+          name: '',
+        },
+      });
+    } else if (projectImageFileList.length > e.fileList.length) {
+      deleteProjectFileByAdmin({
+        variables: {
+          id: +e.file.uid,
+        },
+      });
+    }
+    if (success) {
+      projectimageChange(e);
+      setSuccess(false);
+    }
   };
 
   const handleFileChange = (
@@ -96,26 +130,30 @@ export function BasicInfo({
     key: string,
   ) => {
     if (isFix) {
-      if (key === 'docs') {
-        setNewInvestFileList((prev: any) => {
-          prev[index].file = file;
-          handleChange('docs', prev);
-          return [...prev];
-        });
-      } else {
-        setNewOfficialInfosFileList((prev: any) => {
-          prev[index].file = file;
-          handleChange('officialInfos', prev);
-          return [...prev];
-        });
-      }
       const variables = key === 'docs' ? newInvestFileList[index] : newOfficialInfosFileList[index];
       createProjectFileByAdmin({
         variables: {
           ...variables,
-          projectId,
+          projectId: projectId ? projectId : 0,
+          file,
         },
       });
+      if (success) {
+        if (key === 'docs') {
+          setNewInvestFileList((prev: any) => {
+            prev[index].file = file;
+            handleChange('docs', prev);
+            return [...prev];
+          });
+        } else {
+          setNewOfficialInfosFileList((prev: any) => {
+            prev[index].file = file;
+            handleChange('officialInfos', prev);
+            return [...prev];
+          });
+        }
+        setSuccess(false);
+      }
     } else {
       if (key === 'docs') {
         setInvestFileList((prev) => {
@@ -206,6 +244,22 @@ export function BasicInfo({
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
+      if (projectImageFileList?.length === 0) {
+        data.findManyProjectFile
+          .filter((item) => item.fileKind === 'IMAGE')
+          .map((image) =>
+            setProjectImageFileList([
+              ...projectImageFileList,
+              {
+                uid: image.id.toString(),
+                name: '',
+                thumbUrl: `${process.env.REACT_APP_SERVER_BASIC}/project-file?fileKind=IMAGE&name=${image.fileName}`,
+                url: `${process.env.REACT_APP_SERVER_BASIC}/project-file?fileKind=IMAGE&name=${image.fileName}`,
+              },
+            ]),
+          );
+      }
+      handleChange('images', projectImageFileList);
       setNewInvestFileList(data.findManyProjectFile.filter((item) => item.fileKind === 'DOCS'));
       setNewOfficialInfosFileList(
         data.findManyProjectFile.filter((item) => item.fileKind === 'OFFICIAL_INFO'),
@@ -218,6 +272,7 @@ export function BasicInfo({
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
+      setSuccess(true);
       findManyProjectFile({
         variables: { projectId: projectId ? projectId : 0 },
         fetchPolicy: 'no-cache',
@@ -245,9 +300,10 @@ export function BasicInfo({
       variables: { projectId: projectId ? projectId : 0 },
       fetchPolicy: 'no-cache',
     });
-  }, []);
+    setProjectImageFileList([]);
+  }, [projectId]);
 
-  useEffect(() => {}, [investFileList, officialInfosFileList, visible, projectImageFileList]);
+  useEffect(() => {}, [investFileList, officialInfosFileList, visible]);
 
   const uploadButton = (
     <div>
@@ -408,7 +464,7 @@ export function BasicInfo({
             <>
               <Upload
                 listType="picture-card"
-                fileList={variables.images}
+                fileList={projectImageFileList}
                 onPreview={handlePreview}
                 onChange={handleProjectimageChange}
               >

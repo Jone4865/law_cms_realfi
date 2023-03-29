@@ -15,7 +15,7 @@ export const SOCKET =
 
 function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userTokenTypes>) {
   const uploadLink = createUploadLink({
-    uri: '/graphql',
+    uri: 'http://localhost:8001/graphql',
     credentials: 'include',
     // headers: {
     //   'keep-alive': 'true',
@@ -24,7 +24,7 @@ function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userToken
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: '/graphql',
+      url: 'ws://localhost:8001/subscriptions',
 
       // url: SOCKET,
       // connectionParams: () => {

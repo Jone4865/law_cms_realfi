@@ -7,6 +7,12 @@ export const FIND_MANY_PUBLICOFFERING_EXTENSION_BY_ADMIN = gql(/* GraphQL */ `
       publicOfferingExtensions {
         originEndedAt
         newEndedAt
+        originAllocationDate
+        newAllocationDate
+        originReceivingDate
+        newReceivingDate
+        originListedDate
+        newListedDate
         createdAt
         admin {
           name

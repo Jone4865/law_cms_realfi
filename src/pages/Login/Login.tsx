@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Form, Input, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useRecoilState } from 'recoil';
-import { useCookies } from 'react-cookie';
 
 import { OtpInputModal } from '../../components/OtpInputModal';
 import { useLazyQuery } from '@apollo/client';
@@ -10,6 +9,7 @@ import * as S from './style';
 import { userTokenState } from '../../recoil/atoms/userToken';
 import { SIGN_IN_FROM_ADMIN, VALIDATE_ADMIN } from '../../graphql/query';
 import Loader from '../../components/Loader';
+import { useNavigate } from 'react-router-dom';
 
 type SubmitType = {
   email: string;
@@ -18,13 +18,11 @@ type SubmitType = {
 };
 
 export function Login() {
-  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'Authentication']);
   const [visible, setVisible] = useState(false);
   const [otpImg, setOtpImg] = useState('');
   const [form] = useForm<SubmitType>();
+  const navigator = useNavigate();
   const [, setToken] = useRecoilState(userTokenState);
-
-  useEffect(() => {}, [cookies]);
 
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -79,13 +77,8 @@ export function Login() {
     onError: (error) => {
       notification.error({ message: error?.message });
     },
-    onCompleted: (data) => {
-      // setCookie('accessToken', data.signInFromAdmin.accessToken);
-      // setCookie('refreshToken', data.signInFromAdmin.refreshToken);
-      // setToken({
-      //   accessToken: data.signInFromAdmin.accessToken,
-      // });
-      return (window.location.href = '/');
+    onCompleted: (_data) => {
+      return navigator('/');
     },
     fetchPolicy: 'no-cache',
     notifyOnNetworkStatusChange: true,

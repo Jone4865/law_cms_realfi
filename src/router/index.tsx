@@ -11,7 +11,7 @@ import { Change } from '../pages/Users';
 import { Classifi } from '../pages/Users';
 import { useCookies } from 'react-cookie';
 import { CookiesProvider } from 'react-cookie';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Setting } from '../pages/Setting';
 
 function Root() {

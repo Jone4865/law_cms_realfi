@@ -1,32 +1,51 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, DatePicker, Modal, notification } from 'antd';
-import moment from 'moment';
+import { Button, Modal, notification } from 'antd';
 import { useEffect, useState } from 'react';
-import { FindManyPublicOfferingExtensionByAdminOutput } from '../../graphql/generated/graphql';
+import {
+  FindManyPublicOfferingExtensionByAdminOutput,
+  FindManyPublicOfferingExtensionByAdminQuery,
+} from '../../graphql/generated/graphql';
 import { EXTEND_PUBLIC_OFFERING_BY_ADMIN } from '../../graphql/mutation';
 import { FIND_MANY_PUBLICOFFERING_EXTENSION_BY_ADMIN } from '../../graphql/query';
+import { AddDateInput } from './AddDateInput/AddDateInput';
 import * as S from './style';
 
 type Props = {
   visible: boolean;
   projectId: number;
   handleCancel: () => void;
-  publicOfferingEndedAt: Date;
 };
 
-export function AddDateModal({ visible, handleCancel, projectId, publicOfferingEndedAt }: Props) {
+export function AddDateModal({ visible, handleCancel, projectId }: Props) {
   const Btns = [1, 2, 3];
   const [able, setAble] = useState(1);
-  const [newEndedAt, setNewEndedAt] = useState<Date>();
   const [publicOfferingExtensCount, setPublicOfferingExtensCount] = useState(0);
   const [publicOfferingExtensions, setPublicOfferingExtensions] =
-    useState<FindManyPublicOfferingExtensionByAdminOutput['publicOfferingExtensions']>();
-  const handleOnChange = (e: string) => {
-    setNewEndedAt(new Date(e));
+    useState<FindManyPublicOfferingExtensionByAdminOutput['publicOfferingExtensions'][0]>();
+
+  const [variables, setVariables] =
+    useState<
+      FindManyPublicOfferingExtensionByAdminQuery['findManyPublicOfferingExtensionByAdmin']['publicOfferingExtensions'][0]
+    >();
+
+  const handleOnChange = (key: string, value: string) => {
+    setVariables((prev: any) => {
+      let newVariables: any = { ...prev };
+      newVariables[key] = value;
+      return newVariables;
+    });
   };
 
   const onAddDateClick = () => {
-    extendPublicOfferingByAdmin({ variables: { id: projectId, newEndedAt } });
+    extendPublicOfferingByAdmin({
+      variables: {
+        id: projectId,
+        newAllocationDate: variables?.newAllocationDate,
+        newEndedAt: variables?.newEndedAt,
+        newListedDate: variables?.newListedDate,
+        newReceivingDate: variables?.newReceivingDate,
+      },
+    });
   };
 
   const [findManyPublicOfferingExtensionByAdmin] = useLazyQuery(
@@ -36,11 +55,11 @@ export function AddDateModal({ visible, handleCancel, projectId, publicOfferingE
         notification.error({ message: error.message });
       },
       onCompleted: (data) => {
-        setPublicOfferingExtensions(
-          data.findManyPublicOfferingExtensionByAdmin.publicOfferingExtensions,
+        setVariables(
+          data.findManyPublicOfferingExtensionByAdmin.publicOfferingExtensions[able - 1],
         );
-        setNewEndedAt(
-          data.findManyPublicOfferingExtensionByAdmin.publicOfferingExtensions[able - 1].newEndedAt,
+        setPublicOfferingExtensions(
+          data.findManyPublicOfferingExtensionByAdmin.publicOfferingExtensions[able - 1],
         );
         setPublicOfferingExtensCount(data.findManyPublicOfferingExtensionByAdmin.totalCount);
       },
@@ -52,6 +71,7 @@ export function AddDateModal({ visible, handleCancel, projectId, publicOfferingE
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
+      handleCancel();
       notification.success({ message: '공모기간을 수정했습니다.' });
     },
   });
@@ -90,20 +110,45 @@ export function AddDateModal({ visible, handleCancel, projectId, publicOfferingE
           </S.Btn>
         ))}
       </S.Btns>
-      <S.Bottom>
-        <span>공모 종료일</span>
-        <DatePicker
-          disabled={publicOfferingExtensCount < able ? false : true}
-          disabledDate={(date) =>
-            !moment(date).isBetween(
-              moment(publicOfferingEndedAt),
-              moment(publicOfferingEndedAt).add('d', 4),
-            )
-          }
-          value={moment(newEndedAt ? newEndedAt : publicOfferingEndedAt)}
-          onChange={(e) => handleOnChange(moment(e).format('YYYY-MM-DD'))}
-        />
-      </S.Bottom>
+      <AddDateInput
+        handleOnChange={handleOnChange}
+        disabled={publicOfferingExtensCount < able ? false : true}
+        title="공모 종료일"
+        value={variables ? variables?.newEndedAt : undefined}
+        disableDate={publicOfferingExtensions?.originEndedAt}
+        saveName="newEndedAt"
+        isBetwin
+      />
+      <AddDateInput
+        handleOnChange={handleOnChange}
+        disabled={publicOfferingExtensCount < able ? false : true}
+        title="배정일"
+        value={variables ? variables?.newAllocationDate : undefined}
+        disableDate={publicOfferingExtensions?.originAllocationDate}
+        saveName="newAllocationDate"
+      />
+      <AddDateInput
+        handleOnChange={handleOnChange}
+        disabled={publicOfferingExtensCount < able ? false : true}
+        title="입고일"
+        value={variables ? variables?.newReceivingDate : undefined}
+        disableDate={publicOfferingExtensions?.originReceivingDate}
+        saveName="newReceivingDate"
+      />
+      <AddDateInput
+        handleOnChange={handleOnChange}
+        disabled={publicOfferingExtensCount < able ? false : true}
+        title="상장일"
+        value={variables ? variables?.newListedDate : undefined}
+        disableDate={publicOfferingExtensions?.originListedDate}
+        saveName="newListedDate"
+      />
+      <AddDateInput
+        disabled
+        title="환불일"
+        value={variables ? variables?.newEndedAt : undefined}
+        disableDate={publicOfferingExtensions?.originEndedAt}
+      />
     </Modal>
   );
 }
