@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { Form, Input, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import { useRecoilState } from 'recoil';
 
 import { OtpInputModal } from '../../components/OtpInputModal';
 import { useLazyQuery } from '@apollo/client';
 import * as S from './style';
-import { userTokenState } from '../../recoil/atoms/userToken';
 import { SIGN_IN_FROM_ADMIN, VALIDATE_ADMIN } from '../../graphql/query';
 import Loader from '../../components/Loader';
 import { useNavigate } from 'react-router-dom';
@@ -17,12 +15,15 @@ type SubmitType = {
   code: string;
 };
 
-export function Login() {
+type Props = {
+  setCookies: (name: 'login' | 'time', value: any) => void;
+};
+
+export function Login({ setCookies }: Props) {
   const [visible, setVisible] = useState(false);
   const [otpImg, setOtpImg] = useState('');
   const [form] = useForm<SubmitType>();
   const navigator = useNavigate();
-  const [, setToken] = useRecoilState(userTokenState);
 
   const emailReg =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -78,7 +79,8 @@ export function Login() {
       notification.error({ message: error?.message });
     },
     onCompleted: (_data) => {
-      return navigator('/');
+      setCookies('login', 'succese');
+      navigator('/');
     },
     fetchPolicy: 'no-cache',
     notifyOnNetworkStatusChange: true,

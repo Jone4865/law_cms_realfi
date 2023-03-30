@@ -15,44 +15,43 @@ import { useEffect } from 'react';
 import { Setting } from '../pages/Setting';
 
 function Root() {
-  const [cookies] = useCookies(['accessToken', 'Authentication', 'time']);
-
-  useEffect(() => {}, [cookies.accessToken]);
+  const [cookies, setCookies] = useCookies(['time', 'login']);
+  useEffect(() => {}, [cookies]);
 
   return (
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
-          {/* {cookies?.accessToken && ( */}
-          <Route path="/" element={<Layout />}>
-            <Route path="*" element={<Navigate to="/" />} />
-            <Route index element={<Dashboard />} />
-            <Route path="admin" element={<Admin />} />
-            <Route path="/users">
-              <Route path="columns" element={<Columns />} />
-              <Route path="change" element={<Change />} />
-              <Route path="change/:userName" element={<ChangeDetail />} />
-              <Route path="classifi" element={<Classifi />} />
-              <Route path=":userEamil" element={<UserDetail />} />
-            </Route>
+          {cookies?.login === 'succese' && (
+            <Route path="/" element={<Layout setCookies={setCookies} />}>
+              <Route path="*" element={<Navigate to="/" />} />
+              <Route index element={<Dashboard />} />
+              <Route path="admin" element={<Admin />} />
+              <Route path="/users">
+                <Route path="columns" element={<Columns />} />
+                <Route path="change" element={<Change />} />
+                <Route path="change/:userName" element={<ChangeDetail />} />
+                <Route path="classifi" element={<Classifi />} />
+                <Route path=":userEamil" element={<UserDetail />} />
+              </Route>
 
-            <Route path="/customer">
-              <Route path="inquiry" element={<Inquiry />} />
-              <Route path="faq" element={<Faq />} />
-              <Route path="notice" element={<Notice />} />
+              <Route path="/customer">
+                <Route path="inquiry" element={<Inquiry />} />
+                <Route path="faq" element={<Faq />} />
+                <Route path="notice" element={<Notice />} />
+              </Route>
+              <Route path="policy" element={<Policy />} />
+              <Route path="/project">
+                <Route path="check" element={<ProjectCheck />} />
+                <Route path="add" element={<ProjectAdd isAdd={true} />} />
+                <Route path=":projectId" element={<ProjectAdd isFix={true} />} />
+              </Route>
+              <Route path="setting" element={<Setting />} />
             </Route>
-            <Route path="policy" element={<Policy />} />
-            <Route path="/project">
-              <Route path="check" element={<ProjectCheck />} />
-              <Route path="add" element={<ProjectAdd isAdd={true} />} />
-              <Route path=":projectId" element={<ProjectAdd isFix={true} />} />
-            </Route>
-            <Route path="setting" element={<Setting />} />
-          </Route>
-          {/* )} */}
-          {!cookies?.accessToken && (
+          )}
+          {cookies?.login === 'undefined' && (
             <>
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login setCookies={setCookies} />} />
               <Route path="*" element={<Navigate to="/login" />} />
             </>
           )}

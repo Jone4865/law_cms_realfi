@@ -1,6 +1,5 @@
 import { useLayoutEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
 import { Menu } from 'antd';
 import {
   CustomerServiceOutlined,
@@ -24,9 +23,11 @@ type MenuData = {
   subMenu?: string;
 };
 
-export function AsideMenu() {
-  const [, setCookie] = useCookies(['accessToken', 'refreshToken']);
+type Props = {
+  setCookies: (name: 'login' | 'time', value: any) => void;
+};
 
+export function AsideMenu({ setCookies }: Props) {
   const [menu, setMenu] = useState<MenuData>({
     item: '',
     subMenu: '',
@@ -36,7 +37,7 @@ export function AsideMenu() {
   const { pathname } = useLocation();
 
   const handleLogout = () => {
-    localStorage.setItem('accessToken', '');
+    setCookies('login', undefined);
     navigator('/login');
   };
 
@@ -127,15 +128,7 @@ export function AsideMenu() {
         <Menu.Item key={'setting'} icon={<SettingOutlined />}>
           전체 설정
         </Menu.Item>
-        <Menu.Item
-          key={'logout'}
-          icon={<LogoutOutlined />}
-          onClick={() => {
-            setCookie('accessToken', '');
-            setCookie('refreshToken', '');
-            window.location.href = '/login';
-          }}
-        >
+        <Menu.Item key={'logout'} icon={<LogoutOutlined />}>
           로그아웃
         </Menu.Item>
       </Menu>

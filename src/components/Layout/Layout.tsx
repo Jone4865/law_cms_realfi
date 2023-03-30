@@ -25,7 +25,11 @@ export type BadgeType = {
   partnerCount: number;
 };
 
-function Layout() {
+type Props = {
+  setCookies: (name: 'login' | 'time', value: any) => void;
+};
+
+function Layout({ setCookies }: Props) {
   const navigator = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(['accessToken', 'refreshToken', 'time']);
   const [time, setTime] = useState(3600000);
@@ -76,8 +80,7 @@ function Layout() {
   useEffect(() => {
     setCookie('time', time);
     if (time <= 0) {
-      setCookie('accessToken', '');
-      setCookie('refreshToken', '');
+      setCookies('login', null);
       removeCookie('time');
       navigator('/login');
     }
@@ -91,7 +94,7 @@ function Layout() {
 
   return (
     <S.Layout>
-      <AsideMenu />
+      <AsideMenu setCookies={setCookies} />
       <S.Layout $marginLeft={200}>
         <S.Content>
           <S.StatusBar>
