@@ -1,6 +1,5 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import axios, { AxiosResponse, AxiosError } from 'axios';
 import { Button, notification, Popover, Table } from 'antd';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
@@ -15,11 +14,9 @@ import { userChangeColumns, userChangeFileColumns } from '../../utils/columns';
 import { ChangeQualificationModal } from '../../components/Users/ChangeQualificationModal/ChangeQualificationModal';
 import * as S from './style';
 import { TREAT_CHANGE_INVESTMENT_QUILIFICATION_BY_ADMIN } from '../../graphql/mutation';
-import { useCookies } from 'react-cookie';
 
 export function ChangeDetail() {
   const params = useParams();
-  const [cookies] = useCookies(['accessToken']);
   const [modalVisible, setModalVisible] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [startDate] = useState(moment());
@@ -71,7 +68,6 @@ export function ChangeDetail() {
           approveStatus: ApproveStatus.Approved,
         },
       });
-      setPopoverVisible(false);
     } else {
       if (reason === '') {
         return notification.warning({ message: '이유를 입력해주세요.' });
@@ -83,9 +79,18 @@ export function ChangeDetail() {
           reason,
         },
       });
-      setModalVisible(false);
-      setPopoverVisible(false);
     }
+    handleCancel();
+    findManyChangeInvestmentQualificationByAdmin({
+      variables: {
+        take: 1,
+        skip: 0,
+        searchText: params.userName,
+        gte: startDate.subtract(2, 'year').format('YYYY-MM-DD'),
+        lt: endDate.add(1, 'd').format('YYYY-MM-DD'),
+      },
+      fetchPolicy: 'no-cache',
+    });
   };
 
   const handleCancel = () => {
@@ -166,7 +171,7 @@ export function ChangeDetail() {
       },
       fetchPolicy: 'no-cache',
     });
-  }, [startDate, endDate, modalVisible, popoverVisible]);
+  }, [detailData]);
 
   return (
     <>
@@ -179,7 +184,6 @@ export function ChangeDetail() {
           reason={reason}
         />
       )}
-      {/* <Button onClick={()=>downloadHandle()}>테스트</Button> */}
       <S.Title>{params.userName} 회원 자격변경 상세정보</S.Title>
       <S.Wrap>
         <Button

@@ -494,7 +494,7 @@ export function BasicInfo({
           }}
         />
         {investFileList?.length < 10 && (
-          <div style={{ width: '1300px', display: 'flex' }}>
+          <div style={{ width: '80vw', display: 'flex' }}>
             <Button
               onClick={() =>
                 isFix
@@ -545,7 +545,7 @@ export function BasicInfo({
           }}
         />
         {officialInfosFileList?.length < 10 && (
-          <div style={{ width: '1300px', display: 'flex' }}>
+          <div style={{ width: '80vw', display: 'flex' }}>
             <Button
               onClick={() =>
                 isFix

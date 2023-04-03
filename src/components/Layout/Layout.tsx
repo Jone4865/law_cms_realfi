@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
 import * as S from './style';
 
-import { useLazyQuery, useSubscription } from '@apollo/client';
+import { useLazyQuery, useMutation, useSubscription } from '@apollo/client';
 import {
   FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN,
@@ -60,6 +60,15 @@ function Layout({ setCookies }: Props) {
       setInquiryCount(data.findUserInquiryCountByAdmin);
     },
   });
+
+  // const [refreshFromAdmin] = useMutation(REFRESH_FROM_ADMIN, {
+  //   onError: (error) => {
+  //     notification.error({ message: error.message });
+  //   },
+  //   onCompleted: (data) => {
+  //     setInquiryCount(data.findUserInquiryCountByAdmin);
+  //   },
+  // });
 
   useSubscription(FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB, {
     onData: (options) => {
@@ -117,7 +126,7 @@ function Layout({ setCookies }: Props) {
           </S.StatusBar>
           <Main />
         </S.Content>
-        <S.Footer>projectName ©2022 Created by Lawdians</S.Footer>
+        <S.Footer>Real-Fi ©2022 Created by Lawdians</S.Footer>
       </S.Layout>
     </S.Layout>
   );

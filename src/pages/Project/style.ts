@@ -15,6 +15,7 @@ export const Span = styled.span`
 export const BtnContainer = styled.div`
   display: flex;
   margin-top: 20px;
+  overflow: scroll;
 `;
 
 export const BtnWrap = styled.div`
