@@ -1,11 +1,10 @@
-import { Input } from 'antd';
 import styled from 'styled-components';
-import { PRIMARY } from '../../styles/colors';
 
 export const Container = styled.div`
   width: 100%;
   height: 100px;
   margin-top: 30px;
+  overflow-x: scroll;
 `;
 
 export const Wrap = styled.div`

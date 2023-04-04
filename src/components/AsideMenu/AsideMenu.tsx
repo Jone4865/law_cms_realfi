@@ -24,10 +24,10 @@ type MenuData = {
 };
 
 type Props = {
-  setCookies: (name: 'login' | 'time', value: any) => void;
+  removeCookie: (name: 'login') => void;
 };
 
-export function AsideMenu({ setCookies }: Props) {
+export function AsideMenu({ removeCookie }: Props) {
   const [menu, setMenu] = useState<MenuData>({
     item: '',
     subMenu: '',
@@ -37,7 +37,7 @@ export function AsideMenu({ setCookies }: Props) {
   const { pathname } = useLocation();
 
   const handleLogout = () => {
-    setCookies('login', undefined);
+    removeCookie('login');
     navigator('/login');
   };
 

@@ -342,7 +342,7 @@ export function BasicInfo({
                 value={variables['zip']}
                 disabled
                 placeholder="우편번호"
-                style={{ width: '310px' }}
+                style={{ width: '19.3vw', minWidth: '255px' }}
               />
               <Button onClick={() => setVisible(true)} style={{ marginLeft: '5px' }}>
                 검색
@@ -353,7 +353,7 @@ export function BasicInfo({
             <S.AddTitle />
             <Input
               value={variables['address']}
-              style={{ width: '371px', margin: '5px 0' }}
+              style={{ width: '19.3vw', margin: '5px 0', minWidth: '255px' }}
               disabled
               placeholder="기본주소"
             />
@@ -361,14 +361,14 @@ export function BasicInfo({
           <S.Flex>
             <S.AddTitle />
             <Input
-              style={{ width: '371px' }}
+              style={{ width: '19.3vw', minWidth: '255px' }}
               onChange={(e) => handleChange('addressDetail', e.target.value)}
               placeholder="상세주소"
               value={variables['addressDetail']}
             />
             <Input
               disabled
-              style={{ width: '180px', margin: '0 5px' }}
+              style={{ width: '7.5vw', margin: '0 5px' }}
               onChange={(e) => {
                 regExp.test(e.target.value)
                   ? handleChange('longitude', e.target.value.replace('-', ''))
@@ -379,7 +379,7 @@ export function BasicInfo({
             />
             <Input
               disabled
-              style={{ width: '180px' }}
+              style={{ width: '7.5vw' }}
               onChange={(e) => {
                 regExp.test(e.target.value)
                   ? handleChange('latitude', e.target.value.replace('-', ''))

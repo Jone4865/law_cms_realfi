@@ -1542,6 +1542,8 @@ export type Mutation = {
   createProjectSellVoteFileByAdmin: Scalars['Boolean'];
   /** 공모하기 (회원) */
   createPublicOfferingByUser: PublicOfferingModel;
+  /** [자전 거래 주문 생성] 특정 회원으로 특정 프로젝트 매수/매도 주문 생성 */
+  createSelfTranscation: Scalars['Boolean'];
   /** 투표 선택 (회원) */
   createSellVoteByUser: Scalars['Boolean'];
   /** 1:1 문의 등록 (회원) */

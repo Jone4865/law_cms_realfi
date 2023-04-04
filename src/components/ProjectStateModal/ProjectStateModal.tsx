@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { marketStatusToText } from '../../utils/marketStatusToText';
 import { publicOfferingStatusToText } from '../../utils/publicOfferingStatusToText';
 import { voteStatusToText } from '../../utils/voteStatusToText';
-import { ProjectStateChangeModal } from './ProjectStateChangeModal/ProjectStateChangeModal';
 import * as S from './style';
 
 type Props = {
@@ -23,12 +22,6 @@ export function ProjectStateModal({ variables, nowProjectState, setProjectState 
     '매각투표 완료',
     '매각 완료',
   ];
-
-  const [changeModalVisible, setChangeModalVisible] = useState(false);
-
-  const handleCancel = () => {
-    setChangeModalVisible(false);
-  };
 
   useEffect(() => {
     setProjectState([

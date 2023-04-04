@@ -14,9 +14,6 @@ type LayoutProps = {
 export const Layout = styled(AntdLayout)<LayoutProps>`
   margin-left: ${(props) => (props.$marginLeft ? props.$marginLeft : 0)}px;
   min-height: 100vh;
-  @media only screen and (max-width: 740px) {
-    margin-left: 0px;
-  }
 `;
 
 export const Sider = styled(AntdSider)`
@@ -44,14 +41,7 @@ export const StatusBar = styled.div`
   margin-top: 30px;
   justify-content: space-between;
   align-items: center;
-  @media only screen and (max-width: 768px) {
-    height: auto;
-    box-shadow: none;
-    background: transparent;
-    margin-top: 70px;
-    z-index: 0;
-    position: relative;
-  }
+  overflow-x: scroll;
 `;
 
 export const StatusWrap = styled.div`
@@ -108,7 +98,6 @@ export const Time = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* padding: 8px; */
   color: #fff;
   margin-right: 20px;
   border-radius: 7px;

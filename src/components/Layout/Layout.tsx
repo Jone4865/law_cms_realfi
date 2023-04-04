@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import { FieldTimeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
@@ -18,6 +18,7 @@ import {
   FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN_SUB,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB,
 } from '../../graphql/subscription';
+import { REFRESH_FROM_ADMIN } from '../../graphql/mutation';
 
 export type BadgeType = {
   [index: string]: number;
@@ -31,7 +32,12 @@ type Props = {
 
 function Layout({ setCookies }: Props) {
   const navigator = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(['accessToken', 'refreshToken', 'time']);
+  const [cookies, setCookie, removeCookie] = useCookies([
+    'accessToken',
+    'refreshToken',
+    'time',
+    'login',
+  ]);
   const [time, setTime] = useState(3600000);
   const [changeCount, setChangeCount] = useState(0);
   const [inquiryCount, setInquiryCount] = useState(0);
@@ -61,14 +67,18 @@ function Layout({ setCookies }: Props) {
     },
   });
 
-  // const [refreshFromAdmin] = useMutation(REFRESH_FROM_ADMIN, {
-  //   onError: (error) => {
-  //     notification.error({ message: error.message });
-  //   },
-  //   onCompleted: (data) => {
-  //     setInquiryCount(data.findUserInquiryCountByAdmin);
-  //   },
-  // });
+  const [refreshFromAdmin] = useMutation(REFRESH_FROM_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+      removeCookie('login');
+      removeCookie('time');
+      navigator('/login');
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '토큰이 갱신되었습니다.' });
+      setTime(3600000);
+    },
+  });
 
   useSubscription(FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB, {
     onData: (options) => {
@@ -89,9 +99,7 @@ function Layout({ setCookies }: Props) {
   useEffect(() => {
     setCookie('time', time);
     if (time <= 0) {
-      setCookies('login', null);
-      removeCookie('time');
-      navigator('/login');
+      refreshFromAdmin();
     }
   }, [time]);
 
@@ -103,7 +111,7 @@ function Layout({ setCookies }: Props) {
 
   return (
     <S.Layout>
-      <AsideMenu setCookies={setCookies} />
+      <AsideMenu removeCookie={removeCookie} />
       <S.Layout $marginLeft={200}>
         <S.Content>
           <S.StatusBar>
