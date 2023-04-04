@@ -24,7 +24,7 @@ type MenuData = {
 };
 
 type Props = {
-  removeCookie: (name: 'login') => void;
+  removeCookie: (name: 'login' | 'time') => void;
 };
 
 export function AsideMenu({ removeCookie }: Props) {
@@ -38,7 +38,8 @@ export function AsideMenu({ removeCookie }: Props) {
 
   const handleLogout = () => {
     removeCookie('login');
-    navigator('/login');
+    removeCookie('time');
+    window.location.replace('/');
   };
 
   const handleMoveHome = () => {

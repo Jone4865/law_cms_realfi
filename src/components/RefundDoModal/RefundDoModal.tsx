@@ -27,7 +27,6 @@ export function RefundDoModal({ visible, isAll, projectId, onClickHandle, handle
       },
       onCompleted: (data) => {
         setData(data.findPublicOfferingRefundInfoByAdmin);
-        handleCancel();
       },
     },
   );

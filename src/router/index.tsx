@@ -16,13 +16,14 @@ import { Setting } from '../pages/Setting';
 
 function Root() {
   const [cookies, setCookies] = useCookies(['time', 'login']);
-  useEffect(() => {}, [cookies]);
+  useEffect(() => {}, [cookies.login]);
+
   return (
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
           {cookies?.login && (
-            <Route path="/" element={<Layout setCookies={setCookies} />}>
+            <Route path="/" element={<Layout />}>
               <Route path="*" element={<Navigate to="/" />} />
               <Route index element={<Dashboard />} />
               <Route path="admin" element={<Admin />} />

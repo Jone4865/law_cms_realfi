@@ -26,11 +26,7 @@ export type BadgeType = {
   partnerCount: number;
 };
 
-type Props = {
-  setCookies: (name: 'login' | 'time', value: any) => void;
-};
-
-function Layout({ setCookies }: Props) {
+function Layout() {
   const navigator = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies([
     'accessToken',
@@ -72,7 +68,7 @@ function Layout({ setCookies }: Props) {
       notification.error({ message: error.message });
       removeCookie('login');
       removeCookie('time');
-      navigator('/login');
+      window.location.replace('/');
     },
     onCompleted: (_data) => {
       notification.success({ message: '토큰이 갱신되었습니다.' });

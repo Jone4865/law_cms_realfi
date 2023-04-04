@@ -15,8 +15,6 @@ type Props = {
 export function SellVote({ projectId = 1, tabsName, projectStates, handleRefetch }: Props) {
   const [totalArr, setTotalArr] = useState<number[]>([]);
   const [variables, setVariables] = useState<any>(undefined);
-  const [take, setTake] = useState(1);
-  const [skip, setSkip] = useState(0);
   const [voteTotalCount, setVoteTotalCount] = useState(1);
   const [voteCurrent, setVoteCurrent] = useState(0);
   const [voteState, setVoteState] = useState('매각투표 예정');
@@ -57,7 +55,7 @@ export function SellVote({ projectId = 1, tabsName, projectStates, handleRefetch
       }
       setTotalArr(totalArr);
     }
-  }, [voteTotalCount, voteState, voteCurrent]);
+  }, [voteTotalCount]);
 
   return (
     <S.Container>
