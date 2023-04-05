@@ -100,7 +100,7 @@ export function SellVoteTabs({
       return [...prev];
     });
     const variables = investFileList[index];
-    if (disable) {
+    if (!disable) {
       createProjectSellVoteFileByAdmin({ variables: { ...variables, projectSellVoteId } });
     }
   };

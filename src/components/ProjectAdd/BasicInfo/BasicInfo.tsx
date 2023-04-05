@@ -20,6 +20,7 @@ import {
   DELETE_PROJECT_FILE_BY_ADMIN,
   UPDATE_PROJECT_BASIC_INFO_BY_ADMIN,
 } from '../../../graphql/mutation';
+import Loader from '../../Loader';
 
 type Props = {
   variables: any;
@@ -102,26 +103,31 @@ export function BasicInfo({
   const handleProjectimageChange = (e: any) => {
     const newImage: UploadFile = e?.file?.originFileObj;
 
-    if (projectImageFileList?.length < e.fileList?.length) {
-      createProjectFileByAdmin({
-        variables: {
-          file: newImage,
-          fileKind: FileKind.Image,
-          projectId: projectId ? projectId : 0,
-          name: '',
-        },
-      });
-    } else if (projectImageFileList.length > e.fileList.length) {
-      deleteProjectFileByAdmin({
-        variables: {
-          id: +e.file.uid,
-        },
-      });
+    if (isFix) {
+      if (projectImageFileList?.length < e.fileList?.length) {
+        createProjectFileByAdmin({
+          variables: {
+            file: newImage,
+            fileKind: FileKind.Image,
+            projectId: projectId ? projectId : 0,
+            name: '',
+          },
+          onCompleted: (_data) => {
+            projectimageChange(e);
+          },
+        });
+      } else if (projectImageFileList.length > e.fileList.length) {
+        deleteProjectFileByAdmin({
+          variables: {
+            id: +e.file.uid,
+          },
+          onCompleted: (_data) => {
+            projectimageChange(e);
+          },
+        });
+      }
     }
-    if (success) {
-      projectimageChange(e);
-      setSuccess(false);
-    }
+    setSuccess(false);
   };
 
   const handleFileChange = (
@@ -192,8 +198,8 @@ export function BasicInfo({
   };
 
   const setCoordinateHandle = (longitude: number, latitude: number) => {
-    handleChange('longitude', longitude);
-    handleChange('latitude', latitude);
+    handleChange('longitude', longitude.toString());
+    handleChange('latitude', latitude.toString());
   };
 
   const complteSerchZipHandle = (fullAdress: string, zip: string) => {
@@ -248,8 +254,8 @@ export function BasicInfo({
         data.findManyProjectFile
           .filter((item) => item.fileKind === 'IMAGE')
           .map((image) =>
-            setProjectImageFileList([
-              ...projectImageFileList,
+            setProjectImageFileList((prevImageFileList) => [
+              ...prevImageFileList,
               {
                 uid: image.id.toString(),
                 name: '',
@@ -267,7 +273,7 @@ export function BasicInfo({
     },
   });
 
-  const [createProjectFileByAdmin] = useMutation(CREATE_PROJECT_FILE_BY_ADMIN, {
+  const [createProjectFileByAdmin, { loading }] = useMutation(CREATE_PROJECT_FILE_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
@@ -301,9 +307,7 @@ export function BasicInfo({
       fetchPolicy: 'no-cache',
     });
     setProjectImageFileList([]);
-  }, [projectId]);
-
-  useEffect(() => {}, [investFileList, officialInfosFileList, visible]);
+  }, [projectId, success, visible]);
 
   const uploadButton = (
     <div>
@@ -311,6 +315,10 @@ export function BasicInfo({
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
