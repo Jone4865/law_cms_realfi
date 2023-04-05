@@ -328,7 +328,7 @@ export function BasicInfo({
         {isFix && (
           <Button
             onClick={() => editBasicInfo()}
-            style={{ width: '150px', margin: 'auto' }}
+            style={{ width: '150px', marginLeft: '37vw', marginBottom: '20px' }}
             type="primary"
           >
             수정
