@@ -260,6 +260,9 @@ export function ProjectCheck() {
           total: totalCount,
           current: current,
         }}
+        style={{
+          marginTop: '30px',
+        }}
       />
     </>
   );

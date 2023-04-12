@@ -6,7 +6,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { validateEmail, validataPassword } from '../../utils/valitation';
 import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
-import { SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
+import { DELETE_ADMIN, SIGN_UP_FROM_ADMIN } from '../../graphql/mutation';
 
 export type SubmitType = {
   email?: string;
@@ -131,9 +131,11 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
           ...variables,
         },
       });
-      refetch();
-    } else {
     }
+  };
+
+  const onClickDeleteAdmin = () => {
+    deleteAdmin({ variables: { email: adminInfo.email ? adminInfo.email : '' } });
   };
 
   const [signUpFromAdmin] = useMutation(SIGN_UP_FROM_ADMIN, {
@@ -142,6 +144,17 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
     },
     onCompleted: (_data) => {
       notification.success({ message: '관리자를 생성하였습니다.' });
+      refetch();
+    },
+  });
+
+  const [deleteAdmin] = useMutation(DELETE_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '관리자를 삭제했습니다.' });
+      refetch();
     },
   });
 
@@ -229,12 +242,16 @@ export function AdminDetailModal({ handleCancel, visible, admin, refetch, adminR
       <TransformBox justifyContent="center">
         <>
           {!admin && (
-            <Button type="primary" onClick={() => (!admin ? handleFinish : '')}>
+            <Button type="primary" onClick={handleFinish}>
               생성
             </Button>
           )}
           {admin && (
-            <Popconfirm okText="삭제" title="정말로 삭제하시겠습니까?">
+            <Popconfirm
+              onConfirm={onClickDeleteAdmin}
+              okText="삭제"
+              title="정말로 삭제하시겠습니까?"
+            >
               <Button
                 style={{
                   marginLeft: 30,

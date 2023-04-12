@@ -30,3 +30,5 @@ export { FIND_USER_INQUIRY_COUNT_BY_ADMIN } from './findUserInquiryCountByAdmin'
 export { FIND_USER_BY_ADMIN } from './findUserByAdmin';
 export { FIND_MANY_WALLET_TRANSFER_BY_ADMIN } from './findManyWalletTransferByAdmin';
 export { FIND_MANY_DIVIDEND_IN_USER_BY_ADMIN } from './findManyDividendInUserByAdmin';
+export { FIND_MANY_STATS_BY_ADMIN } from './findManyStatsByAdmin';
+export { FIND_MANY_PUBLICOFFERING_EXTENSION_BY_ADMIN } from './findManyPublicOfferingExtensionByAdmin';

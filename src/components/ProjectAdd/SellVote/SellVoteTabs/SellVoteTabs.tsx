@@ -15,7 +15,6 @@ import {
   DELETE_PROJECT_SELL_VOTEFILE_BY_ADMIN,
   UPDATE_PROJECT_SELL_VOTE_BY_ADMIN,
   UPDATE_VOTE_KIND_BY_ADMIN,
-  VERIFY_VOTE_STATE_IS_SELL_VOTE_WAIT,
 } from '../../../../graphql/mutation';
 import { FIND_MANY_COMPANY_DATA, FIND_MANY_SELL_VOTE_BY_ADMIN } from '../../../../graphql/query';
 import { investfileColumns, sellvoteColumns } from '../../../../utils/columns';
@@ -52,11 +51,12 @@ export function SellVoteTabs({
   const [sellvoteData, setSellvoteData] = useState<FindManySellVoteByAdminOutput['sellVotes']>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
-  const [current, setCurrent] = useState(1);
+  const [, setTotalCount] = useState(0);
+  const [, setCurrent] = useState(1);
   const [projectSellVoteId, setProjectSellVoteId] = useState<number>(0);
   const [times, setTimes] = useState<FindCompanyDataQuery['findCompanyData']>();
   const [disable, setDisable] = useState(false);
+  const [popoverVisible, setPopoverVisible] = useState(false);
 
   const [investFileList, setInvestFileList] = useState<any[]>([
     {
@@ -100,7 +100,7 @@ export function SellVoteTabs({
       return [...prev];
     });
     const variables = investFileList[index];
-    if (disable) {
+    if (!disable) {
       createProjectSellVoteFileByAdmin({ variables: { ...variables, projectSellVoteId } });
     }
   };
@@ -120,12 +120,11 @@ export function SellVoteTabs({
   };
 
   const handleDeleteFile = (idx: number) => {
-    setInvestFileList(investFileList.filter((_v, i) => i !== idx));
-    {
-      !disable &&
-        deleteProjectSellVoteFileByAdmin({
-          variables: { id: investFileList[idx]?.id },
-        });
+    if (!disable) {
+      setInvestFileList(investFileList.filter((_v, i) => i !== idx));
+      deleteProjectSellVoteFileByAdmin({
+        variables: { id: investFileList[idx]?.id },
+      });
     }
   };
 
@@ -216,25 +215,30 @@ export function SellVoteTabs({
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '매각정보를 수정하였습니다.' });
+      notification.success({ message: '투표정보를 저장하였습니다.' });
       handleRefetch();
     },
-  });
-
-  const [verifyVoteStatusIsSellVoteWait] = useMutation(VERIFY_VOTE_STATE_IS_SELL_VOTE_WAIT, {
-    onError: (error) => {
-      notification.error({ message: error.message });
-    },
-    onCompleted: (_data) => {},
   });
 
   const [updateVoteKindByAdmin] = useMutation(UPDATE_VOTE_KIND_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (_data) => {
-      notification.success({ message: '매각투표를 결정하였습니다.' });
-      handleRefetch();
+    onCompleted: (data) => {
+      if (data.updateVoteKindByAdmin.id === 2) {
+        notification.success({ message: '투표가 부결되었습니다.' });
+      } else {
+        notification.success({ message: '투표가 가결되었습니다.' });
+      }
+      setPopoverVisible(false);
+      findManySellVoteByAdmin({
+        variables: {
+          projectSellVoteId: projectSellVoteId,
+          skip,
+          take,
+        },
+        fetchPolicy: 'no-cache',
+      });
     },
   });
 
@@ -277,8 +281,6 @@ export function SellVoteTabs({
     }
   }, [variables, voteCurrent, projectSellVoteId]);
 
-  useEffect(() => {}, [investFileList]);
-
   if (loading) {
     return <Loader />;
   }
@@ -294,13 +296,16 @@ export function SellVoteTabs({
             voteState === '매각투표 중' &&
             voteTotalCount === voteCurrent && (
               <Popover
+                open={popoverVisible}
                 content={PopupContent}
                 title=""
                 trigger="click"
                 placement="bottom"
                 color="white"
               >
-                <Button type="primary">투표하기</Button>
+                <Button type="primary" onClick={() => setPopoverVisible(true)}>
+                  투표하기
+                </Button>
               </Popover>
             )
           ) : voteState === undefined ? (
@@ -362,7 +367,7 @@ export function SellVoteTabs({
           moment(`2022-01-01 ${times?.voteFinalHour}`),
         ]}
       />
-      {!variables && (
+      {variables?.voteKind === VoteKind.Favour && (
         <S.Wrap>
           <S.Title style={{ border: 'none', justifyContent: 'flex-start', fontWeight: 'bold' }}>
             투표 알림
@@ -381,8 +386,8 @@ export function SellVoteTabs({
           handleDeleteFile,
           handleTitleChange,
           handleFileChange,
-          disable,
-          isFix: true,
+          disable: disable,
+          isFix: variables ? true : false,
         })}
         dataSource={investFileList}
         scroll={{ x: 800 }}

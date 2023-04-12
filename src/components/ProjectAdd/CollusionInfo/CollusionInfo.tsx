@@ -29,7 +29,6 @@ export function CollusionInfo({ isFix, variables, submitHandle, handleChange }: 
   useEffect(() => {
     findCompanyData();
   }, []);
-
   return (
     <>
       <S.AddTitle style={{ marginTop: '15px' }}>공모정보</S.AddTitle>
@@ -111,7 +110,7 @@ export function CollusionInfo({ isFix, variables, submitHandle, handleChange }: 
         essential={false}
         handleChange={handleChange}
         disable={true}
-        values={isFix ? [moment(variables['publicOfferingEndedAt']).add(3, 'days')] : []}
+        values={[moment(variables['publicOfferingEndedAt']).add(3, 'days')]}
       />
       <Button onClick={() => submitHandle()} type="primary" style={{ marginLeft: '250px' }}>
         {isFix ? '수정완료' : '등록완료'}

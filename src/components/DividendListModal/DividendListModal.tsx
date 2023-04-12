@@ -50,9 +50,8 @@ export function DividendListModal({ visible, projectDividendId, tabsName, handle
   useEffect(() => {
     findManyDividendByAdmin({
       variables: { projectDividendId, searchText, skip, take },
-      fetchPolicy: 'no-cache',
     });
-  }, [dividendListData]);
+  }, [projectDividendId, take]);
 
   return (
     <Modal open={visible} onCancel={handleCancel} width={1000} closable centered footer={false}>

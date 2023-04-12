@@ -12,6 +12,7 @@ export const UnableBtn = styled.div`
   align-items: center;
   font-weight: bold;
   margin-right: 30px;
+  white-space: nowrap;
 `;
 
 export const Btns = styled.div`

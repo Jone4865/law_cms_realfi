@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
 import TransformBox from '../TransformBox';
 import { useMutation } from '@apollo/client';
-import { CREATE_FAQ_BY_ADMIN, UPDATE_FAQ_BY_ADMIN } from '../../graphql/mutation';
+import {
+  CREATE_FAQ_BY_ADMIN,
+  DELETE_FAQ_BY_ADMIN,
+  UPDATE_FAQ_BY_ADMIN,
+} from '../../graphql/mutation';
 import { FindManyFaqCategoryQuery } from '../../graphql/generated/graphql';
 import { FaqType } from '../../utils/columns';
 import { Editor } from '../Editor';
@@ -12,18 +16,10 @@ type Props = {
   isEdit: boolean;
   data: FaqType | undefined;
   faqCategory: FindManyFaqCategoryQuery['findManyFaqCategory'];
-  refetch: () => void;
   handleCancel: () => void;
 };
 
-export function FaqDetailModal({
-  visible,
-  isEdit,
-  data,
-  faqCategory,
-  refetch,
-  handleCancel,
-}: Props) {
+export function FaqDetailModal({ visible, isEdit, data, faqCategory, handleCancel }: Props) {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [faqCategoryId, setFaqCategoryId] = useState(1);
@@ -62,13 +58,15 @@ export function FaqDetailModal({
     }
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    deleteFaqByAdmin({ variables: { id: data ? data.id : 0 } });
+    handleCancel();
+  };
 
   const [updateFaqByAdmin] = useMutation(UPDATE_FAQ_BY_ADMIN, {
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
       notification.success({ message: '수정을 완료했습니다.' });
       handleCancel();
-      refetch();
     },
     onError: (e) => {
       notification.error({ message: e.message });
@@ -76,10 +74,19 @@ export function FaqDetailModal({
   });
 
   const [createFaqByAdmin] = useMutation(CREATE_FAQ_BY_ADMIN, {
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
       notification.success({ message: 'FAQ를 생성했습니다.' });
       handleCancel();
-      refetch();
+    },
+    onError: (e) => {
+      notification.error({ message: e.message });
+    },
+  });
+
+  const [deleteFaqByAdmin] = useMutation(DELETE_FAQ_BY_ADMIN, {
+    onCompleted: (_data) => {
+      notification.success({ message: '삭제를 완료했습니다.' });
+      handleCancel();
     },
     onError: (e) => {
       notification.error({ message: e.message });

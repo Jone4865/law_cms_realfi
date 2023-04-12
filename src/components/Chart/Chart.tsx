@@ -30,7 +30,7 @@ export type ChartDataType = {
 type Props = {
   data: {
     date: string;
-    count: number;
+    result: number;
   }[];
 };
 
@@ -39,7 +39,7 @@ export function Chart({ data }: Props) {
     labels: data?.map((v) => moment(v.date).format('MM-DD')),
     datasets: [
       {
-        data: data?.map((v) => v.count),
+        data: data?.map((v) => v.result),
         borderColor: PRIMARY,
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },

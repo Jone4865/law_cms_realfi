@@ -113,12 +113,6 @@ export const projectCheckColumns = ({
       return val ? moment(val).format('YYYY-MM-DD HH:mm:ss') : '-';
     },
   },
-  // {
-  //   title: '등록관리자',
-  //   key: 'manager',
-  //   dataIndex: 'manager',
-  //   align: 'center',
-  // },
   {
     title: '상태',
     key: 'publicOfferingStatus',

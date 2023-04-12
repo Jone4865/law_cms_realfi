@@ -56,10 +56,13 @@ export function CollusionHistory({ projectId, variables }: Props) {
         },
       });
     } else {
+      refundFailedPublicOfferingByAdmin({
+        variables: {
+          projectId: projectId ? projectId : 0,
+        },
+      });
     }
   };
-
-  const onClickAddDateHandle = () => {};
 
   const [findManyPublicOfferingByAdmin] = useLazyQuery(FIND_MANY_PUBLIC_OFFERING_BY_ADMIN, {
     onError: (error) => {
@@ -84,7 +87,7 @@ export function CollusionHistory({ projectId, variables }: Props) {
     onError: (error) => {
       notification.error({ message: error.message });
     },
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
       notification.success({ message: '전체 환불을 완료하였습니다.' });
     },
   });
@@ -112,8 +115,6 @@ export function CollusionHistory({ projectId, variables }: Props) {
         projectId={projectId ? projectId : 0}
         handleCancel={handleModalCancel}
         visible={addDateModalVisible}
-        onClickHandle={onClickAddDateHandle}
-        publicOfferingEndedAt={variables?.publicOfferingEndedAt}
       />
       <CollusionDetailModal
         handleCancel={handleModalCancel}

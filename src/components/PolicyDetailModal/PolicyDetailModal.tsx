@@ -1,11 +1,11 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, Input, Modal, notification, Switch, Checkbox } from 'antd';
+import { Button, Input, Modal, notification, Switch, Checkbox, Popconfirm } from 'antd';
 
 import React, { useEffect, useState } from 'react';
 import {
   CREATE_POLICY_BY_ADMIN,
+  DELETE_POLICY_BY_ADMIN,
   UPDATE_POLICY_BY_ADMIN,
-  UPLOAD_POLICY_FILE_BY_ADMIN,
 } from '../../graphql/mutation';
 import { FIND_POLICY } from '../../graphql/query';
 import { Editor } from '../Editor';
@@ -31,7 +31,7 @@ export function PolicyDetailModal({
   const [content, setContent] = useState('');
   const [variables, setVariables] = useState<any>([]);
   const [checkBoxDefaultVlaue, setCheckBoxDefaultVlaue] = useState<string[]>([]);
-  const options = ['회원가입', '비밀번호 초기화', '투자정보 입력', '투자자격 변경'];
+  const options = ['회원가입', '투자정보 입력', '비밀번호 초기화', '투자자격 변경'];
 
   const handleClick = () => {
     const categorys = options.map((option, idx) =>
@@ -88,6 +88,11 @@ export function PolicyDetailModal({
     setCheckBoxDefaultVlaue(e);
   };
 
+  const handleDelete = () => {
+    deletePolicyByAdmin({ variables: { id: policyId } });
+    handleRefetch();
+  };
+
   const [findPolicy] = useLazyQuery(FIND_POLICY, {
     onError: (error) => {
       notification.error({ message: error.message });
@@ -113,6 +118,16 @@ export function PolicyDetailModal({
     },
     onCompleted: (_data) => {
       notification.success({ message: '답변을 수정했습니다.' });
+      handleRefetch();
+    },
+  });
+
+  const [deletePolicyByAdmin] = useMutation(DELETE_POLICY_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '삭제를 완료했습니다.' });
       handleRefetch();
     },
   });
@@ -160,9 +175,15 @@ export function PolicyDetailModal({
       footer={
         <TransformBox justifyContent="flex-end">
           <>
-            <Button onClick={() => (!isEdit ? handleCancel() : '')}>
-              {!isEdit ? '취소' : '삭제'}
-            </Button>
+            {!isEdit ? (
+              <Button onClick={() => handleCancel()}>취소</Button>
+            ) : (
+              <Popconfirm title="삭제하시겠습니까?" okText="삭제" onConfirm={handleDelete}>
+                <Button type="primary" danger>
+                  삭제
+                </Button>
+              </Popconfirm>
+            )}
           </>
           <>
             <Button type="primary" onClick={handleClick}>
@@ -198,11 +219,7 @@ export function PolicyDetailModal({
       </TransformBox>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>약관 내용</h3>
-        <Editor
-          state={content}
-          onChange={handleChangeContent}
-          // onUpload={handleUploadImage}
-        />
+        <Editor state={content} onChange={handleChangeContent} />
       </TransformBox>
     </Modal>
   );

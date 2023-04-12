@@ -22,8 +22,14 @@ const documents = {
     "\n  mutation createProjectFileByAdmin(\n    $projectId: Int!\n    $fileKind: FileKind!\n    $file: Upload!\n    $name: String\n  ) {\n    createProjectFileByAdmin(projectId: $projectId, name: $name, fileKind: $fileKind, file: $file)\n  }\n": types.CreateProjectFileByAdminDocument,
     "\n  mutation createProjectSellVoteByAdmin(\n    $requestSellAmount: String!\n    $sellVoteStartedAt: Date!\n    $sellVoteEndedAt: Date!\n    $soldDate: Date!\n    $projectId: Int!\n    $docs: [DocInCreateProjectSellVoteArgs!]!\n  ) {\n    createProjectSellVoteByAdmin(\n      requestSellAmount: $requestSellAmount\n      sellVoteStartedAt: $sellVoteStartedAt\n      sellVoteEndedAt: $sellVoteEndedAt\n      soldDate: $soldDate\n      projectId: $projectId\n      docs: $docs\n    )\n  }\n": types.CreateProjectSellVoteByAdminDocument,
     "\n  mutation createProjectSellVoteFileByAdmin(\n    $projectSellVoteId: Int!\n    $file: Upload!\n    $name: String!\n  ) {\n    createProjectSellVoteFileByAdmin(\n      projectSellVoteId: $projectSellVoteId\n      name: $name\n      file: $file\n    )\n  }\n": types.CreateProjectSellVoteFileByAdminDocument,
+    "\n  mutation deleteAdmin($email: String!) {\n    deleteAdmin(email: $email)\n  }\n": types.DeleteAdminDocument,
+    "\n  mutation deleteFaqByAdmin($id: Int!) {\n    deleteFaqByAdmin(id: $id)\n  }\n": types.DeleteFaqByAdminDocument,
+    "\n  mutation deleteNoticeByAdmin($id: Int!) {\n    deleteNoticeByAdmin(id: $id)\n  }\n": types.DeleteNoticeByAdminDocument,
+    "\n  mutation deleteOtpSecretByAdmin($email: String!) {\n    deleteOtpSecretByAdmin(email: $email)\n  }\n": types.DeleteOtpSecretByAdminDocument,
+    "\n  mutation deletePolicyByAdmin($id: Int!) {\n    deletePolicyByAdmin(id: $id)\n  }\n": types.DeletePolicyByAdminDocument,
     "\n  mutation deleteProjectFileByAdmin($id: Int!) {\n    deleteProjectFileByAdmin(id: $id)\n  }\n": types.DeleteProjectFileByAdminDocument,
     "\n  mutation deleteProjectSellVoteFileByAdmin($id: Int!) {\n    deleteProjectSellVoteFileByAdmin(id: $id)\n  }\n": types.DeleteProjectSellVoteFileByAdminDocument,
+    "\n  mutation extendPublicOfferingByAdmin(\n    $id: Int!\n    $newEndedAt: Date!\n    $newAllocationDate: Date!\n    $newReceivingDate: Date!\n    $newListedDate: Date!\n  ) {\n    extendPublicOfferingByAdmin(\n      id: $id\n      newEndedAt: $newEndedAt\n      newAllocationDate: $newAllocationDate\n      newReceivingDate: $newReceivingDate\n      newListedDate: $newListedDate\n    )\n  }\n": types.ExtendPublicOfferingByAdminDocument,
     "\n  mutation payDividendByAdmin($id: Int!) {\n    payDividendByAdmin(id: $id)\n  }\n": types.PayDividendByAdminDocument,
     "\n  mutation refreshFromAdmin {\n    refreshFromAdmin {\n      accessToken\n      refreshToken\n    }\n  }\n": types.RefreshFromAdminDocument,
     "\n  mutation refundFailedPublicOfferingByAdmin($projectId: Int!) {\n    refundFailedPublicOfferingByAdmin(projectId: $projectId)\n  }\n": types.RefundFailedPublicOfferingByAdminDocument,
@@ -61,8 +67,10 @@ const documents = {
     "\n  query findManyProjectFile($take: Int, $skip: Int, $projectId: Int!, $fileKind: FileKind) {\n    findManyProjectFile(take: $take, skip: $skip, projectId: $projectId, fileKind: $fileKind) {\n      id\n      fileKind\n      name\n      fileName\n    }\n  }\n": types.FindManyProjectFileDocument,
     "\n  query findManyProjectSellVoteByAdmin($id: Int!) {\n    findManyProjectSellVoteByAdmin(id: $id) {\n      totalCount\n      projectSellVotes {\n        id\n        no\n        requestSellAmount\n        sellVoteStartedAt\n        sellVoteEndedAt\n        soldDate\n        voteKind\n        favourCount\n        againstCount\n        undoCount\n        docs {\n          id\n          fileKind\n          name\n          fileName\n        }\n        favourRatio\n        againstRatio\n        undoRatio\n      }\n    }\n  }\n": types.FindManyProjectSellVoteByAdminDocument,
     "\n  query findManyPublicOfferingByAdmin($take: Int!, $cursorId: Int, $projectId: Int!) {\n    findManyPublicOfferingByAdmin(take: $take, cursorId: $cursorId, projectId: $projectId) {\n      totalCount\n      publicOfferings {\n        id\n        quantity\n        isCanceled\n        createdAt\n        canceledAt\n        name\n        phone\n        status\n        amount\n        status\n      }\n    }\n  }\n": types.FindManyPublicOfferingByAdminDocument,
+    "\n  query findManyPublicOfferingExtensionByAdmin($projectId: Int!) {\n    findManyPublicOfferingExtensionByAdmin(projectId: $projectId) {\n      totalCount\n      publicOfferingExtensions {\n        originEndedAt\n        newEndedAt\n        originAllocationDate\n        newAllocationDate\n        originReceivingDate\n        newReceivingDate\n        originListedDate\n        newListedDate\n        createdAt\n        admin {\n          name\n        }\n      }\n    }\n  }\n": types.FindManyPublicOfferingExtensionByAdminDocument,
     "\n  query findManySellVoteByAdmin($take: Int!, $skip: Int!, $projectSellVoteId: Int!) {\n    findManySellVoteByAdmin(take: $take, skip: $skip, projectSellVoteId: $projectSellVoteId) {\n      totalCount\n      sellVotes {\n        id\n        voteKind\n        tabsCount\n        createdAt\n        user {\n          name\n          phone\n        }\n      }\n    }\n  }\n": types.FindManySellVoteByAdminDocument,
     "\n  query findManySignedOrderByAdmin($take: Int!, $skip: Int!, $projectId: Int!) {\n    findManySignedOrderByAdmin(take: $take, skip: $skip, projectId: $projectId) {\n      totalCount\n      signedOrders {\n        id\n        quantity\n        createdAt\n        askPrice\n        fluctuation\n        fluctuationRatio\n        buyer\n        seller\n      }\n    }\n  }\n": types.FindManySignedOrderByAdminDocument,
+    "\n  query findManyStatsByAdmin {\n    findManyStatsByAdmin {\n      userCount {\n        day\n        result\n      }\n    }\n  }\n": types.FindManyStatsByAdminDocument,
     "\n  query findManyTabsWalletByAdmin($take: Int!, $skip: Int!, $searchText: String!, $email: String!) {\n    findManyTabsWalletByAdmin(take: $take, skip: $skip, searchText: $searchText, email: $email) {\n      totalCount\n      tabsWallets {\n        tabsCount\n        averagePurchasePrice\n        project {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.FindManyTabsWalletByAdminDocument,
     "\n  query findManyUserByAdmin($take: Int!, $skip: Int!, $searchText: String!) {\n    findManyUserByAdmin(take: $take, skip: $skip, searchText: $searchText) {\n      totalCount\n      users {\n        email\n        name\n        phone\n        createdAt\n        possibleInvestmentAmount\n        isExistAccount\n        birth\n      }\n    }\n  }\n": types.FindManyUserByAdminDocument,
     "\n  query findManyUserInquiryByAdmin(\n    $take: Int!\n    $skip: Int!\n    $searchText: String!\n    $userInquiryCategoryId: Int\n    $email: String\n  ) {\n    findManyUserInquiryByAdmin(\n      take: $take\n      skip: $skip\n      searchText: $searchText\n      userInquiryCategoryId: $userInquiryCategoryId\n      email: $email\n    ) {\n      totalCount\n      userInquiries {\n        id\n        title\n        content\n        reply\n        repliedAt\n        createdAt\n        userInquiryCategory {\n          id\n          name\n        }\n        admin {\n          name\n        }\n        user {\n          name\n          phone\n        }\n      }\n    }\n  }\n": types.FindManyUserInquiryByAdminDocument,
@@ -135,11 +143,35 @@ export function gql(source: "\n  mutation createProjectSellVoteFileByAdmin(\n   
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  mutation deleteAdmin($email: String!) {\n    deleteAdmin(email: $email)\n  }\n"): (typeof documents)["\n  mutation deleteAdmin($email: String!) {\n    deleteAdmin(email: $email)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deleteFaqByAdmin($id: Int!) {\n    deleteFaqByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteFaqByAdmin($id: Int!) {\n    deleteFaqByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deleteNoticeByAdmin($id: Int!) {\n    deleteNoticeByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteNoticeByAdmin($id: Int!) {\n    deleteNoticeByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deleteOtpSecretByAdmin($email: String!) {\n    deleteOtpSecretByAdmin(email: $email)\n  }\n"): (typeof documents)["\n  mutation deleteOtpSecretByAdmin($email: String!) {\n    deleteOtpSecretByAdmin(email: $email)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation deletePolicyByAdmin($id: Int!) {\n    deletePolicyByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deletePolicyByAdmin($id: Int!) {\n    deletePolicyByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  mutation deleteProjectFileByAdmin($id: Int!) {\n    deleteProjectFileByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteProjectFileByAdmin($id: Int!) {\n    deleteProjectFileByAdmin(id: $id)\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation deleteProjectSellVoteFileByAdmin($id: Int!) {\n    deleteProjectSellVoteFileByAdmin(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteProjectSellVoteFileByAdmin($id: Int!) {\n    deleteProjectSellVoteFileByAdmin(id: $id)\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation extendPublicOfferingByAdmin(\n    $id: Int!\n    $newEndedAt: Date!\n    $newAllocationDate: Date!\n    $newReceivingDate: Date!\n    $newListedDate: Date!\n  ) {\n    extendPublicOfferingByAdmin(\n      id: $id\n      newEndedAt: $newEndedAt\n      newAllocationDate: $newAllocationDate\n      newReceivingDate: $newReceivingDate\n      newListedDate: $newListedDate\n    )\n  }\n"): (typeof documents)["\n  mutation extendPublicOfferingByAdmin(\n    $id: Int!\n    $newEndedAt: Date!\n    $newAllocationDate: Date!\n    $newReceivingDate: Date!\n    $newListedDate: Date!\n  ) {\n    extendPublicOfferingByAdmin(\n      id: $id\n      newEndedAt: $newEndedAt\n      newAllocationDate: $newAllocationDate\n      newReceivingDate: $newReceivingDate\n      newListedDate: $newListedDate\n    )\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -291,11 +323,19 @@ export function gql(source: "\n  query findManyPublicOfferingByAdmin($take: Int!
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\n  query findManyPublicOfferingExtensionByAdmin($projectId: Int!) {\n    findManyPublicOfferingExtensionByAdmin(projectId: $projectId) {\n      totalCount\n      publicOfferingExtensions {\n        originEndedAt\n        newEndedAt\n        originAllocationDate\n        newAllocationDate\n        originReceivingDate\n        newReceivingDate\n        originListedDate\n        newListedDate\n        createdAt\n        admin {\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query findManyPublicOfferingExtensionByAdmin($projectId: Int!) {\n    findManyPublicOfferingExtensionByAdmin(projectId: $projectId) {\n      totalCount\n      publicOfferingExtensions {\n        originEndedAt\n        newEndedAt\n        originAllocationDate\n        newAllocationDate\n        originReceivingDate\n        newReceivingDate\n        originListedDate\n        newListedDate\n        createdAt\n        admin {\n          name\n        }\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  query findManySellVoteByAdmin($take: Int!, $skip: Int!, $projectSellVoteId: Int!) {\n    findManySellVoteByAdmin(take: $take, skip: $skip, projectSellVoteId: $projectSellVoteId) {\n      totalCount\n      sellVotes {\n        id\n        voteKind\n        tabsCount\n        createdAt\n        user {\n          name\n          phone\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query findManySellVoteByAdmin($take: Int!, $skip: Int!, $projectSellVoteId: Int!) {\n    findManySellVoteByAdmin(take: $take, skip: $skip, projectSellVoteId: $projectSellVoteId) {\n      totalCount\n      sellVotes {\n        id\n        voteKind\n        tabsCount\n        createdAt\n        user {\n          name\n          phone\n        }\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query findManySignedOrderByAdmin($take: Int!, $skip: Int!, $projectId: Int!) {\n    findManySignedOrderByAdmin(take: $take, skip: $skip, projectId: $projectId) {\n      totalCount\n      signedOrders {\n        id\n        quantity\n        createdAt\n        askPrice\n        fluctuation\n        fluctuationRatio\n        buyer\n        seller\n      }\n    }\n  }\n"): (typeof documents)["\n  query findManySignedOrderByAdmin($take: Int!, $skip: Int!, $projectId: Int!) {\n    findManySignedOrderByAdmin(take: $take, skip: $skip, projectId: $projectId) {\n      totalCount\n      signedOrders {\n        id\n        quantity\n        createdAt\n        askPrice\n        fluctuation\n        fluctuationRatio\n        buyer\n        seller\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query findManyStatsByAdmin {\n    findManyStatsByAdmin {\n      userCount {\n        day\n        result\n      }\n    }\n  }\n"): (typeof documents)["\n  query findManyStatsByAdmin {\n    findManyStatsByAdmin {\n      userCount {\n        day\n        result\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

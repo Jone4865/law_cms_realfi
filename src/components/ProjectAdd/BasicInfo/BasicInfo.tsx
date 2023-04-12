@@ -6,7 +6,11 @@ import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { InputBasic } from '../InputBasic/InputBasic';
 import { investfileColumns, lesseeColumns } from '../../../utils/columns';
-import { DocInCreateProjectByAdminArgs, FileKind } from '../../../graphql/generated/graphql';
+import {
+  DocInCreateProjectByAdminArgs,
+  FileKind,
+  FindManyProjectFileQuery,
+} from '../../../graphql/generated/graphql';
 import GetZipApi from '../../GetZipApi/GetZipApi';
 import GetCoordinateApi from '../../GetCoordinateApi/GetCoordinateApi';
 import { useLazyQuery, useMutation } from '@apollo/client';
@@ -16,6 +20,7 @@ import {
   DELETE_PROJECT_FILE_BY_ADMIN,
   UPDATE_PROJECT_BASIC_INFO_BY_ADMIN,
 } from '../../../graphql/mutation';
+import Loader from '../../Loader';
 
 type Props = {
   variables: any;
@@ -51,8 +56,11 @@ export function BasicInfo({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
-  const [projectImageFileList, setProjectImageFileList] = useState<any>([]);
-  const [newInvestFileList, setNewInvestFileList] = useState<any>([
+  const [projectImageFileList, setProjectImageFileList] = useState<UploadFile[]>([]);
+  const [success, setSuccess] = useState(false);
+  const [newInvestFileList, setNewInvestFileList] = useState<
+    FindManyProjectFileQuery['findManyProjectFile']
+  >([
     {
       fileKind: FileKind.Docs,
       fileName: '',
@@ -60,7 +68,9 @@ export function BasicInfo({
       name: '',
     },
   ]);
-  const [newOfficialInfosFileList, setNewOfficialInfosFileList] = useState<any>([
+  const [newOfficialInfosFileList, setNewOfficialInfosFileList] = useState<
+    FindManyProjectFileQuery['findManyProjectFile']
+  >([
     {
       fileKind: FileKind.OfficialInfo,
       fileName: '',
@@ -85,9 +95,39 @@ export function BasicInfo({
     setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
   };
 
-  const handleProjectimageChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+  const projectimageChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
     setProjectImageFileList(newFileList);
     handleChange('images', newFileList);
+  };
+
+  const handleProjectimageChange = (e: any) => {
+    const newImage: UploadFile = e?.file?.originFileObj;
+
+    if (isFix) {
+      if (projectImageFileList?.length < e.fileList?.length) {
+        createProjectFileByAdmin({
+          variables: {
+            file: newImage,
+            fileKind: FileKind.Image,
+            projectId: projectId ? projectId : 0,
+            name: '',
+          },
+          onCompleted: (_data) => {
+            projectimageChange(e);
+          },
+        });
+      } else if (projectImageFileList.length > e.fileList.length) {
+        deleteProjectFileByAdmin({
+          variables: {
+            id: +e.file.uid,
+          },
+          onCompleted: (_data) => {
+            projectimageChange(e);
+          },
+        });
+      }
+    }
+    setSuccess(false);
   };
 
   const handleFileChange = (
@@ -96,26 +136,30 @@ export function BasicInfo({
     key: string,
   ) => {
     if (isFix) {
-      if (key === 'docs') {
-        setNewInvestFileList((prev: any) => {
-          prev[index].file = file;
-          handleChange('docs', prev);
-          return [...prev];
-        });
-      } else {
-        setNewOfficialInfosFileList((prev: any) => {
-          prev[index].file = file;
-          handleChange('officialInfos', prev);
-          return [...prev];
-        });
-      }
       const variables = key === 'docs' ? newInvestFileList[index] : newOfficialInfosFileList[index];
       createProjectFileByAdmin({
         variables: {
           ...variables,
-          projectId,
+          projectId: projectId ? projectId : 0,
+          file,
         },
       });
+      if (success) {
+        if (key === 'docs') {
+          setNewInvestFileList((prev: any) => {
+            prev[index].file = file;
+            handleChange('docs', prev);
+            return [...prev];
+          });
+        } else {
+          setNewOfficialInfosFileList((prev: any) => {
+            prev[index].file = file;
+            handleChange('officialInfos', prev);
+            return [...prev];
+          });
+        }
+        setSuccess(false);
+      }
     } else {
       if (key === 'docs') {
         setInvestFileList((prev) => {
@@ -154,8 +198,8 @@ export function BasicInfo({
   };
 
   const setCoordinateHandle = (longitude: number, latitude: number) => {
-    handleChange('longitude', longitude);
-    handleChange('latitude', latitude);
+    handleChange('longitude', longitude.toString());
+    handleChange('latitude', latitude.toString());
   };
 
   const complteSerchZipHandle = (fullAdress: string, zip: string) => {
@@ -206,6 +250,22 @@ export function BasicInfo({
       notification.error({ message: error.message });
     },
     onCompleted: (data) => {
+      if (projectImageFileList?.length === 0) {
+        data.findManyProjectFile
+          .filter((item) => item.fileKind === 'IMAGE')
+          .map((image) =>
+            setProjectImageFileList((prevImageFileList) => [
+              ...prevImageFileList,
+              {
+                uid: image.id.toString(),
+                name: '',
+                thumbUrl: `${process.env.REACT_APP_SERVER_BASIC}/project-file?fileKind=IMAGE&name=${image.fileName}`,
+                url: `${process.env.REACT_APP_SERVER_BASIC}/project-file?fileKind=IMAGE&name=${image.fileName}`,
+              },
+            ]),
+          );
+      }
+      handleChange('images', projectImageFileList);
       setNewInvestFileList(data.findManyProjectFile.filter((item) => item.fileKind === 'DOCS'));
       setNewOfficialInfosFileList(
         data.findManyProjectFile.filter((item) => item.fileKind === 'OFFICIAL_INFO'),
@@ -213,11 +273,12 @@ export function BasicInfo({
     },
   });
 
-  const [createProjectFileByAdmin] = useMutation(CREATE_PROJECT_FILE_BY_ADMIN, {
+  const [createProjectFileByAdmin, { loading }] = useMutation(CREATE_PROJECT_FILE_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
+      setSuccess(true);
       findManyProjectFile({
         variables: { projectId: projectId ? projectId : 0 },
         fetchPolicy: 'no-cache',
@@ -245,9 +306,8 @@ export function BasicInfo({
       variables: { projectId: projectId ? projectId : 0 },
       fetchPolicy: 'no-cache',
     });
-  }, []);
-
-  useEffect(() => {}, [investFileList, officialInfosFileList, visible, projectImageFileList]);
+    setProjectImageFileList([]);
+  }, [projectId, success, visible]);
 
   const uploadButton = (
     <div>
@@ -255,6 +315,10 @@ export function BasicInfo({
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -264,7 +328,7 @@ export function BasicInfo({
         {isFix && (
           <Button
             onClick={() => editBasicInfo()}
-            style={{ width: '150px', margin: 'auto' }}
+            style={{ width: '150px', marginLeft: '37vw', marginBottom: '20px' }}
             type="primary"
           >
             수정
@@ -286,7 +350,7 @@ export function BasicInfo({
                 value={variables['zip']}
                 disabled
                 placeholder="우편번호"
-                style={{ width: '310px' }}
+                style={{ width: '19.3vw', minWidth: '255px' }}
               />
               <Button onClick={() => setVisible(true)} style={{ marginLeft: '5px' }}>
                 검색
@@ -297,7 +361,7 @@ export function BasicInfo({
             <S.AddTitle />
             <Input
               value={variables['address']}
-              style={{ width: '371px', margin: '5px 0' }}
+              style={{ width: '19.3vw', margin: '5px 0', minWidth: '255px' }}
               disabled
               placeholder="기본주소"
             />
@@ -305,14 +369,14 @@ export function BasicInfo({
           <S.Flex>
             <S.AddTitle />
             <Input
-              style={{ width: '371px' }}
+              style={{ width: '19.3vw', minWidth: '255px' }}
               onChange={(e) => handleChange('addressDetail', e.target.value)}
               placeholder="상세주소"
               value={variables['addressDetail']}
             />
             <Input
               disabled
-              style={{ width: '180px', margin: '0 5px' }}
+              style={{ width: '7.5vw', margin: '0 5px' }}
               onChange={(e) => {
                 regExp.test(e.target.value)
                   ? handleChange('longitude', e.target.value.replace('-', ''))
@@ -323,7 +387,7 @@ export function BasicInfo({
             />
             <Input
               disabled
-              style={{ width: '180px' }}
+              style={{ width: '7.5vw' }}
               onChange={(e) => {
                 regExp.test(e.target.value)
                   ? handleChange('latitude', e.target.value.replace('-', ''))
@@ -408,7 +472,7 @@ export function BasicInfo({
             <>
               <Upload
                 listType="picture-card"
-                fileList={variables.images}
+                fileList={projectImageFileList}
                 onPreview={handlePreview}
                 onChange={handleProjectimageChange}
               >
@@ -438,7 +502,7 @@ export function BasicInfo({
           }}
         />
         {investFileList?.length < 10 && (
-          <div style={{ width: '1300px', display: 'flex' }}>
+          <div style={{ width: '80vw', display: 'flex' }}>
             <Button
               onClick={() =>
                 isFix
@@ -489,7 +553,7 @@ export function BasicInfo({
           }}
         />
         {officialInfosFileList?.length < 10 && (
-          <div style={{ width: '1300px', display: 'flex' }}>
+          <div style={{ width: '80vw', display: 'flex' }}>
             <Button
               onClick={() =>
                 isFix

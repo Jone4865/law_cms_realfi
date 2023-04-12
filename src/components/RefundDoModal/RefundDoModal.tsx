@@ -23,22 +23,24 @@ export function RefundDoModal({ visible, isAll, projectId, onClickHandle, handle
     {
       onError: (error) => {
         notification.error({ message: error.message });
+        handleCancel();
       },
       onCompleted: (data) => {
         setData(data.findPublicOfferingRefundInfoByAdmin);
-        handleCancel();
       },
     },
   );
 
   useEffect(() => {
-    findPublicOfferingRefundInfoByAdmin({
-      variables: {
-        projectId,
-      },
-      fetchPolicy: 'no-cache',
-    });
-  }, []);
+    if (visible) {
+      findPublicOfferingRefundInfoByAdmin({
+        variables: {
+          projectId,
+        },
+        fetchPolicy: 'no-cache',
+      });
+    }
+  }, [visible]);
 
   return (
     <Modal

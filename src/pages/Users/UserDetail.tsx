@@ -38,7 +38,9 @@ export function UserDetail() {
           <S.UnableBtn
             onClick={() => setNowAble(item)}
             key={item}
-            style={{ backgroundColor: `${nowAble === item ? '#5d28dd' : ''}` }}
+            style={{
+              backgroundColor: `${nowAble === item ? '#5d28dd' : ''}`,
+            }}
           >
             {item}
           </S.UnableBtn>

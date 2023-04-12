@@ -11,19 +11,18 @@ import { Change } from '../pages/Users';
 import { Classifi } from '../pages/Users';
 import { useCookies } from 'react-cookie';
 import { CookiesProvider } from 'react-cookie';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Setting } from '../pages/Setting';
 
 function Root() {
-  const [cookies] = useCookies(['accessToken', 'Authentication', 'time']);
-
-  useEffect(() => {}, [cookies.accessToken]);
+  const [cookies, setCookies] = useCookies(['time', 'login']);
+  useEffect(() => {}, [cookies.login]);
 
   return (
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
-          {cookies?.accessToken && (
+          {cookies?.login && (
             <Route path="/" element={<Layout />}>
               <Route path="*" element={<Navigate to="/" />} />
               <Route index element={<Dashboard />} />
@@ -50,9 +49,9 @@ function Root() {
               <Route path="setting" element={<Setting />} />
             </Route>
           )}
-          {!cookies?.accessToken && (
+          {!cookies?.login && (
             <>
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login setCookies={setCookies} />} />
               <Route path="*" element={<Navigate to="/login" />} />
             </>
           )}

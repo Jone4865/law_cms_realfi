@@ -44,7 +44,7 @@ export function InputDate({
                   }}
                   disabled={disable && true}
                   format={'HH:mm'}
-                  style={{ width: '230px' }}
+                  style={{ width: '12vw' }}
                 />
               ) : (
                 <DatePicker
@@ -56,7 +56,7 @@ export function InputDate({
                       saveNames &&
                       handleChange(saveNames[idx], moment(v).format('YYYY-MM-DD'));
                   }}
-                  style={{ width: '230px' }}
+                  style={{ width: '12vw' }}
                 />
               )}
             </S.DateInputWrap>

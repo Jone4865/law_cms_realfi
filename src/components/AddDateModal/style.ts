@@ -28,5 +28,6 @@ export const Bottom = styled.div`
   margin-bottom: 20px;
   span {
     margin-right: 20px;
+    width: 100px;
   }
 `;

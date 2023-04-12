@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, Input, Modal, notification, Popconfirm, Select } from 'antd';
 import { useMutation } from '@apollo/client';
 import { NoticeInFindManyNoticeByAdminOutput, NoticeKind } from '../../graphql/generated/graphql';
-import { CREATE_NOTICE_BY_ADMIN, UPDATE_NOTICE_BY_ADMIN } from '../../graphql/mutation';
+import {
+  CREATE_NOTICE_BY_ADMIN,
+  DELETE_NOTICE_BY_ADMIN,
+  UPDATE_NOTICE_BY_ADMIN,
+} from '../../graphql/mutation';
 import { noticeKindToText } from '../../utils/noticeKindToText';
 import { Editor } from '../Editor';
 import TransformBox from '../TransformBox';
@@ -66,30 +70,26 @@ export function NoticeDetailModal({
   };
 
   const handleDelete = () => {
-    // deleteNotice({
-    //   variables: {
-    //     id: data?.id ?? -1,
-    //   },
-    // });
+    deleteNoticeByAdmin({ variables: { id: data ? data.id : 0 } });
   };
 
   const handleChangeContent = (value: string) => {
     setContent(value);
   };
 
-  const [createNoticeByAdmin, {}] = useMutation(CREATE_NOTICE_BY_ADMIN, {
+  const [createNoticeByAdmin] = useMutation(CREATE_NOTICE_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
       handleCancel();
       refetch();
     },
-    onCompleted: (data) => {
+    onCompleted: (_data) => {
       notification.success({ message: '공지사항을 등록했습니다.' });
       refetch();
     },
   });
 
-  const [updateNoticeByAdmin, {}] = useMutation(UPDATE_NOTICE_BY_ADMIN, {
+  const [updateNoticeByAdmin] = useMutation(UPDATE_NOTICE_BY_ADMIN, {
     onError: (error) => {
       notification.error({ message: error.message });
       handleCancel();
@@ -97,6 +97,18 @@ export function NoticeDetailModal({
     },
     onCompleted: (data) => {
       notification.success({ message: '수정을 완료했습니다.' });
+      refetch();
+    },
+  });
+
+  const [deleteNoticeByAdmin] = useMutation(DELETE_NOTICE_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+      handleCancel();
+      refetch();
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '삭제를 완료했습니다.' });
       refetch();
     },
   });
@@ -169,16 +181,6 @@ export function NoticeDetailModal({
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <TransformBox justifyContent="space-between" alignItems="center">
           <h3>내용</h3>
-          {/* <TransformBox>
-            <span>고정</span>
-            <Switch
-              checked={isFix}
-              style={{
-                margin: '0 10px',
-              }}
-              onChange={setisFix}
-            />
-          </TransformBox> */}
         </TransformBox>
         <Editor state={content} onChange={handleChangeContent} />
       </TransformBox>

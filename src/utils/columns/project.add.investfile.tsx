@@ -76,9 +76,9 @@ export const investfileColumns = ({
     key: 'delete',
     align: 'center',
     dataIndex: 'fileName',
-    render: (val, _record, index) => {
+    render: (val, record, index) => {
       return (
-        val &&
+        (isFix ? val : record?.file?.name) &&
         !disable && (
           <Button
             onClick={() => handleDeleteFile(index, docs ? 'docs' : 'officialInfos')}

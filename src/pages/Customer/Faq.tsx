@@ -47,39 +47,17 @@ export function Faq() {
     setVisible(false);
   };
 
-  const handleRefetch = () => {
-    // if (refetch) {
-    //   refetch({ searchText, skip, take })
-    //     .then((data) => {
-    //       setFaqData(data.data.seeFaqHistoryByAdmin.faqs);
-    //       setTotalCount(data.data.seeFaqHistoryByAdmin.totalCount);
-    //       if (
-    //         data.data.seeFaqHistoryByAdmin.faqs.length === 0 &&
-    //         data.data.seeFaqHistoryByAdmin.totalCount > 0
-    //       ) {
-    //         setSkip(skip - take);
-    //       }
-    //     })
-    //     .catch((e) => {
-    //       notification.error({ message: e.message });
-    //     });
-    // }
-  };
-
-  const [findManyFaqByAdmin, { loading }] = useLazyQuery<FindManyFaqByAdminQuery>(
-    FIND_MANY_FAQ_BY_ADMIN,
-    {
-      onError: (error) => {
-        notification.error({ message: error.message });
-      },
-      onCompleted: (data) => {
-        setFaqData(data.findManyFaqByAdmin.faqs);
-        setTotalCount(data.findManyFaqByAdmin.totalCount);
-      },
+  const [findManyFaqByAdmin] = useLazyQuery<FindManyFaqByAdminQuery>(FIND_MANY_FAQ_BY_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
     },
-  );
+    onCompleted: (data) => {
+      setFaqData(data.findManyFaqByAdmin.faqs);
+      setTotalCount(data.findManyFaqByAdmin.totalCount);
+    },
+  });
 
-  const [findManyFaqCategory, {}] = useLazyQuery(FIND_MANY_FAQ_CATEGORY, {
+  const [findManyFaqCategory] = useLazyQuery(FIND_MANY_FAQ_CATEGORY, {
     onError: (error) => {
       notification.error({ message: error.message });
     },
@@ -108,7 +86,7 @@ export function Faq() {
         data={modalData}
         handleCancel={handleCancel}
         isEdit={isEdit}
-        refetch={handleRefetch}
+        // refetch={handleRefetch}
         faqCategory={faqCategorys}
       />
       <Divider>FAQ</Divider>

@@ -41,11 +41,11 @@ export function InputBasic({
           onChange={(v) => {
             handleChange && handleChange(`${saveName}`, moment(v).format('YYYY-MM-DD'));
           }}
-          style={{ width: '370px' }}
+          style={{ width: '19.3vw' }}
         />
       ) : (
         <Input
-          style={{ width: '371px', color: `${color}` }}
+          style={{ width: '19.3vw', color: `${color}`, minWidth: '255px' }}
           value={
             typeof value === 'string'
               ? value

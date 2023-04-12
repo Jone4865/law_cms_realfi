@@ -112,13 +112,15 @@ export function InquiryDetailModal({ visible, handleCancel, data, refetch }: Pro
       />
 
       <TransformBox justifyContent="center" marginTop="30px">
-        <Button
+        {/* <Button
           style={{
             width: 150,
+            backgroundColor: '#ff4d4f',
+            color: 'white',
           }}
         >
           삭제
-        </Button>
+        </Button> */}
         <Button
           type="primary"
           style={{

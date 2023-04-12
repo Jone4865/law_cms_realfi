@@ -14,19 +14,16 @@ export const ImageWrap = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  @media only screen and (max-width: 768px) {
-    margin: 0;
-    margin-left: 20px;
+  /* @media only screen and (max-width: 768px) {
     justify-content: flex-start;
     align-items: flex-start;
-    width: auto;
-  }
+    width: 80%;
+  } */
 `;
 
 export const Image = styled.img`
   width: 40%;
   height: 40%;
-  /* object-fit: cover; */
 `;
 
 type LayoutProps = {
@@ -70,7 +67,6 @@ export const NavTop = styled.div<NavProps>`
   top: 0;
   z-index: 1000;
   height: 50px;
-  /* background: ${(props) => (props.isOpen ? '#fff' : 'transparent')}; */
   background: #fff;
 `;
 

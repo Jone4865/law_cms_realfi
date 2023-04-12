@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import { FieldTimeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import { useCookies } from 'react-cookie';
 import * as S from './style';
 
-import { useLazyQuery, useSubscription } from '@apollo/client';
+import { useLazyQuery, useMutation, useSubscription } from '@apollo/client';
 import {
   FIND_CHANGE_INVESTMENT_QUALIFICATION_COUNT_BY_ADMIN,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN,
@@ -15,9 +15,10 @@ import Main from '../Main';
 import { AsideMenu } from '../AsideMenu';
 import useInterval from '../../utils/useInterval';
 import {
-  FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN,
+  FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN_SUB,
   FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB,
 } from '../../graphql/subscription';
+import { REFRESH_FROM_ADMIN } from '../../graphql/mutation';
 
 export type BadgeType = {
   [index: string]: number;
@@ -27,7 +28,12 @@ export type BadgeType = {
 
 function Layout() {
   const navigator = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(['accessToken', 'refreshToken', 'time']);
+  const [cookies, setCookie, removeCookie] = useCookies([
+    'accessToken',
+    'refreshToken',
+    'time',
+    'login',
+  ]);
   const [time, setTime] = useState(3600000);
   const [changeCount, setChangeCount] = useState(0);
   const [inquiryCount, setInquiryCount] = useState(0);
@@ -57,21 +63,31 @@ function Layout() {
     },
   });
 
+  const [refreshFromAdmin] = useMutation(REFRESH_FROM_ADMIN, {
+    onError: (error) => {
+      notification.error({ message: error.message });
+      removeCookie('login');
+      removeCookie('time');
+      window.location.replace('/');
+    },
+    onCompleted: (_data) => {
+      notification.success({ message: '토큰이 갱신되었습니다.' });
+      setTime(3600000);
+    },
+  });
+
   useSubscription(FIND_USER_INQUIRY_COUNT_BY_ADMIN_SUB, {
-    onSubscriptionData: (options) => {
-      console.log('11111');
-      if (options.subscriptionData.data?.findUserInquiryCountByAdminSub) {
-        setInquiryCount(options.subscriptionData.data.findUserInquiryCountByAdminSub);
+    onData: (options) => {
+      if (options.data.data?.findUserInquiryCountByAdminSub) {
+        setInquiryCount(options.data.data?.findUserInquiryCountByAdminSub);
       }
     },
   });
 
-  useSubscription(FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN, {
-    onSubscriptionData: (options) => {
-      if (options.subscriptionData.data?.findChangeInvestmentQualificationCountByAdminSub) {
-        setChangeCount(
-          options.subscriptionData.data.findChangeInvestmentQualificationCountByAdminSub,
-        );
+  useSubscription(FIND_CHANGE_INVESTMENT_QUILIFICATION_COUNT_BY_ADMIN_SUB, {
+    onData: (options) => {
+      if (options.data.data?.findChangeInvestmentQualificationCountByAdminSub) {
+        setChangeCount(options.data.data?.findChangeInvestmentQualificationCountByAdminSub);
       }
     },
   });
@@ -79,10 +95,7 @@ function Layout() {
   useEffect(() => {
     setCookie('time', time);
     if (time <= 0) {
-      setCookie('accessToken', '');
-      setCookie('refreshToken', '');
-      removeCookie('time');
-      window.location.href = '/login';
+      refreshFromAdmin();
     }
   }, [time]);
 
@@ -94,7 +107,7 @@ function Layout() {
 
   return (
     <S.Layout>
-      <AsideMenu />
+      <AsideMenu removeCookie={removeCookie} />
       <S.Layout $marginLeft={200}>
         <S.Content>
           <S.StatusBar>
@@ -117,7 +130,7 @@ function Layout() {
           </S.StatusBar>
           <Main />
         </S.Content>
-        <S.Footer>projectName ©2022 Created by Lawdians</S.Footer>
+        <S.Footer>Real-Fi ©2022 Created by Lawdians</S.Footer>
       </S.Layout>
     </S.Layout>
   );
