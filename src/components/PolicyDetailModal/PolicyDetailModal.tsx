@@ -6,7 +6,6 @@ import {
   CREATE_POLICY_BY_ADMIN,
   DELETE_POLICY_BY_ADMIN,
   UPDATE_POLICY_BY_ADMIN,
-  UPLOAD_POLICY_FILE_BY_ADMIN,
 } from '../../graphql/mutation';
 import { FIND_POLICY } from '../../graphql/query';
 import { Editor } from '../Editor';
@@ -32,7 +31,7 @@ export function PolicyDetailModal({
   const [content, setContent] = useState('');
   const [variables, setVariables] = useState<any>([]);
   const [checkBoxDefaultVlaue, setCheckBoxDefaultVlaue] = useState<string[]>([]);
-  const options = ['회원가입', '비밀번호 초기화', '투자정보 입력', '투자자격 변경'];
+  const options = ['회원가입', '투자정보 입력', '비밀번호 초기화', '투자자격 변경'];
 
   const handleClick = () => {
     const categorys = options.map((option, idx) =>
@@ -220,11 +219,7 @@ export function PolicyDetailModal({
       </TransformBox>
       <TransformBox marginBottom="30px" marginTop="30px" flexDirection="column">
         <h3>약관 내용</h3>
-        <Editor
-          state={content}
-          onChange={handleChangeContent}
-          // onUpload={handleUploadImage}
-        />
+        <Editor state={content} onChange={handleChangeContent} />
       </TransformBox>
     </Modal>
   );
