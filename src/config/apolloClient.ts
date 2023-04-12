@@ -9,13 +9,17 @@ import { SetterOrUpdater } from 'recoil';
 import { userTokenTypes } from '../recoil/atoms/userToken';
 
 export const SERVER =
-  process.env.NODE_ENV === 'development' ? '/graphql' : process.env.REACT_APP_SERVER;
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8001/graphql'
+    : process.env.REACT_APP_SERVER;
 export const SOCKET =
-  process.env.NODE_ENV === 'development' ? '/graphql' : process.env.REACT_APP_SOCKET_URL!;
+  process.env.NODE_ENV === 'development'
+    ? 'ws://localhost:8001/subscriptions'
+    : process.env.REACT_APP_SOCKET_URL!;
 
 function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userTokenTypes>) {
   const uploadLink = createUploadLink({
-    uri: 'http://localhost:8001/graphql',
+    uri: SERVER,
     credentials: 'include',
     // headers: {
     //   'keep-alive': 'true',
@@ -24,7 +28,7 @@ function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userToken
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: 'ws://localhost:8001/subscriptions',
+      url: SOCKET,
 
       // url: SOCKET,
       // connectionParams: () => {
