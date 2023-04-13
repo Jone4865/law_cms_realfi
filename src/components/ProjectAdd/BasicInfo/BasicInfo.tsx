@@ -126,6 +126,8 @@ export function BasicInfo({
           },
         });
       }
+    } else {
+      projectimageChange(e);
     }
     setSuccess(false);
   };

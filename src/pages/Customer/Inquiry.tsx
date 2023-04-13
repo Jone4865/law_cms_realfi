@@ -59,16 +59,6 @@ export function Inquiry() {
   };
 
   const handleRefetch = () => {
-    // if (refetch) {
-    //   refetch({ take, skip })
-    //     .then((data) => {
-    //       setInquiryData(data.data.seeAllInquiryHistoryByAdmin.inquiries);
-    //       setTotalCount(data.data.seeAllInquiryHistoryByAdmin.totalCount);
-    //     })
-    //     .catch((e) => {
-    //       notification.error({ message: e.message });
-    //     });
-    // }
     findManyUserInquiryByAdmin({
       variables: {
         take,
@@ -161,6 +151,7 @@ export function Inquiry() {
           };
         }}
         scroll={{ x: 800 }}
+        rowKey={(rec) => rec.id}
       />
     </>
   );

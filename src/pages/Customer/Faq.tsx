@@ -21,11 +21,10 @@ export function Faq() {
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchText, setSearchText] = useState('');
-  const [faqCategoryId, setFaqCategoryId] = useState(1);
   const [faqCategorys, setFaqCategorys] = useState<FindManyFaqCategoryQuery['findManyFaqCategory']>(
     [],
   );
+  const [faqCategoryId, setFaqCategoryId] = useState<number | undefined>(undefined);
 
   const handlePagination = (e: number) => {
     setCurrent(e);
@@ -71,13 +70,13 @@ export function Faq() {
       variables: {
         take,
         skip,
-        searchText,
+        searchText: '',
         faqCategoryId,
       },
       fetchPolicy: 'no-cache',
     });
     findManyFaqCategory({});
-  }, [skip, take, faqCategoryId, visible]);
+  }, [skip, take, visible, faqCategoryId]);
 
   return (
     <>
@@ -86,7 +85,6 @@ export function Faq() {
         data={modalData}
         handleCancel={handleCancel}
         isEdit={isEdit}
-        // refetch={handleRefetch}
         faqCategory={faqCategorys}
       />
       <Divider>FAQ</Divider>
@@ -98,6 +96,9 @@ export function Faq() {
       <Table
         columns={faqColumns({ faqCategorys })}
         dataSource={faqData}
+        onChange={(_v, filter) => {
+          setFaqCategoryId(filter && filter.faqCategory ? +filter.faqCategory[0] : undefined);
+        }}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: true,
