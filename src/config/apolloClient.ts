@@ -17,23 +17,11 @@ function apolloClient(state: userTokenTypes, setState: SetterOrUpdater<userToken
   const uploadLink = createUploadLink({
     uri: 'http://localhost:8001/graphql',
     credentials: 'include',
-    // headers: {
-    //   'keep-alive': 'true',
-    // },
   });
 
   const wsLink = new GraphQLWsLink(
     createClient({
       url: 'ws://localhost:8001/subscriptions',
-
-      // url: SOCKET,
-      // connectionParams: () => {
-      //   const accessToken = state.accessToken ?? localStorage.getItem('accessToken') ?? '';
-
-      //   return {
-      //     Authorization: accessToken ? `Bearer ${accessToken}` : '',
-      //   };
-      // },
     }),
   );
 

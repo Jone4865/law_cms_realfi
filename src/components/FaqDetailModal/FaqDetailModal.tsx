@@ -42,7 +42,7 @@ export function FaqDetailModal({ visible, isEdit, data, faqCategory, handleCance
     const variables = {
       question,
       answer,
-      faqCategoryId: 1,
+      faqCategoryId,
     };
     if (!isEdit) {
       createFaqByAdmin({
@@ -76,6 +76,7 @@ export function FaqDetailModal({ visible, isEdit, data, faqCategory, handleCance
   const [createFaqByAdmin] = useMutation(CREATE_FAQ_BY_ADMIN, {
     onCompleted: (_data) => {
       notification.success({ message: 'FAQ를 생성했습니다.' });
+      setFaqCategoryId(1);
       handleCancel();
     },
     onError: (e) => {
