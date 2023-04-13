@@ -121,7 +121,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '프로젝트 생성을 완료했습니다.' });
+      notification.success({ message: '프로젝트를 생성했습니다.' });
       setVariables({});
       setNowAble(0);
     },
@@ -134,7 +134,7 @@ export function ProjectAdd({ isFix, isAdd }: Props) {
         notification.error({ message: error.message });
       },
       onCompleted: (_data) => {
-        notification.success({ message: '프로젝트 공모정보를 수정했습니다.' });
+        notification.success({ message: '프로젝트의 공모정보를 수정했습니다.' });
       },
     },
   );

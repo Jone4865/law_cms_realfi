@@ -299,7 +299,7 @@ export function BasicInfo({
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '프로젝트 기본정보를 수정했습니다.' });
+      notification.success({ message: '프로젝트의 기본정보를 수정했습니다.' });
     },
   });
 
