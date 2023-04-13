@@ -117,7 +117,7 @@ export function PolicyDetailModal({
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '답변을 수정했습니다.' });
+      notification.success({ message: '약관을 수정했습니다.' });
       handleRefetch();
     },
   });
@@ -127,7 +127,7 @@ export function PolicyDetailModal({
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '삭제를 완료했습니다.' });
+      notification.success({ message: '약관을 삭제했습니다.' });
       handleRefetch();
     },
   });
@@ -152,18 +152,6 @@ export function PolicyDetailModal({
   useEffect(() => {
     handleChange('content', content);
   }, [content]);
-
-  // const handleUploadImage = (file: File, cb: (url: string) => void) => {
-  //   uploadPolicyFile({
-  //     variables: {
-  //       file: file,
-  //     },
-  //     onCompleted: (res) => {
-  //       console.log(res.uploadPolicyFileByAdmin);
-  //       cb(`${process.env.REACT_APP_SERVER_BASIC}/policy/file?name=${res.uploadPolicyFileByAdmin}`);
-  //     },
-  //   });
-  // };
 
   return (
     <Modal

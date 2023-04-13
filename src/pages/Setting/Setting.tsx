@@ -52,7 +52,7 @@ export function Setting() {
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '수수료를 변경하였습니다.' });
+      notification.success({ message: '수수료를 수정하였습니다.' });
     },
   });
 
@@ -61,7 +61,7 @@ export function Setting() {
       notification.error({ message: error.message });
     },
     onCompleted: (_data) => {
-      notification.success({ message: '시간을 변경하였습니다.' });
+      notification.success({ message: '시간을 수정하였습니다.' });
     },
   });
 

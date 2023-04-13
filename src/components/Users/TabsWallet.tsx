@@ -9,7 +9,6 @@ import { FIND_MANY_TABS_WALLET_BY_ADMIN } from '../../graphql/query/findManyTabs
 import { tabsWalletClumns } from '../../utils/columns';
 import * as S from './style';
 import { UserDividendModal } from './UserDividendModal/UserDividendModal';
-// import { UserTransactionModal } from './UserTransactionModal/UserTransactionModal';
 
 type Props = {
   email: string | undefined;
@@ -17,7 +16,6 @@ type Props = {
 
 export function TabsWallet({ email }: Props) {
   const [dividendModalView, setDividendModalView] = useState(false);
-  // const [transactionModalView, setTransactionModalView] = useState(false);
   const [tabsWalletData, setTabsWalletData] =
     useState<FindManyTabsWalletByAdminOutput['tabsWallets']>();
   const [totalCount, setTotalCount] = useState(0);
@@ -38,7 +36,6 @@ export function TabsWallet({ email }: Props) {
 
   const handleCancel = () => {
     setDividendModalView(false);
-    // setTransactionModalView(false);
   };
 
   const handleClickRow = (rec: TabsWalletInFindManyTabsWalletByAdminOutput) => {
@@ -76,9 +73,6 @@ export function TabsWallet({ email }: Props) {
           projectId={projectId}
         />
       )}
-      {/* {transactionModalView && (
-        <UserTransactionModal handleCancel={handleCancel} visible={transactionModalView} />
-      )} */}
       <S.SubTitle>보유부동산</S.SubTitle>
       <Form layout="inline">
         <Form.Item name="searchText">
